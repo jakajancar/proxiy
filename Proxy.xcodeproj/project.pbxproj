@@ -45,6 +45,7 @@
 		21A3359825C0BD27007B8C45 /* ProxyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProxyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		21A3359C25C0BD27007B8C45 /* ProxyUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyUITests.swift; sourceTree = "<group>"; };
 		21A3359E25C0BD27007B8C45 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		21A335AD25C0BD6B007B8C45 /* Proxy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Proxy.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +96,7 @@
 		21A3357E25C0BD26007B8C45 /* Proxy */ = {
 			isa = PBXGroup;
 			children = (
+				21A335AD25C0BD6B007B8C45 /* Proxy.entitlements */,
 				21A3357F25C0BD26007B8C45 /* ProxyApp.swift */,
 				21A3358125C0BD26007B8C45 /* ContentView.swift */,
 				21A3358325C0BD27007B8C45 /* Assets.xcassets */,
@@ -417,6 +419,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Proxy/Proxy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Proxy/Preview Content\"";
 				DEVELOPMENT_TEAM = 9N2BT52DHB;
@@ -429,8 +432,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = si.jancar.Proxy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
 		};
@@ -439,6 +443,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Proxy/Proxy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Proxy/Preview Content\"";
 				DEVELOPMENT_TEAM = 9N2BT52DHB;
@@ -451,8 +456,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = si.jancar.Proxy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Release;
 		};
