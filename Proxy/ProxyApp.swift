@@ -8,6 +8,9 @@
 import SwiftUI
 import Network
 import Combine
+import OSLog
+
+private let logger = Logger(subsystem: "si.jancar.Proxy", category: "app")
 
 @main
 struct ProxyApp: App {
@@ -47,6 +50,35 @@ struct ProxyApp: App {
 //    }
     
     init() {
+//        logger.debug("test debug message")
+//        logger.info("test info message")
+//        logger.log("test default (notice) message")
+//        logger.notice("test notice message")
+//        logger.warning("test warning message")
+//        logger.error("test error message")
+        // TODO: Publish error if cannot increase
+        
+        var rlim: rlimit = .init()
+        if getrlimit(RLIMIT_NOFILE, &rlim) == 0 {
+            print("Soft limit: \(rlim.rlim_cur), Hard limit: \(rlim.rlim_max)")
+        } else {
+            print("Unable to get file descriptor limits")
+        }
+        
+        rlim.rlim_cur = 8192
+        
+        if setrlimit(RLIMIT_NOFILE, &rlim) == 0 {
+            print("Increased rlimit")
+        } else {
+            print("Unable to set file descriptor limits")
+        }
+        
+        if getrlimit(RLIMIT_NOFILE, &rlim) == 0 {
+            print("Soft limit: \(rlim.rlim_cur), Hard limit: \(rlim.rlim_max)")
+        } else {
+            print("Unable to get file descriptor limits")
+        }
+
         // Initialize defaults
 //        if self.psk == nil {
 //            print("Setting default psk")

@@ -7,12 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		212AE41525D0984B00C3813F /* AnyObject+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 212AE41425D0984B00C3813F /* AnyObject+Extensions.swift */; };
+		212AE42C25D0A9D700C3813F /* NWConnection+SOCKS5.swift in Sources */ = {isa = PBXBuildFile; fileRef = 212AE42B25D0A9D700C3813F /* NWConnection+SOCKS5.swift */; };
 		215EE3B325CA1BCF00045BFB /* DeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215EE3B225CA1BCF00045BFB /* DeviceInfo.swift */; };
-		2162AD8D25CE01BD00193520 /* ClientRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2162AD8C25CE01BD00193520 /* ClientRequest.swift */; };
+		2162AD8D25CE01BD00193520 /* PeerHello.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2162AD8C25CE01BD00193520 /* PeerHello.swift */; };
 		2162AD9525CE052100193520 /* DataConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2162AD9425CE052100193520 /* DataConvertible.swift */; };
 		216B4E8525D0556F00486B42 /* ConnectionToPeer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 216B4E8425D0556F00486B42 /* ConnectionToPeer.swift */; };
 		216B4E8A25D0557D00486B42 /* ConnectionFromPeer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 216B4E8925D0557D00486B42 /* ConnectionFromPeer.swift */; };
-		21899B2525CC4234003BC13E /* NWConnection+Socks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21899B2425CC4234003BC13E /* NWConnection+Socks.swift */; };
 		218CE57025CA091300FBDCB2 /* View+WindowHacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 218CE56F25CA091300FBDCB2 /* View+WindowHacks.swift */; };
 		21908CD225CA236900DAF5CB /* ModalView in Frameworks */ = {isa = PBXBuildFile; productRef = 21908CD125CA236900DAF5CB /* ModalView */; };
 		21908CDB25CA2E5800DAF5CB /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21908CDA25CA2E5800DAF5CB /* IOKit.framework */; };
@@ -50,12 +51,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		212AE41425D0984B00C3813F /* AnyObject+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnyObject+Extensions.swift"; sourceTree = "<group>"; };
+		212AE42B25D0A9D700C3813F /* NWConnection+SOCKS5.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NWConnection+SOCKS5.swift"; sourceTree = "<group>"; };
 		215EE3B225CA1BCF00045BFB /* DeviceInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfo.swift; sourceTree = "<group>"; };
-		2162AD8C25CE01BD00193520 /* ClientRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientRequest.swift; sourceTree = "<group>"; };
+		2162AD8C25CE01BD00193520 /* PeerHello.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerHello.swift; sourceTree = "<group>"; };
 		2162AD9425CE052100193520 /* DataConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataConvertible.swift; sourceTree = "<group>"; };
 		216B4E8425D0556F00486B42 /* ConnectionToPeer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionToPeer.swift; sourceTree = "<group>"; };
 		216B4E8925D0557D00486B42 /* ConnectionFromPeer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionFromPeer.swift; sourceTree = "<group>"; };
-		21899B2425CC4234003BC13E /* NWConnection+Socks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NWConnection+Socks.swift"; sourceTree = "<group>"; };
 		218CE56F25CA091300FBDCB2 /* View+WindowHacks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+WindowHacks.swift"; sourceTree = "<group>"; };
 		21908CDA25CA2E5800DAF5CB /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
 		21908CDF25CB51D900DAF5CB /* NWConnection+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NWConnection+Extensions.swift"; sourceTree = "<group>"; };
@@ -111,9 +113,10 @@
 		2162AD8825CE010700193520 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				212AE41425D0984B00C3813F /* AnyObject+Extensions.swift */,
 				2162AD9425CE052100193520 /* DataConvertible.swift */,
 				21908CDF25CB51D900DAF5CB /* NWConnection+Extensions.swift */,
-				21899B2425CC4234003BC13E /* NWConnection+Socks.swift */,
+				212AE42B25D0A9D700C3813F /* NWConnection+SOCKS5.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -208,7 +211,7 @@
 			children = (
 				21A335B425C0BE9F007B8C45 /* Mesh.swift */,
 				21E88A3225C4CB9000F33D72 /* PeerAdvertisement.swift */,
-				2162AD8C25CE01BD00193520 /* ClientRequest.swift */,
+				2162AD8C25CE01BD00193520 /* PeerHello.swift */,
 				216B4E8425D0556F00486B42 /* ConnectionToPeer.swift */,
 				216B4E8925D0557D00486B42 /* ConnectionFromPeer.swift */,
 			);
@@ -351,10 +354,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				216B4E8525D0556F00486B42 /* ConnectionToPeer.swift in Sources */,
-				2162AD8D25CE01BD00193520 /* ClientRequest.swift in Sources */,
+				212AE42C25D0A9D700C3813F /* NWConnection+SOCKS5.swift in Sources */,
+				212AE41525D0984B00C3813F /* AnyObject+Extensions.swift in Sources */,
+				2162AD8D25CE01BD00193520 /* PeerHello.swift in Sources */,
 				21D2EB0625C8E0BE0059C6B0 /* PeerView.swift in Sources */,
 				218CE57025CA091300FBDCB2 /* View+WindowHacks.swift in Sources */,
-				21899B2525CC4234003BC13E /* NWConnection+Socks.swift in Sources */,
 				21A335B525C0BE9F007B8C45 /* Mesh.swift in Sources */,
 				21D2EAF025C7B1AF0059C6B0 /* Config.swift in Sources */,
 				2162AD9525CE052100193520 /* DataConvertible.swift in Sources */,

@@ -9,13 +9,13 @@ import Foundation
 import Network
 
 /// Data sent on the connection when a peer connects to another peer, after TLS auth.
-struct ClientRequest: Codable {
+struct PeerHello: Codable {
     let instanceID: InstanceID
 }
 
 extension NWConnection {
-    func send(clientRequest: ClientRequest, completion: @escaping (NWError?) -> Void) {
-        let jsonData = try! JSONEncoder().encode(clientRequest)
+    func send(peerHello: PeerHello, completion: @escaping (NWError?) -> Void) {
+        let jsonData = try! JSONEncoder().encode(peerHello)
         
         let length: UInt32 = UInt32(exactly: jsonData.count)!
         let lengthData = length.bigEndian.data
@@ -31,19 +31,18 @@ extension NWConnection {
         }))
     }
     
-    func receiveClientRequest(completion: @escaping (ClientRequest?, NWError?) -> Void) {
-        self.receive(minimumIncompleteLength: 4, maximumLength: 4) { (data, ctx, _, error) in
-            guard data != nil else { return completion(nil, error) }
+    func receivePeerHello(completion: @escaping (PeerHello?, NWError?) -> Void) {
+        self.receive(length: 4) { (data, error) in
+            guard let data = data else { return completion(nil, error!) }
             
-            let length = Int(UInt32(bigEndian: UInt32(data: data!)!))
+            let length = Int(UInt32(bigEndian: UInt32(data: data)!))
             
-            self.receive(minimumIncompleteLength: length, maximumLength: length) { (data, _, _, error) in
-                guard error == nil else { completion(nil, error); return }
+            self.receive(length: length) { (data, error) in
+                guard let data = data else { return completion(nil, error!) }
                 
-                let req = try! JSONDecoder().decode(ClientRequest.self, from: data!)
+                let req = try! JSONDecoder().decode(PeerHello.self, from: data)
                 completion(req, nil)
             }
         }
     }
-
 }

@@ -8,7 +8,30 @@
 import Foundation
 import Network
 
+/// General-purpose utilities for `NWConnection`.
 extension NWConnection {
+    /// Reads exactly `length` bytes from the connection. Exactly one `completion` parameter will be non-`nil`.
+    ///
+    func receive(length: Int, expectFinal: Bool = true, completion: @escaping (Data?, NWError?) -> Void) {
+        self.receive(minimumIncompleteLength: length, maximumLength: length) { (data, ctx, isComplete, error) in
+            if let error = error {
+                completion(nil, error)
+            } else if let data = data {
+                // got enough data
+                if isComplete && !expectFinal {
+                    // If we get `length` bytes + EOF, in order to not swallow the EOF, unless
+                    // expectFinal is true, we return .ENODATA as well.
+                    completion(nil, .posix(.ENODATA))
+                } else {
+                    completion(data, nil)
+                }
+            } else {
+                // not enough data
+                completion(nil, .posix(.ENODATA))
+            }
+        }
+    }
+
     /// Receives all data from connection and sends it to another.
     /// Completion is called when `self` has FIN'd and all data and FIN has been sent, or after an error has occured either reading or writing.
     func transcieve(to: NWConnection, completion: @escaping (NWError?) -> Void) {

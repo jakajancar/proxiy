@@ -55,6 +55,8 @@ class Mesh {
     
     private var localListeners: [Config.Listener : NWListener] = [:]
     
+    private var unidentifiedConnectionsFromPeer: Set<ConnectionFromPeer> = []
+    
     init(deviceInfo: DeviceInfo, config: Config) {
         self.deviceInfo = deviceInfo
         self.config = config
@@ -133,6 +135,7 @@ class Mesh {
     
 //    func forceCancel() {
 //        self.cancelled = true
+//        unidentified
 //        for result in self.meshBrowser.browseResults {
 //            self.updatePeer(result: result)
 //        }
@@ -203,6 +206,17 @@ class Mesh {
         return matching.randomElement()
     }
     
+    private func fileDescriptorCount() -> Int {
+        var inUseDescCount = 0
+        let descCount = getdtablesize()
+        for descIndex in 0..<descCount {
+            if fcntl(descIndex, F_GETFL) >= 0 {
+                inUseDescCount += 1
+            }
+        }
+        return inUseDescCount
+    }
+    
     private func refreshLocalListeners() {
         print("refreshing local listeners")
         // Compute diff
@@ -220,23 +234,7 @@ class Mesh {
         
         // Add missing listeners
         for config in toAdd {
-            let tcpOpts = NWProtocolTCP.Options()
-            tcpOpts.noDelay = true
-            
-            let udpOpts = NWProtocolUDP.Options()
-            
-            let listenerParams: NWParameters
-            let newConnectionHandler: (NWConnection) -> Void
-            
-            switch config.connectInstructions {
-            case .Tcp(remoteHost: let remoteHost, remotePort: let remotePort):
-                listenerParams = NWParameters(tls: nil, tcp: tcpOpts)
-            case .Udp(remoteHost: let remoteHost, remotePort: let remotePort):
-                listenerParams = NWParameters(dtls: nil, udp: udpOpts)
-            case .Socks:
-                listenerParams = NWParameters(tls: nil, tcp: tcpOpts)
-            }
-            
+            let listenerParams = NWParameters.tcp
             listenerParams.requiredInterfaceType = .loopback
             listenerParams.allowLocalEndpointReuse = true // TIME_WAIT doesn't seem to be applied, but just in case
             
@@ -245,45 +243,19 @@ class Mesh {
 //                    print("local listener state = \(state)")
             }
             listener.newConnectionHandler = { conn in
+                print("\(self.fileDescriptorCount()) file descriptors in use")
                 if let targetPeer = self.selectPeer(via: config.via) {
-                    let targetTCPOpts = NWProtocolTCP.Options()
-                    targetTCPOpts.noDelay = true
-
-                    let targetParams = NWParameters.init(
-                        tls: Mesh.kUseTLSBetweenPeers ? Self.tlsOptions(psk: self.psk) : nil,
-                        tcp: tcpOpts)
-                    
-                    let targetConn = NWConnection(to: targetPeer.endpoint, using: targetParams)
-                    targetPeer.track(connectionToPeer: targetConn)
-                    
-                    conn.stateUpdateHandler = { [weak conn, weak targetConn] state in
-                        switch state {
-                        case .waiting(_), .failed(_):
-                            print("local connection has failed")
-                            conn?.cancel()
-                        case .cancelled:
-                            print("canceling connection to peer because local connection was cancelled")
-                            targetConn?.cancel()
-                        default:
-                            break
-                        }
+                    let connToPeer = ConnectionToPeer(
+                        local: conn,
+                        peerEndpoint: targetPeer.endpoint,
+                        tlsOptions: Mesh.kUseTLSBetweenPeers ? Self.tlsOptions(psk: self.psk) : nil,
+                        myInstanceID: self.myInstanceID
+                    )
+                    targetPeer.connectionsTo.insert(connToPeer)
+                    connToPeer.completedHandler = { [weak targetPeer, weak connToPeer] in
+                        targetPeer?.connectionsTo.remove(connToPeer!)
                     }
-                    
-                    conn.start(queue: DispatchQueue.main)
-                    targetConn.start(queue: DispatchQueue.main)
-                    
-                    print("sending client request")
-                    let clientRequest = ClientRequest(instanceID: self.myInstanceID, instructions: config.connectInstructions)
-                    targetConn.send(clientRequest: clientRequest) { error in
-                        print("sent client request")
-                        guard error == nil else { return }
-                        conn.transcieve(between: targetConn) { error in
-                            print("transcieve between local and remote peer completed")
-                            conn.cancel()
-                            targetConn.cancel()
-                        }
-                    }
-
+                    connToPeer.start(queue: DispatchQueue.main)
                 } else {
                     logger.log("no matching peer for connection to listener")
                     conn.cancel()
@@ -296,50 +268,31 @@ class Mesh {
     }
 
     private func handleConnectionFromPeer(conn: NWConnection) {
-        conn.start(queue: DispatchQueue.main)
-        
-        conn.receiveClientRequest { (clientRequest, error) in
-            guard error == nil else { return }
-            guard let clientRequest = clientRequest else { return }
-            
-            guard let peer = self.peerMap[clientRequest.instanceID] else {
-                logger.log("got request from peer not in peerMap")
-                return
-            }
-            peer.track(connectionFromPeer: conn)
-            
-            let tcpOpts = NWProtocolTCP.Options()
-            tcpOpts.noDelay = true
-            
-            let udpOpts = NWProtocolUDP.Options()
-
-            switch clientRequest.instructions {
-            case .Tcp(remoteHost: let remoteHost, remotePort: let remotePort):
-                let params = NWParameters(tls: nil, tcp: tcpOpts)
-                let targetConn = NWConnection(host: .name(remoteHost, nil), port: remotePort, using: params)
-                targetConn.transcieve(between: conn) { error in
-                    //
-                }
-                targetConn.start(queue: DispatchQueue.main)
-            case .Udp(remoteHost: let remoteHost, remotePort: let remotePort):
-                let params = NWParameters(dtls: nil, udp: udpOpts)
-                let targetConn = NWConnection(host: .name(remoteHost, nil), port: remotePort, using: params)
-                targetConn.transcieve(between: conn) { error in
-                    //
-                }
-                targetConn.start(queue: DispatchQueue.main)
-                break
-            case .Socks:
-                print("got request, will handle socks")
-                conn.receiveAndHandleSocks { error in
-                    print("socks handling finished")
-                    if case .proto(let str) = error {
-                        logger.log("SOCKS protocol error: \(str)")
-                    }
-                    conn.cancel()
+        let connFromPeer = ConnectionFromPeer(conn)
+        self.unidentifiedConnectionsFromPeer.insert(connFromPeer)
+        connFromPeer.identifiedHandler = { [weak self, weak connFromPeer] in
+            let connFromPeer = connFromPeer!
+            if let self = self {
+                // Remove from unidentified
+                self.unidentifiedConnectionsFromPeer.remove(connFromPeer)
+                
+                // Add to peer
+                if let peer = self.peerMap[connFromPeer.peerInstanceID!] {
+                    peer.connectionsFrom.insert(connFromPeer)
+                } else {
+                    logger.log("got request from peer not in peerMap")
+                    connFromPeer.forceCancel()
+                    return
                 }
             }
         }
+        connFromPeer.completedHandler = { [weak self, weak connFromPeer] in
+            let connFromPeer = connFromPeer!
+            if let self = self, let instanceID = connFromPeer.peerInstanceID, let peer = self.peerMap[instanceID] {
+                peer.connectionsFrom.remove(connFromPeer)
+            }
+        }
+        connFromPeer.start(queue: DispatchQueue.main)
     }
 }
 
@@ -348,8 +301,8 @@ class Peer {
     fileprivate let endpoint: NWEndpoint
     fileprivate var advertisement: PeerAdvertisement
     
-    @Published private var connectionsTo: Set<NWConnection> = [] // does not include local part
-    @Published private var connectionsFrom: Set<NWConnection> = [] // does not include internet part
+    @Published var connectionsTo: Set<ConnectionToPeer> = [] // does not include local part
+    @Published var connectionsFrom: Set<ConnectionFromPeer> = [] // does not include internet part
     
     fileprivate init(instanceID: InstanceID, endpoint: NWEndpoint, advertisement: PeerAdvertisement) {
         self.instanceID = instanceID
@@ -357,34 +310,6 @@ class Peer {
         self.advertisement = advertisement
     }
     
-    // Tracks the connection and sets it's state update handler.
-    private func track(connection conn: NWConnection, inSet set: ReferenceWritableKeyPath<Peer, Set<NWConnection>>) {
-        self[keyPath: set].insert(conn)
-        conn.stateUpdateHandler = { [weak self, weak conn] state in
-            switch state {
-            case .waiting(_), .failed(_):
-                print("tracked connection failed")
-                conn?.cancel()
-            case .cancelled:
-                print("tracked connection cancelled")
-                if let self = self, let conn = conn {
-                    self[keyPath: set].remove(conn)
-                }
-            default:
-                break
-            }
-        }
-        
-    }
-    
-    fileprivate func track(connectionToPeer conn: NWConnection) {
-        self.track(connection: conn, inSet: \.connectionsTo)
-    }
-    
-    fileprivate func track(connectionFromPeer conn: NWConnection) {
-        self.track(connection: conn, inSet: \.connectionsFrom)
-    }
-
     fileprivate func forceCancel() {
         for conn in self.connectionsTo {
             conn.forceCancel()

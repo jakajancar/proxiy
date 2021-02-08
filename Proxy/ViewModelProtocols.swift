@@ -21,12 +21,12 @@ protocol PeerViewModel: ObservableObject, Hashable, Identifiable {
 
 }
 
-extension PeerViewModel {
-    static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs === rhs
-    }
-    
-    func hash(into hasher: inout Hasher) {
-        self.id.hash(into: &hasher)
-    }
-}
+//extension PeerViewModel {
+//    static func == (lhs: Self, rhs: Self) -> Bool {
+//        lhs === rhs
+//    }
+//    
+//    func hash(into hasher: inout Hasher) {
+//        self.id.hash(into: &hasher)
+//    }
+//}
