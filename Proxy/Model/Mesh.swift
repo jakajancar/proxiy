@@ -21,46 +21,27 @@ class Mesh {
     // BUG: https://developer.apple.com/forums/thread/673143
     private static let kUseTLSBetweenPeers: Bool = false
     
-    /// Random UUID generated at startup.
+    private let deviceInfo: DeviceInfo
+    private let config: Config
+    private var psk: SymmetricKey
+    
     private let myInstanceID: InstanceID = UUID().uuidString
-    
-    @Published var deviceInfo: DeviceInfo
-    
-    /// User-defined configuration.
-    @Published var config: Config {
-        didSet {
-            self.psk = config.createSymmetricKey()
-            self.meshListener.service = self.createService()
-            self.refreshLocalListeners()
-        }
-    }
-    
-    /// `SymmetricKey` build from the configuration.
-    private var psk: SymmetricKey {
-        didSet {
-            for result in self.meshBrowser.browseResults {
-                self.updatePeer(result: result)
-            }
-        }
-    }
-    
-    /// Bonjour listener and service advertiser.
     private let meshListener: NWListener
-    
-    /// Bonjour service browser.
     private let meshBrowser: NWBrowser
     
     /// Peers indexed by instance, so that Bonjour updates can be easily applied and inbound connections easily tracked.
     @Published fileprivate var peerMap: [InstanceID : Peer] = [:]
     
-    private var localListeners: [Config.Listener : NWListener] = [:]
+    private var localListeners: [NWEndpoint.Port : NWListener] = [:]
     
     private var unidentifiedConnectionsFromPeer: Set<ConnectionFromPeer> = []
     
+    
     init(deviceInfo: DeviceInfo, config: Config) {
+        logger.log("Initializing")
         self.deviceInfo = deviceInfo
         self.config = config
-        self.psk = config.createSymmetricKey()
+        self.psk = SymmetricKey(data: SHA256.hash(data: config.psk.data(using: .utf8)!))
         
         // Init listener
         do {
@@ -100,7 +81,15 @@ class Mesh {
         
         self.refreshLocalListeners() // TODO: dedup
         
-        self.meshListener.service = self.createService()
+        self.meshListener.service = NWListener.Service(
+            name: self.myInstanceID,
+            type: Mesh.kBonjourServiceType,
+            domain: nil,
+            txtRecord: PeerAdvertisement(
+                deviceInfo: self.deviceInfo,
+                acceptsInbound: config.acceptInbound
+            ).toTxtRecord(using: self.psk)
+        )
         self.meshListener.newConnectionHandler = self.handleConnectionFromPeer
         self.meshListener.start(queue: DispatchQueue.main)
         
@@ -122,28 +111,26 @@ class Mesh {
         return tlsOpts
     }
     
-    private func createService() -> NWListener.Service {
-        NWListener.Service(
-            name: self.myInstanceID,
-            type: Mesh.kBonjourServiceType,
-            domain: nil,
-            txtRecord: PeerAdvertisement(
-                deviceInfo: self.deviceInfo,
-                allowsInbound: self.config.allowInbound
-            ).toTxtRecord(using: self.psk))
+    func forceCancel() {
+        self.meshListener.cancel()
+        self.meshListener.newConnectionHandler = nil
+        
+        self.meshBrowser.cancel()
+        self.meshBrowser.browseResultsChangedHandler = nil
+        
+        for localListener in self.localListeners.values {
+            localListener.cancel()
+            localListener.newConnectionHandler = nil
+        }
+        
+        for peer in self.peerMap.values {
+            peer.forceCancel()
+        }
     }
-    
-//    func forceCancel() {
-//        self.cancelled = true
-//        unidentified
-//        for result in self.meshBrowser.browseResults {
-//            self.updatePeer(result: result)
-//        }
-//    }
-//
-//    deinit {
-//        // force cancel peers
-//    }
+
+    deinit {
+        logger.log("De-initializing")
+    }
     
     private func updatePeer(result: NWBrowser.Result) {
         if case .service(name: let instanceID, type: _, domain: _, interface: _) = result.endpoint {
@@ -159,6 +146,7 @@ class Mesh {
                             endpoint: result.endpoint,
                             advertisement: advertisement)
                     }
+                    self.refreshLocalListeners()
                 } else {
                     // Other network
                     self.removePeer(result: result)
@@ -175,6 +163,7 @@ class Mesh {
         if case .service(name: let instanceID, type: _, domain: _, interface: _) = result.endpoint {
             if let peer = self.peerMap.removeValue(forKey: instanceID) {
                 peer.forceCancel()
+                self.refreshLocalListeners()
             }
         } else {
             fatalError("non-service endpoint?")
@@ -198,73 +187,60 @@ class Mesh {
     }
     
     private func selectPeer(via: Config.Via) -> Peer? {
-        let matching = self.peerMap.values.filter { (peer) -> Bool in
-//            peer.instanceID != self.myInstanceID &&
-                peer.advertisement.allowsInbound &&
-                    (via.nameFilter != nil ? via.nameFilter == peer.deviceInfo.name : true)
+        let matching = self.peerMap.values.filter { peer in
+            peer.advertisement.acceptsInbound &&
+                (via.nameFilter != nil ? via.nameFilter == peer.deviceInfo.name : true)
         }
         return matching.randomElement()
     }
     
-    private func fileDescriptorCount() -> Int {
-        var inUseDescCount = 0
-        let descCount = getdtablesize()
-        for descIndex in 0..<descCount {
-            if fcntl(descIndex, F_GETFL) >= 0 {
-                inUseDescCount += 1
-            }
-        }
-        return inUseDescCount
-    }
-    
     private func refreshLocalListeners() {
-        print("refreshing local listeners")
-        // Compute diff
-        let needed = Set(self.config.listeners)
-        let existing = Set(self.localListeners.keys)
-        let toRemove = existing.subtracting(needed)
-        let toAdd = needed.subtracting(existing)
-        print("Removing \(toRemove), adding \(toAdd)")
-        
-        // Remove obsolete listeners
-        for config in toRemove {
-            self.localListeners[config]!.cancel()
-            self.localListeners.removeValue(forKey: config)
-        }
-        
-        // Add missing listeners
-        for config in toAdd {
-            let listenerParams = NWParameters.tcp
-            listenerParams.requiredInterfaceType = .loopback
-            listenerParams.allowLocalEndpointReuse = true // TIME_WAIT doesn't seem to be applied, but just in case
-            
-            let listener = try! NWListener(using: listenerParams, on: config.localPort)
-            listener.stateUpdateHandler = { state in
-//                    print("local listener state = \(state)")
-            }
-            listener.newConnectionHandler = { conn in
-                print("\(self.fileDescriptorCount()) file descriptors in use")
-                if let targetPeer = self.selectPeer(via: config.via) {
-                    let connToPeer = ConnectionToPeer(
-                        local: conn,
-                        peerEndpoint: targetPeer.endpoint,
-                        tlsOptions: Mesh.kUseTLSBetweenPeers ? Self.tlsOptions(psk: self.psk) : nil,
-                        myInstanceID: self.myInstanceID
-                    )
-                    targetPeer.connectionsTo.insert(connToPeer)
-                    connToPeer.completedHandler = { [weak targetPeer, weak connToPeer] in
-                        targetPeer?.connectionsTo.remove(connToPeer!)
-                    }
-                    connToPeer.start(queue: DispatchQueue.main)
-                } else {
-                    logger.log("no matching peer for connection to listener")
-                    conn.cancel()
-                }
-            }
-
-            self.localListeners[config] = listener
-            listener.start(queue: DispatchQueue.main)
-        }
+//        // Compute diff
+//        let needed = Set(self.peers.map({ $0.advertisement.port }))
+//        let existing = Set(self.localListeners.keys)
+//        let toRemove = existing.subtracting(needed)
+//        let toAdd = needed.subtracting(existing)
+//
+//        // Remove obsolete listeners
+//        for port in toRemove {
+//            logger.log("Removing listener on \(port.debugDescription)")
+//            self.localListeners[port]!.cancel()
+//            self.localListeners.removeValue(forKey: port)
+//        }
+//
+//        // Add missing listeners
+//        for port in toAdd {
+//            logger.log("Adding listener on \(port.debugDescription)")
+//            let listenerParams = NWParameters.tcp
+//            listenerParams.requiredInterfaceType = .loopback
+//            listenerParams.allowLocalEndpointReuse = true // TIME_WAIT doesn't seem to be applied, but just in case
+//
+//            let listener = try! NWListener(using: listenerParams, on: port)
+//            listener.stateUpdateHandler = { state in
+////                    print("local listener state = \(state)")
+//            }
+//            listener.newConnectionHandler = { conn in
+//                if let targetPeer = self.selectPeer(localPort: port) {
+//                    let connToPeer = ConnectionToPeer(
+//                        local: conn,
+//                        peerEndpoint: targetPeer.endpoint,
+//                        tlsOptions: Mesh.kUseTLSBetweenPeers ? Self.tlsOptions(psk: self.psk) : nil,
+//                        myInstanceID: self.myInstanceID
+//                    )
+//                    targetPeer.connectionsTo.insert(connToPeer)
+//                    connToPeer.completedHandler = { [weak targetPeer, weak connToPeer] in
+//                        targetPeer?.connectionsTo.remove(connToPeer!)
+//                    }
+//                    connToPeer.start(queue: DispatchQueue.main)
+//                } else {
+//                    logger.log("no matching peer for connection to listener")
+//                    conn.cancel()
+//                }
+//            }
+//
+//            self.localListeners[port] = listener
+//            listener.start(queue: DispatchQueue.main)
+//        }
     }
 
     private func handleConnectionFromPeer(conn: NWConnection) {
@@ -317,12 +293,6 @@ class Peer {
         for conn in self.connectionsFrom {
             conn.forceCancel()
         }
-    }
-}
-
-private extension Config {
-    func createSymmetricKey() -> SymmetricKey {
-        SymmetricKey(data: SHA256.hash(data: self.psk.data(using: .utf8)!))
     }
 }
 

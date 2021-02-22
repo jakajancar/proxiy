@@ -12,78 +12,87 @@ import OSLog
 
 private let logger = Logger(subsystem: "si.jancar.Proxy", category: "app")
 
+///// Stores the `Config` and:
+/////  1. Syncs it to persistent storage, and
+/////  2. Maintains an up-to-date `Mesh` instance.
+//class ConfigAndMesh: ObservableObject {
+//    @Published var config: Config
+//    @Published private(set) var mesh: Mesh
+//    init(config: Config) {
+//        self.config = config
+//
+//    }
+//    private static func createMesh(_ config: Config) -> Mesh {
+//        Mesh(deviceInfo: DeviceInfo.current, config: <#T##Config#>)
+//    }
+//}
+
 @main
 struct ProxyApp: App {
+    @StateObject private var model = ProxyAppModel()
+    
     var body: some Scene {
         WindowGroup {
-            HomeView(mesh: mesh)
+            HomeView(config: $model.config, mesh: model.mesh)
         }
-        
-//        .commands {
-//            CommandGroup(replacing: CommandGroupPlacement.newItem, addition: {
-//                Button("Add Shape", action: { })
-//                    .keyboardShortcut("N")
-//            })
-//        }
     }
-
-//    @AppStorage("psk") var psk: String!// = nil //"ChangeMe1234!"
-//    @AppStorage("port") var port: Int! // nil = Int.random(in: 44000..<45000)
-    
-    @StateObject var mesh: Mesh = Mesh(
-        deviceInfo: DeviceInfo.current,
-        config: Config(
-            psk: "my secret key",
-            allowInbound: true, //UIDevice.current.userInterfaceIdiom != .mac,
-            listeners: Set([
-                Config.Listener(localPort: 1080, via: Config.Via(nameFilter: nil), connectInstructions: .Socks)
-            ])))
-//    var mesh2 = Mesh(myPort: 50002)
-    
-//    private let sceneCancelable: AnyCancellable = NotificationCenter.default.publisher(for: UIScene.willConnectNotification).sink { (notification) in
-//        #if targetEnvironment(macCatalyst)
-//        UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.forEach { windowScene in
-//            windowScene.sizeRestrictions?.minimumSize = CGSize(width: 480, height: 640)
-//            windowScene.sizeRestrictions?.maximumSize = CGSize(width: 480, height: 640)
-//        }
-//        #endif
-//    }
     
     init() {
-//        logger.debug("test debug message")
-//        logger.info("test info message")
-//        logger.log("test default (notice) message")
-//        logger.notice("test notice message")
-//        logger.warning("test warning message")
-//        logger.error("test error message")
-        // TODO: Publish error if cannot increase
-        
-        var rlim: rlimit = .init()
-        if getrlimit(RLIMIT_NOFILE, &rlim) == 0 {
-            print("Soft limit: \(rlim.rlim_cur), Hard limit: \(rlim.rlim_max)")
-        } else {
-            print("Unable to get file descriptor limits")
-        }
-        
-        rlim.rlim_cur = 8192
-        
-        if setrlimit(RLIMIT_NOFILE, &rlim) == 0 {
-            print("Increased rlimit")
-        } else {
-            print("Unable to set file descriptor limits")
-        }
-        
-        if getrlimit(RLIMIT_NOFILE, &rlim) == 0 {
-            print("Soft limit: \(rlim.rlim_cur), Hard limit: \(rlim.rlim_max)")
-        } else {
-            print("Unable to get file descriptor limits")
-        }
-
-        // Initialize defaults
-//        if self.psk == nil {
-//            print("Setting default psk")
-//            self.psk = "ChangeMe1234!"
-//        }
-        
+        increaseFileDescriptorLimit(to: 8192)
     }
+    
+}
+
+class ProxyAppModel: ObservableObject {
+    @Published var config: Config {
+        didSet {
+            try! config.persistToDefaultFile()
+            mesh.forceCancel()
+            mesh = Mesh(deviceInfo: DeviceInfo.current, config: config)
+        }
+    }
+    @Published var mesh: Mesh
+    
+    init() {
+//        if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
+//            fatalError("Refusing to initialize the full (slow) app model in preview. Bug somewhere?")
+//        }
+        let initialConfig = try! Config.restoreFromDefaultFile()
+        config = initialConfig
+        mesh = Mesh(deviceInfo: DeviceInfo.current, config: initialConfig)
+    }
+}
+
+func increaseFileDescriptorLimit(to: rlim_t) {
+    var rlim: rlimit = .init()
+    if getrlimit(RLIMIT_NOFILE, &rlim) == 0 {
+        print("Soft limit: \(rlim.rlim_cur), Hard limit: \(rlim.rlim_max)")
+    } else {
+        print("Unable to get file descriptor limits")
+    }
+    
+    rlim.rlim_cur = to
+    
+    if setrlimit(RLIMIT_NOFILE, &rlim) == 0 {
+        print("Increased rlimit")
+    } else {
+        print("Unable to set file descriptor limits")
+    }
+    
+    if getrlimit(RLIMIT_NOFILE, &rlim) == 0 {
+        print("Soft limit: \(rlim.rlim_cur), Hard limit: \(rlim.rlim_max)")
+    } else {
+        print("Unable to get file descriptor limits")
+    }
+}
+
+func fileDescriptorCount() -> Int {
+    var inUseDescCount = 0
+    let descCount = getdtablesize()
+    for descIndex in 0..<descCount {
+        if fcntl(descIndex, F_GETFL) >= 0 {
+            inUseDescCount += 1
+        }
+    }
+    return inUseDescCount
 }

@@ -3,19 +3,25 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		212AE41525D0984B00C3813F /* AnyObject+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 212AE41425D0984B00C3813F /* AnyObject+Extensions.swift */; };
 		212AE42C25D0A9D700C3813F /* NWConnection+SOCKS5.swift in Sources */ = {isa = PBXBuildFile; fileRef = 212AE42B25D0A9D700C3813F /* NWConnection+SOCKS5.swift */; };
+		212AE44B25D1EEF400C3813F /* IntField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 212AE44A25D1EEF400C3813F /* IntField.swift */; };
+		213DEC6625D645DF00C0411D /* BindPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 213DEC6525D645DF00C0411D /* BindPort.swift */; };
+		2154B8A625E23CE900C2DA1D /* View+DoneCancel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2154B8A525E23CE900C2DA1D /* View+DoneCancel.swift */; };
 		215EE3B325CA1BCF00045BFB /* DeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215EE3B225CA1BCF00045BFB /* DeviceInfo.swift */; };
 		2162AD8D25CE01BD00193520 /* PeerHello.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2162AD8C25CE01BD00193520 /* PeerHello.swift */; };
 		2162AD9525CE052100193520 /* DataConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2162AD9425CE052100193520 /* DataConvertible.swift */; };
+		216B42E825DE0F07009225AA /* ConfigEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 216B42E725DE0F07009225AA /* ConfigEditorView.swift */; };
 		216B4E8525D0556F00486B42 /* ConnectionToPeer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 216B4E8425D0556F00486B42 /* ConnectionToPeer.swift */; };
 		216B4E8A25D0557D00486B42 /* ConnectionFromPeer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 216B4E8925D0557D00486B42 /* ConnectionFromPeer.swift */; };
+		2186D32A25DF253600361CFD /* NWEndpoint+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2186D32925DF253600361CFD /* NWEndpoint+Extensions.swift */; };
+		2186D32F25DF677300361CFD /* Result+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2186D32E25DF677300361CFD /* Result+Extensions.swift */; };
+		2186D33725DF6A7A00361CFD /* UserError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2186D33625DF6A7A00361CFD /* UserError.swift */; };
 		218CE57025CA091300FBDCB2 /* View+WindowHacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 218CE56F25CA091300FBDCB2 /* View+WindowHacks.swift */; };
-		21908CD225CA236900DAF5CB /* ModalView in Frameworks */ = {isa = PBXBuildFile; productRef = 21908CD125CA236900DAF5CB /* ModalView */; };
 		21908CDB25CA2E5800DAF5CB /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21908CDA25CA2E5800DAF5CB /* IOKit.framework */; };
 		21908CE025CB51D900DAF5CB /* NWConnection+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21908CDF25CB51D900DAF5CB /* NWConnection+Extensions.swift */; };
 		21A3358025C0BD26007B8C45 /* ProxyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21A3357F25C0BD26007B8C45 /* ProxyApp.swift */; };
@@ -25,11 +31,10 @@
 		21A3359225C0BD27007B8C45 /* ProxyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21A3359125C0BD27007B8C45 /* ProxyTests.swift */; };
 		21A3359D25C0BD27007B8C45 /* ProxyUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21A3359C25C0BD27007B8C45 /* ProxyUITests.swift */; };
 		21A335B525C0BE9F007B8C45 /* Mesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21A335B425C0BE9F007B8C45 /* Mesh.swift */; };
+		21B1759D25DDEF9E00CEE91A /* ListenerEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21B1759C25DDEF9E00CEE91A /* ListenerEditorView.swift */; };
 		21D2EAF025C7B1AF0059C6B0 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D2EAEF25C7B1AF0059C6B0 /* Config.swift */; };
 		21D2EAF825C7B2AC0059C6B0 /* ViewModelProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D2EAF725C7B2AC0059C6B0 /* ViewModelProtocols.swift */; };
-		21D2EB0625C8E0BE0059C6B0 /* PeerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D2EB0525C8E0BE0059C6B0 /* PeerView.swift */; };
 		21D8020725C8E7D400ABCFA3 /* MockViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D8020625C8E7D400ABCFA3 /* MockViewModel.swift */; };
-		21D8020F25C9856A00ABCFA3 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D8020E25C9856A00ABCFA3 /* SettingsView.swift */; };
 		21E88A3325C4CB9000F33D72 /* PeerAdvertisement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21E88A3225C4CB9000F33D72 /* PeerAdvertisement.swift */; };
 /* End PBXBuildFile section */
 
@@ -53,11 +58,18 @@
 /* Begin PBXFileReference section */
 		212AE41425D0984B00C3813F /* AnyObject+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnyObject+Extensions.swift"; sourceTree = "<group>"; };
 		212AE42B25D0A9D700C3813F /* NWConnection+SOCKS5.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NWConnection+SOCKS5.swift"; sourceTree = "<group>"; };
+		212AE44A25D1EEF400C3813F /* IntField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntField.swift; sourceTree = "<group>"; };
+		213DEC6525D645DF00C0411D /* BindPort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BindPort.swift; sourceTree = "<group>"; };
+		2154B8A525E23CE900C2DA1D /* View+DoneCancel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+DoneCancel.swift"; sourceTree = "<group>"; };
 		215EE3B225CA1BCF00045BFB /* DeviceInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfo.swift; sourceTree = "<group>"; };
 		2162AD8C25CE01BD00193520 /* PeerHello.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerHello.swift; sourceTree = "<group>"; };
 		2162AD9425CE052100193520 /* DataConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataConvertible.swift; sourceTree = "<group>"; };
+		216B42E725DE0F07009225AA /* ConfigEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigEditorView.swift; sourceTree = "<group>"; };
 		216B4E8425D0556F00486B42 /* ConnectionToPeer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionToPeer.swift; sourceTree = "<group>"; };
 		216B4E8925D0557D00486B42 /* ConnectionFromPeer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionFromPeer.swift; sourceTree = "<group>"; };
+		2186D32925DF253600361CFD /* NWEndpoint+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NWEndpoint+Extensions.swift"; sourceTree = "<group>"; };
+		2186D32E25DF677300361CFD /* Result+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+Extensions.swift"; sourceTree = "<group>"; };
+		2186D33625DF6A7A00361CFD /* UserError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserError.swift; sourceTree = "<group>"; };
 		218CE56F25CA091300FBDCB2 /* View+WindowHacks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+WindowHacks.swift"; sourceTree = "<group>"; };
 		21908CDA25CA2E5800DAF5CB /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
 		21908CDF25CB51D900DAF5CB /* NWConnection+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NWConnection+Extensions.swift"; sourceTree = "<group>"; };
@@ -75,11 +87,10 @@
 		21A3359E25C0BD27007B8C45 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		21A335AD25C0BD6B007B8C45 /* Proxy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Proxy.entitlements; sourceTree = "<group>"; };
 		21A335B425C0BE9F007B8C45 /* Mesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mesh.swift; sourceTree = "<group>"; };
+		21B1759C25DDEF9E00CEE91A /* ListenerEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenerEditorView.swift; sourceTree = "<group>"; };
 		21D2EAEF25C7B1AF0059C6B0 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		21D2EAF725C7B2AC0059C6B0 /* ViewModelProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelProtocols.swift; sourceTree = "<group>"; };
-		21D2EB0525C8E0BE0059C6B0 /* PeerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerView.swift; sourceTree = "<group>"; };
 		21D8020625C8E7D400ABCFA3 /* MockViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockViewModel.swift; sourceTree = "<group>"; };
-		21D8020E25C9856A00ABCFA3 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		21E88A3225C4CB9000F33D72 /* PeerAdvertisement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerAdvertisement.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -89,7 +100,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				21908CDB25CA2E5800DAF5CB /* IOKit.framework in Frameworks */,
-				21908CD225CA236900DAF5CB /* ModalView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -115,8 +125,10 @@
 			children = (
 				212AE41425D0984B00C3813F /* AnyObject+Extensions.swift */,
 				2162AD9425CE052100193520 /* DataConvertible.swift */,
+				2186D32E25DF677300361CFD /* Result+Extensions.swift */,
 				21908CDF25CB51D900DAF5CB /* NWConnection+Extensions.swift */,
 				212AE42B25D0A9D700C3813F /* NWConnection+SOCKS5.swift */,
+				2186D32925DF253600361CFD /* NWEndpoint+Extensions.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -157,6 +169,7 @@
 				21A335AD25C0BD6B007B8C45 /* Proxy.entitlements */,
 				21A3357F25C0BD26007B8C45 /* ProxyApp.swift */,
 				215EE3B225CA1BCF00045BFB /* DeviceInfo.swift */,
+				213DEC6525D645DF00C0411D /* BindPort.swift */,
 				21D2EAEF25C7B1AF0059C6B0 /* Config.swift */,
 				21D2EAF725C7B2AC0059C6B0 /* ViewModelProtocols.swift */,
 				21D2EB0D25C8E0F20059C6B0 /* Views */,
@@ -199,9 +212,12 @@
 			children = (
 				21D8020625C8E7D400ABCFA3 /* MockViewModel.swift */,
 				21A3358125C0BD26007B8C45 /* HomeView.swift */,
-				21D2EB0525C8E0BE0059C6B0 /* PeerView.swift */,
-				21D8020E25C9856A00ABCFA3 /* SettingsView.swift */,
+				216B42E725DE0F07009225AA /* ConfigEditorView.swift */,
+				21B1759C25DDEF9E00CEE91A /* ListenerEditorView.swift */,
 				218CE56F25CA091300FBDCB2 /* View+WindowHacks.swift */,
+				2154B8A525E23CE900C2DA1D /* View+DoneCancel.swift */,
+				2186D33625DF6A7A00361CFD /* UserError.swift */,
+				212AE44A25D1EEF400C3813F /* IntField.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -235,7 +251,6 @@
 			);
 			name = Proxy;
 			packageProductDependencies = (
-				21908CD125CA236900DAF5CB /* ModalView */,
 			);
 			productName = Proxy;
 			productReference = 21A3357C25C0BD26007B8C45 /* Proxy.app */;
@@ -309,7 +324,6 @@
 			);
 			mainGroup = 21A3357325C0BD26007B8C45;
 			packageReferences = (
-				21908CD025CA236900DAF5CB /* XCRemoteSwiftPackageReference "modal-view" */,
 			);
 			productRefGroup = 21A3357D25C0BD26007B8C45 /* Products */;
 			projectDirPath = "";
@@ -354,21 +368,27 @@
 			buildActionMask = 2147483647;
 			files = (
 				216B4E8525D0556F00486B42 /* ConnectionToPeer.swift in Sources */,
+				216B42E825DE0F07009225AA /* ConfigEditorView.swift in Sources */,
 				212AE42C25D0A9D700C3813F /* NWConnection+SOCKS5.swift in Sources */,
 				212AE41525D0984B00C3813F /* AnyObject+Extensions.swift in Sources */,
 				2162AD8D25CE01BD00193520 /* PeerHello.swift in Sources */,
-				21D2EB0625C8E0BE0059C6B0 /* PeerView.swift in Sources */,
 				218CE57025CA091300FBDCB2 /* View+WindowHacks.swift in Sources */,
+				213DEC6625D645DF00C0411D /* BindPort.swift in Sources */,
 				21A335B525C0BE9F007B8C45 /* Mesh.swift in Sources */,
 				21D2EAF025C7B1AF0059C6B0 /* Config.swift in Sources */,
+				212AE44B25D1EEF400C3813F /* IntField.swift in Sources */,
+				2154B8A625E23CE900C2DA1D /* View+DoneCancel.swift in Sources */,
 				2162AD9525CE052100193520 /* DataConvertible.swift in Sources */,
 				21E88A3325C4CB9000F33D72 /* PeerAdvertisement.swift in Sources */,
+				2186D32F25DF677300361CFD /* Result+Extensions.swift in Sources */,
 				216B4E8A25D0557D00486B42 /* ConnectionFromPeer.swift in Sources */,
-				21D8020F25C9856A00ABCFA3 /* SettingsView.swift in Sources */,
+				2186D32A25DF253600361CFD /* NWEndpoint+Extensions.swift in Sources */,
+				21B1759D25DDEF9E00CEE91A /* ListenerEditorView.swift in Sources */,
 				21908CE025CB51D900DAF5CB /* NWConnection+Extensions.swift in Sources */,
 				215EE3B325CA1BCF00045BFB /* DeviceInfo.swift in Sources */,
 				21D8020725C8E7D400ABCFA3 /* MockViewModel.swift in Sources */,
 				21A3358225C0BD26007B8C45 /* HomeView.swift in Sources */,
+				2186D33725DF6A7A00361CFD /* UserError.swift in Sources */,
 				21D2EAF825C7B2AC0059C6B0 /* ViewModelProtocols.swift in Sources */,
 				21A3358025C0BD26007B8C45 /* ProxyApp.swift in Sources */,
 			);
@@ -694,25 +714,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		21908CD025CA236900DAF5CB /* XCRemoteSwiftPackageReference "modal-view" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/diniska/modal-view";
-			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		21908CD125CA236900DAF5CB /* ModalView */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 21908CD025CA236900DAF5CB /* XCRemoteSwiftPackageReference "modal-view" */;
-			productName = ModalView;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 21A3357425C0BD26007B8C45 /* Project object */;
 }

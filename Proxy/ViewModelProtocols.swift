@@ -20,13 +20,3 @@ protocol PeerViewModel: ObservableObject, Hashable, Identifiable {
     var bytesPerSec: Int64 { get }
 
 }
-
-//extension PeerViewModel {
-//    static func == (lhs: Self, rhs: Self) -> Bool {
-//        lhs === rhs
-//    }
-//    
-//    func hash(into hasher: inout Hasher) {
-//        self.id.hash(into: &hasher)
-//    }
-//}

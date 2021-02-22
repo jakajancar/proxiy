@@ -6,13 +6,11 @@
 //
 
 import SwiftUI
-import ModalView
 
-// https://www.hackingwithswift.com/quick-start/swiftui
 struct HomeView<M: MeshViewModel>: View {
+    @Binding var config: Config
     @ObservedObject var mesh: M
     @State private var settingsPresented = false
-    
     
     var body: some View {
         VStack {
@@ -28,18 +26,27 @@ struct HomeView<M: MeshViewModel>: View {
                         .foregroundColor(.white)
                         .padding()
                     
-                    ModalPresenter {
-                        ModalLink(destination: SettingsView.init(dismiss:)) {
-                                Image(systemName: "gearshape.fill")
-                        }
-                    }
+                    Button(action: { settingsPresented = true }, label: {
+                        Image(systemName: "gearshape.fill")
+                    })
                 }
             }
 
-            List(self.sortedPeers) { peer in
-                PeerView(peer: peer)
+            List(sortedPeers) { peer in
+                PeerCell(peer: peer)
             }
         }
+        .sheet(isPresented: $settingsPresented, content: {
+            ConfigEditorView(
+                nearbyDeviceNames: Set(mesh.peers.map({ peer in
+                    peer.deviceInfo.name
+                })),
+                initialValue: config,
+                saveAction: { new in
+                    config = new
+                }
+            )
+        })
         .withHostingWindow { window in
             #if targetEnvironment(macCatalyst)
             if let window = window {
@@ -61,97 +68,47 @@ struct HomeView<M: MeshViewModel>: View {
                 (a.bytesPerSec == b.bytesPerSec && a.deviceInfo.name < b.deviceInfo.name)
         }
     }
-//
-//    var body: some View {
-//        TabView {
-//            VStack {
-//                HStack {
-//                    Text("Peers")
-//                        .font(.title)
-//                    Spacer()
-//                }
-//                Text("Num peers: \(self.mesh.peers.count)")
-//                    .padding()
-//                List(Array(mesh.peers)) { peer in
-//                    PeerView(peer: peer)
-//                }
-//            }
-//            .tabItem {
-//                Text("Network")
-//                Image(systemName: "network")
-//            }
-//
-//            VStack {
-//            }
-//            .tabItem {
-//                Text("Tunnels")
-//                Image(systemName: "tram.tunnel.fill")
-//            }
-//
-//            VStack {
-//            }
-//            .tabItem {
-//                Text("Settings")
-//                Image(systemName: "gear")
-//            }
-//        }
-//    }
+}
+
+struct PeerCell<P: PeerViewModel>: View {
+    @ObservedObject var peer: P
+
+    private var bandwidthFormatter: ByteCountFormatter {
+        let fmt = ByteCountFormatter()
+        fmt.countStyle = .decimal
+        return fmt
+    }
     
+    var body: some View {
+        HStack {
+            Image(systemName: peer.deviceInfo.machineSymbolName)
+            VStack(alignment: .leading) {
+                Text(peer.deviceInfo.name)
+                    .font(.body)
+                    .lineLimit(1)
+
+                HStack {
+                    Text("Connections: \(peer.connectionsToCount) to / \(peer.connectionsFromCount) from")
+                    
+                    Spacer()
+                    
+                    Text(bandwidthFormatter.string(fromByteCount: peer.bytesPerSec) + "/sec")
+                }
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+            }
+        }
+//        Text("\(peer.name) (\(peer.inboundConnectionCount) in, \(peer.outboundConnectionCount) out)")
+    }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         HomeView(
-            mesh: MockMesh(peers: [
-                // This device
-                MockPeer(deviceInfo: DeviceInfo(
-                            name: "Jaka's iPhone",
-                            machine: "iPhone13,1"),
-                         inboundConnectionCount: 0,
-                         outboundConnectionCount: 0,
-                         bytesPerSec: 0),
-                
-                // Laptops
-                MockPeer(deviceInfo: DeviceInfo(
-                            name: "Jaka's MacBook Pro",
-                            machine: "MacBookPro16,1"),
-                         inboundConnectionCount: 33,
-                         outboundConnectionCount: 0,
-                         bytesPerSec: 3293291843),
-                
-                MockPeer(deviceInfo: DeviceInfo(
-                            name: "Leah's MacBook Pro",
-                            machine: "MacBookPro15,2"),
-                         inboundConnectionCount: 8,
-                         outboundConnectionCount: 0,
-                         bytesPerSec: 23929100),
-
-                // Tablet
-                MockPeer(deviceInfo: DeviceInfo(
-                            name: "Jaka's iPad Pro",
-                            machine: "iPad7,1"),
-                         inboundConnectionCount: 0,
-                         outboundConnectionCount: 0,
-                         bytesPerSec: 0),
-
-                
-                // Test for long name
-                MockPeer(deviceInfo: DeviceInfo(
-                            name: "A device with a very very very very very very very long name",
-                            machine: "Unknown"),
-                    inboundConnectionCount: 1234,
-                    outboundConnectionCount: 9876,
-                    bytesPerSec: 239291000
-                ),
-
-                // Test for sorting of rows with same bw
-                MockPeer(deviceInfo: DeviceInfo(name: "Device A", machine: "Unknown"), bytesPerSec: 1),
-                MockPeer(deviceInfo: DeviceInfo(name: "Device D", machine: "Unknown"), bytesPerSec: 1),
-                MockPeer(deviceInfo: DeviceInfo(name: "Device C", machine: "Unknown"), bytesPerSec: 1),
-                MockPeer(deviceInfo: DeviceInfo(name: "Device B", machine: "Unknown"), bytesPerSec: 1),
-
-            ]))
-            .previewDevice("iPhone 12 mini")
-            .previewLayout(.sizeThatFits)
+            config: .constant(Config.initial),
+            mesh: MockMesh.forDevelopment
+        )
+        .previewDevice("iPhone 12 mini")
+        .previewLayout(.sizeThatFits)
     }
 }

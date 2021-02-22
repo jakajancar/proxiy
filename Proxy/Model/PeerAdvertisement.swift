@@ -15,7 +15,8 @@ private let logger = Logger(subsystem: "si.jancar.Proxy", category: "peeradverti
 /// Details a peer broadcasts on the network. Only visible within members.
 struct PeerAdvertisement: Codable {
     let deviceInfo: DeviceInfo
-    let allowsInbound: Bool
+    let acceptsInbound: Bool
+//    let port: NWEndpoint.Port
     // hasInternet? (dynamic)
 }
 
@@ -35,7 +36,7 @@ extension PeerAdvertisement {
             return nil
         }
         guard let jsonData = try? ChaChaPoly.open(box, using: key) else {
-            logger.log("malformed box format (wrong key)")
+            logger.log("ignoring peer (wrong key)")
             return nil
         }
         // Correct version (not yet checked for v1) and correct key, should be OK from here
