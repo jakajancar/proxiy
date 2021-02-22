@@ -13,53 +13,52 @@ struct HomeView<M: MeshViewModel>: View {
     @State private var settingsPresented = false
     
     var body: some View {
-        VStack {
-            ZStack(alignment: .leading) {
-                Image("Header")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(maxHeight: 100)
-                
-                HStack {
-                    Text("Peers")
-                        .font(.largeTitle)
-                        .foregroundColor(.white)
-                        .padding()
-                    
+        NavigationView {
+            List(sortedPeers) { peer in
+                PeerCell(peer: peer)
+            }
+            .navigationTitle("Peers")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar(content: {
+                ToolbarItemGroup(placement: .bottomBar) {
+                    Spacer()
                     Button(action: { settingsPresented = true }, label: {
                         Image(systemName: "gearshape.fill")
                     })
                 }
-            }
-
-            List(sortedPeers) { peer in
-                PeerCell(peer: peer)
-            }
-        }
-        .sheet(isPresented: $settingsPresented, content: {
-            ConfigEditorView(
-                nearbyDeviceNames: Set(mesh.peers.map({ peer in
-                    peer.deviceInfo.name
-                })),
-                initialValue: config,
-                saveAction: { new in
-                    config = new
-                }
-            )
-        })
-        .withHostingWindow { window in
-            #if targetEnvironment(macCatalyst)
-            if let window = window {
-                if let scene = window.windowScene {
-                    // Hide titlebar
-                    if let titlebar = scene.titlebar {
-                        titlebar.titleVisibility = .hidden
-                        titlebar.toolbar = nil
+            })
+            .sheet(isPresented: $settingsPresented, content: {
+                ConfigEditorView(
+                    nearbyDeviceNames: Set(mesh.peers.map({ peer in
+                        peer.deviceInfo.name
+                    })),
+                    initialValue: config,
+                    saveAction: { new in
+                        config = new
+                    }
+                )
+            })
+            .withHostingWindow { window in
+                // replace with windowStyle / windowToolbarStyle
+                #if targetEnvironment(macCatalyst)
+                if let window = window {
+                    if let scene = window.windowScene {
+                        // Hide titlebar
+                        if let titlebar = scene.titlebar {
+                            titlebar.titleVisibility = .hidden
+                            titlebar.toolbar = nil
+                        }
+//                        if let sizeRestrictions = scene.sizeRestrictions {
+////                            let size = CGSize(width: 320, height: 600)
+////                            sizeRestrictions.minimumSize = size
+////                            sizeRestrictions.maximumSize = size
+//                        }
                     }
                 }
+                #endif
             }
-            #endif
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
     
     var sortedPeers: [M.Peer] {
