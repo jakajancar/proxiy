@@ -33,7 +33,27 @@ struct ProxyApp: App {
     
     var body: some Scene {
         WindowGroup {
-            HomeView(config: $model.config, mesh: model.mesh)
+            HomeView(
+                config: $model.config,
+                settingsPresented: $model.settingsPresented,
+                mesh: model.mesh
+            )
+        }
+        .commands {
+            #if targetEnvironment(macCatalyst)
+            // As of 2021-02-22:
+            //   - The Settings scene does not work under Catalyst
+            //   - I cannot figure out how to have multiple scenes to show Preferences
+            //     in own window, so we still use a modal, just like on iOS.
+            //   - .appSettings group is not shown, even if we replace it here,
+            //     so we add to the end of the .appInfo group.
+            CommandGroup(after: .appInfo) {
+                Button("Preferences...") {
+                    model.settingsPresented = true
+                }
+                .keyboardShortcut(KeyEquivalent(","), modifiers: .command)
+            }
+            #endif
         }
     }
     
@@ -44,6 +64,7 @@ struct ProxyApp: App {
 }
 
 class ProxyAppModel: ObservableObject {
+    @Published var settingsPresented: Bool = false
     @Published var config: Config {
         didSet {
             try! config.persistToDefaultFile()

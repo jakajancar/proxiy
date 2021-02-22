@@ -9,8 +9,8 @@ import SwiftUI
 
 struct HomeView<M: MeshViewModel>: View {
     @Binding var config: Config
+    @Binding var settingsPresented: Bool
     @ObservedObject var mesh: M
-    @State private var settingsPresented = false
     
     var body: some View {
         NavigationView {
@@ -22,9 +22,12 @@ struct HomeView<M: MeshViewModel>: View {
             .toolbar(content: {
                 ToolbarItemGroup(placement: .bottomBar) {
                     Spacer()
+                    
+                    #if !targetEnvironment(macCatalyst)
                     Button(action: { settingsPresented = true }, label: {
                         Image(systemName: "gearshape.fill")
                     })
+                    #endif
                 }
             })
             .sheet(isPresented: $settingsPresented, content: {
@@ -105,6 +108,7 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         HomeView(
             config: .constant(Config.initial),
+            settingsPresented: .constant(false),
             mesh: MockMesh.forDevelopment
         )
         .previewDevice("iPhone 12 mini")
