@@ -82,6 +82,7 @@ struct PeerCell<P: PeerViewModel>: View {
     var body: some View {
         HStack {
             Image(systemName: peer.deviceInfo.machineSymbolName)
+                .frame(width: 35, alignment: .center)
             VStack(alignment: .leading) {
                 Text(peer.deviceInfo.name)
                     .font(.body)
