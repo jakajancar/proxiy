@@ -35,10 +35,7 @@ struct HomeView<M: MeshViewModel>: View {
                     nearbyDeviceNames: Set(mesh.peers.map({ peer in
                         peer.deviceInfo.name
                     })),
-                    initialValue: config,
-                    saveAction: { new in
-                        config = new
-                    }
+                    config: $config
                 )
             })
             .withHostingWindow { window in

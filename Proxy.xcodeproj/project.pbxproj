@@ -11,7 +11,7 @@
 		212AE42C25D0A9D700C3813F /* NWConnection+SOCKS5.swift in Sources */ = {isa = PBXBuildFile; fileRef = 212AE42B25D0A9D700C3813F /* NWConnection+SOCKS5.swift */; };
 		212AE44B25D1EEF400C3813F /* IntField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 212AE44A25D1EEF400C3813F /* IntField.swift */; };
 		213DEC6625D645DF00C0411D /* BindPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 213DEC6525D645DF00C0411D /* BindPort.swift */; };
-		2154B8A625E23CE900C2DA1D /* View+DoneCancel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2154B8A525E23CE900C2DA1D /* View+DoneCancel.swift */; };
+		2154B8A625E23CE900C2DA1D /* View+NavButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2154B8A525E23CE900C2DA1D /* View+NavButtons.swift */; };
 		215EE3B325CA1BCF00045BFB /* DeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215EE3B225CA1BCF00045BFB /* DeviceInfo.swift */; };
 		2162AD8D25CE01BD00193520 /* PeerHello.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2162AD8C25CE01BD00193520 /* PeerHello.swift */; };
 		2162AD9525CE052100193520 /* DataConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2162AD9425CE052100193520 /* DataConvertible.swift */; };
@@ -60,7 +60,7 @@
 		212AE42B25D0A9D700C3813F /* NWConnection+SOCKS5.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NWConnection+SOCKS5.swift"; sourceTree = "<group>"; };
 		212AE44A25D1EEF400C3813F /* IntField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntField.swift; sourceTree = "<group>"; };
 		213DEC6525D645DF00C0411D /* BindPort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BindPort.swift; sourceTree = "<group>"; };
-		2154B8A525E23CE900C2DA1D /* View+DoneCancel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+DoneCancel.swift"; sourceTree = "<group>"; };
+		2154B8A525E23CE900C2DA1D /* View+NavButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+NavButtons.swift"; sourceTree = "<group>"; };
 		215EE3B225CA1BCF00045BFB /* DeviceInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfo.swift; sourceTree = "<group>"; };
 		2162AD8C25CE01BD00193520 /* PeerHello.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerHello.swift; sourceTree = "<group>"; };
 		2162AD9425CE052100193520 /* DataConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataConvertible.swift; sourceTree = "<group>"; };
@@ -215,7 +215,7 @@
 				216B42E725DE0F07009225AA /* ConfigEditorView.swift */,
 				21B1759C25DDEF9E00CEE91A /* ListenerEditorView.swift */,
 				218CE56F25CA091300FBDCB2 /* View+WindowHacks.swift */,
-				2154B8A525E23CE900C2DA1D /* View+DoneCancel.swift */,
+				2154B8A525E23CE900C2DA1D /* View+NavButtons.swift */,
 				2186D33625DF6A7A00361CFD /* UserError.swift */,
 				212AE44A25D1EEF400C3813F /* IntField.swift */,
 			);
@@ -377,7 +377,7 @@
 				21A335B525C0BE9F007B8C45 /* Mesh.swift in Sources */,
 				21D2EAF025C7B1AF0059C6B0 /* Config.swift in Sources */,
 				212AE44B25D1EEF400C3813F /* IntField.swift in Sources */,
-				2154B8A625E23CE900C2DA1D /* View+DoneCancel.swift in Sources */,
+				2154B8A625E23CE900C2DA1D /* View+NavButtons.swift in Sources */,
 				2162AD9525CE052100193520 /* DataConvertible.swift in Sources */,
 				21E88A3325C4CB9000F33D72 /* PeerAdvertisement.swift in Sources */,
 				2186D32F25DF677300361CFD /* Result+Extensions.swift in Sources */,

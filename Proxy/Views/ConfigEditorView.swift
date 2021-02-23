@@ -10,32 +10,12 @@ import SwiftUI
 struct ConfigEditorView: View {
     @Environment(\.presentationMode) private var presentationMode: Binding<PresentationMode>
     
-    private let nearbyDeviceNames: Set<String>
-    private let saveAction: (Config) -> Void
-
-    @State private var draft: Config
+    let nearbyDeviceNames: Set<String>
+    @Binding var config: Config
     @State private var showingAddListener = false
-    @State private var presentedError: UserError?
 
-    init(
-        nearbyDeviceNames: Set<String>,
-        initialValue initial: Config,
-        saveAction: @escaping (Config) -> Void
-    ) {
-        self.nearbyDeviceNames = nearbyDeviceNames
-        self.saveAction = saveAction
-        _draft = State(initialValue: initial)
-    }
-    
-    private func validate() -> UserError? {
-        if draft.psk.isEmpty {
-            return UserError("The network key must not be empty.")
-        }
-        return nil
-    }
-    
     var body: some View {
-        let sortedListeners = draft.listeners.sorted { $0.bindPort < $1.bindPort }
+        let sortedListeners = config.listeners.sorted { $0.bindPort < $1.bindPort }
         
         NavigationView {
             Form {
@@ -43,10 +23,10 @@ struct ConfigEditorView: View {
                     header: Text("Network Key"),
                     footer: Text("Nearby devices configured with the same key will connect using a peer-to-peer mesh network. ")
                 ) {
-                    TextField("Required", text: $draft.psk)
+                    TextField("Required", text: $config.psk)
                 }
 
-                Toggle(isOn: $draft.acceptInbound) {
+                Toggle(isOn: $config.acceptInbound) {
                     Text("Allow Connections from Peers")
                 }
                 
@@ -105,32 +85,14 @@ struct ConfigEditorView: View {
 
             }
             .navigationTitle("Settings")
-            .buttons(
-                doneText: "Save",
-                doneAction: {
-                    if let error = validate() {
-                        presentedError = error
-                    } else {
-                        saveAction(draft)
-                        presentationMode.wrappedValue.dismiss()
-                    }
-                },
-                cancelAction: {
-                    presentationMode.wrappedValue.dismiss()
-                }
-            )
-            .alert(item: $presentedError, content: { userError in
-                return Alert(
-                    title: Text("Error"),
-                    message: Text(userError.message),
-                    dismissButton: .default(Text("OK"))
-                )
-            })
+            .primaryButton("Done") {
+                presentationMode.wrappedValue.dismiss()
+            }
         }
     }
 
     private func updateListener(old: Config.Listener?, new: Config.Listener?) -> UserError? {
-        if let conflict = draft.updateListener(old: old, new: new) {
+        if let conflict = config.updateListener(old: old, new: new) {
             return UserError("A listener already exists for \(conflict.namespace.rawValue) port \(conflict.number).")
         } else {
             return nil
@@ -139,17 +101,22 @@ struct ConfigEditorView: View {
 }
 
 struct ConfigEditorView_Previews: PreviewProvider {
+    struct PreviewWrapper: View {
+        @State private var config: Config = Config.initial
+        var body: some View {
+            ConfigEditorView(
+                nearbyDeviceNames: Set([
+                    "Jaka's iPhone",
+                    "Jaka's MacBook Pro",
+                ]),
+                config: $config
+            )
+            .previewDevice("iPhone 12 mini")
+            .previewLayout(.sizeThatFits)
+        }
+    }
     static var previews: some View {
-        ConfigEditorView(
-            nearbyDeviceNames: Set([
-                "Jaka's iPhone",
-                "Jaka's MacBook Pro",
-            ]),
-            initialValue: Config.initial,
-            saveAction: { new in }
-        )
-        .previewDevice("iPhone 12 mini")
-        .previewLayout(.sizeThatFits)
+        PreviewWrapper()
     }
 }
 

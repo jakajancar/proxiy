@@ -83,6 +83,12 @@ struct ListenerEditorView: View {
     }
     
     var body: some View {
+        #if targetEnvironment(macCatalyst)
+        let buttonSuffix = " Listener"
+        #else
+        let buttonSuffix = ""
+        #endif
+        
         Form {
             Section(
                 header: Text("Listen On")
@@ -177,9 +183,9 @@ struct ListenerEditorView: View {
         .listStyle(InsetGroupedListStyle())
         .navigationTitle(addingNew ? "Add Listener" : "Edit Listener")
         .navigationBarTitleDisplayMode(.inline)
-        .buttons(
-            doneText: addingNew ? "Add" : "Save",
-            doneAction: {
+        .confirmCancelButtons(
+            confirmText: (addingNew ? "Add" : "Save") + buttonSuffix,
+            confirmAction: {
                 switch createConfig() {
                 case .success(let config):
                     if let parentError = saveAction(config) {
