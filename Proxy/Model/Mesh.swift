@@ -152,7 +152,7 @@ class Mesh {
                     self.removePeer(result: result)
                 }
             } else {
-                fatalError("non-Bonjour metadata: \(result.metadata)")
+                fatalError("non-Bonjour metadata: \(result.metadata), result: \(result)")
             }
         } else {
             fatalError("non-service endpoint: \(result.endpoint)")
