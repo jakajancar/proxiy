@@ -30,6 +30,13 @@ struct ConfigEditorView: View {
                     Text("Allow Connections from Peers")
                 }
                 
+                // Dark mode is primarily useful on iOS where we have to remain in the foreground
+                #if !targetEnvironment(macCatalyst)
+                Toggle(isOn: $config.alwaysDark) {
+                    Text("Always Use Dark Mode")
+                }
+                #endif
+
                 Section(
                     header: Text("Local Listeners")
                 ) {
@@ -79,6 +86,7 @@ struct ConfigEditorView: View {
                                 )
                             }
                             .navigationViewStyle(StackNavigationViewStyle())
+                            .colorScheme(alwaysDark: config.alwaysDark)
                         }
                     }
                 }
@@ -89,6 +97,7 @@ struct ConfigEditorView: View {
                 presentationMode.wrappedValue.dismiss()
             }
         }
+        .colorScheme(alwaysDark: config.alwaysDark)
     }
 
     private func updateListener(old: Config.Listener?, new: Config.Listener?) -> UserError? {

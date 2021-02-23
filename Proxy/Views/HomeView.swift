@@ -59,6 +59,7 @@ struct HomeView<M: MeshViewModel>: View {
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
+        .colorScheme(alwaysDark: config.alwaysDark)
     }
     
     var sortedPeers: [M.Peer] {

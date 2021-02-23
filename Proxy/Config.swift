@@ -14,6 +14,7 @@ private let logger = Logger(subsystem: "si.jancar.Proxy", category: "config")
 struct Config: Equatable, Hashable, Codable {
     var psk: String
     var acceptInbound: Bool
+    var alwaysDark: Bool = false
     private(set) var listeners: Set<Listener>
     
     init(psk: String, acceptInbound: Bool, listeners: Set<Listener>) {
