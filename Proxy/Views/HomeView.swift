@@ -83,6 +83,9 @@ struct PeerCell<P: PeerViewModel>: View {
         HStack {
             Image(systemName: peer.deviceInfo.machineSymbolName)
                 .frame(width: 35, alignment: .center)
+                .foregroundColor(peer.acceptsInbound
+                                    ? Color.primary
+                                    : Color.primary.opacity(0.3))
             VStack(alignment: .leading) {
                 Text(peer.deviceInfo.name)
                     .font(.body)
@@ -105,12 +108,28 @@ struct PeerCell<P: PeerViewModel>: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeView(
-            config: .constant(Config.initial),
-            settingsPresented: .constant(false),
-            mesh: MockMesh.forDevelopment
-        )
-        .previewDevice("iPhone 12 mini")
-        .previewLayout(.sizeThatFits)
+        Group {
+            HomeView(
+                config: .constant(Config.initial),
+                settingsPresented: .constant(false),
+                mesh: MockMesh.forDevelopment
+            )
+            .previewDevice("iPhone 12 mini")
+            .previewLayout(.sizeThatFits)
+
+            let darkConfig: Config = {
+                var c = Config.initial
+                c.alwaysDark = true
+                return c
+            }()
+            
+            HomeView(
+                config: .constant(darkConfig),
+                settingsPresented: .constant(false),
+                mesh: MockMesh.forDevelopment
+            )
+            .previewDevice("iPhone 12 mini")
+            .previewLayout(.sizeThatFits)
+        }
     }
 }

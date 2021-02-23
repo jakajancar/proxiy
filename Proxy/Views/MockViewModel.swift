@@ -26,17 +26,20 @@ class MockMesh: MeshViewModel {
 
 class MockPeer: PeerViewModel {
     var deviceInfo: DeviceInfo
+    var acceptsInbound: Bool
     var connectionsFromCount: Int
     var connectionsToCount: Int
     var bytesPerSec: Int64
 
     init(
         deviceInfo: DeviceInfo = DeviceInfo(name: "Unknown device", machine: "Unknown"),
+        acceptsInbound: Bool = true,
         inboundConnectionCount: Int = 0,
         outboundConnectionCount: Int = 0,
         bytesPerSec: Int64 = 0
     ) {
         self.deviceInfo = deviceInfo
+        self.acceptsInbound = acceptsInbound
         self.connectionsFromCount = inboundConnectionCount
         self.connectionsToCount = outboundConnectionCount
         self.bytesPerSec = bytesPerSec
@@ -48,6 +51,7 @@ class MockPeer: PeerViewModel {
             MockPeer(deviceInfo: DeviceInfo(
                         name: "Jaka's iPhone",
                         machine: "iPhone13,1"),
+                     acceptsInbound: true,
                      inboundConnectionCount: 0,
                      outboundConnectionCount: 0,
                      bytesPerSec: 0),
@@ -56,6 +60,7 @@ class MockPeer: PeerViewModel {
             MockPeer(deviceInfo: DeviceInfo(
                         name: "Jaka's MacBook Pro",
                         machine: "MacBookPro16,1"),
+                     acceptsInbound: false,
                      inboundConnectionCount: 33,
                      outboundConnectionCount: 0,
                      bytesPerSec: 3293291843),
@@ -63,6 +68,7 @@ class MockPeer: PeerViewModel {
             MockPeer(deviceInfo: DeviceInfo(
                         name: "Leah's MacBook Pro",
                         machine: "MacBookPro15,2"),
+                     acceptsInbound: true,
                      inboundConnectionCount: 8,
                      outboundConnectionCount: 0,
                      bytesPerSec: 23929100),
@@ -71,6 +77,7 @@ class MockPeer: PeerViewModel {
             MockPeer(deviceInfo: DeviceInfo(
                         name: "Jaka's iPad Pro",
                         machine: "iPad7,1"),
+                     acceptsInbound: true,
                      inboundConnectionCount: 0,
                      outboundConnectionCount: 0,
                      bytesPerSec: 0),
@@ -80,9 +87,10 @@ class MockPeer: PeerViewModel {
             MockPeer(deviceInfo: DeviceInfo(
                         name: "A device with a very very very very very very very long name",
                         machine: "Unknown"),
-                inboundConnectionCount: 1234,
-                outboundConnectionCount: 9876,
-                bytesPerSec: 239291000
+                    acceptsInbound: true,
+                    inboundConnectionCount: 1234,
+                    outboundConnectionCount: 9876,
+                    bytesPerSec: 239291000
             ),
 
             // Test for sorting of rows with same bw

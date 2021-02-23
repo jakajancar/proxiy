@@ -319,6 +319,10 @@ extension Peer: PeerViewModel {
         self.advertisement.deviceInfo
     }
     
+    var acceptsInbound: Bool {
+        self.advertisement.acceptsInbound
+    }
+    
     var connectionsFromCount: Int {
         self.connectionsFrom.count
     }
