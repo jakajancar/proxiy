@@ -25,7 +25,7 @@ struct HomeView<M: MeshViewModel>: View {
                     
                     #if !targetEnvironment(macCatalyst)
                     Button(action: { settingsPresented = true }, label: {
-                        Image(systemName: "gearshape.fill")
+                        Image(systemName: "gearshape")
                     })
                     #endif
                 }
