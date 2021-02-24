@@ -110,21 +110,15 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             HomeView(
-                config: .constant(Config.initial),
+                config: .constant(Config()),
                 settingsPresented: .constant(false),
                 mesh: MockMesh.forDevelopment
             )
             .previewDevice("iPhone 12 mini")
             .previewLayout(.sizeThatFits)
 
-            let darkConfig: Config = {
-                var c = Config.initial
-                c.alwaysDark = true
-                return c
-            }()
-            
             HomeView(
-                config: .constant(darkConfig),
+                config: .constant(Config(alwaysDark: true)),
                 settingsPresented: .constant(false),
                 mesh: MockMesh.forDevelopment
             )

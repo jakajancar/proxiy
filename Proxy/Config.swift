@@ -11,17 +11,25 @@ import OSLog
 
 private let logger = Logger(subsystem: "si.jancar.Proxy", category: "config")
 
+// TODO: https://github.com/gonzalezreal/DefaultCodable
 struct Config: Equatable, Hashable, Codable {
     var psk: String
     var acceptInbound: Bool
-    var alwaysDark: Bool = false
     private(set) var listeners: Set<Listener>
-    
-    init(psk: String, acceptInbound: Bool, listeners: Set<Listener>) {
+    var alwaysDark: Bool
+
+    // Custom memberwise initialized that also does some validation.
+    init(
+        psk: String = "ChangeMe1234!",
+        acceptInbound: Bool = true,
+        listeners: Set<Listener> = [ .socks(.socks, .init()) ],
+        alwaysDark: Bool = false
+    ) {
         precondition(Self.areBindPortsUnique(listeners: listeners), "Bind port conflict")
         self.psk = psk
         self.acceptInbound = acceptInbound
         self.listeners = listeners
+        self.alwaysDark = alwaysDark
     }
     
     enum ListenerType: String, Codable {
@@ -118,20 +126,8 @@ struct Config: Equatable, Hashable, Codable {
         }
         return nil
     }
-
     
-    static var initial: Config {
-        let ret = Config(
-            psk: "ChangeMe1234!",
-            acceptInbound: true,
-            listeners: [
-                .socks(.socks, .init())
-            ]
-        )
-        return ret
-    }
-    
-    static func areBindPortsUnique(listeners: Set<Listener>) -> Bool {
+    private static func areBindPortsUnique(listeners: Set<Listener>) -> Bool {
         var bindPorts: Set<BindPort> = []
         for listener in listeners {
             let (inserted, _) = bindPorts.insert(listener.bindPort)
@@ -155,11 +151,11 @@ extension Config {
             } catch {
                 logger.error("Could not decode config file: \(error.localizedDescription)")
                 logger.error("Initializing with defaults")
-                return Self.initial
+                return Self()
             }
         } else {
             logger.log("No config file exists, initializing with defaults")
-            return Self.initial
+            return Self()
         }
     }
     

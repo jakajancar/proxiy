@@ -111,7 +111,7 @@ struct ConfigEditorView: View {
 
 struct ConfigEditorView_Previews: PreviewProvider {
     struct PreviewWrapper: View {
-        @State private var config: Config = Config.initial
+        @State private var config: Config = Config()
         var body: some View {
             ConfigEditorView(
                 nearbyDeviceNames: Set([
