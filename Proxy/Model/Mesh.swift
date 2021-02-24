@@ -152,7 +152,7 @@ class Mesh {
                     self.removePeer(result: result)
                 }
             } else {
-                fatalError("non-Bonjour metadata: \(result.metadata), result: \(result)")
+                // No metadata. Happens when disconnecting cable while debugging on device (?). Ignore.
             }
         } else {
             fatalError("non-service endpoint: \(result.endpoint)")
