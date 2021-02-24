@@ -122,8 +122,9 @@ struct ContentView_Previews: PreviewProvider {
                 settingsPresented: .constant(false),
                 mesh: MockMesh.forDevelopment
             )
-            .previewDevice("iPhone 12 mini")
+            .previewDevice("Mac Catalyst")
             .previewLayout(.sizeThatFits)
+
         }
     }
 }
