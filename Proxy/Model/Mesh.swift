@@ -24,7 +24,7 @@ struct MeshConfig: Equatable {
 }
 
 class Mesh {
-    private static let kBonjourServiceType: String = "_jjproxy._tcp"
+    private static let kBonjourServiceType: String = (Bundle.main.infoDictionary!["NSBonjourServices"] as! [String])[0]
     // BUG: https://developer.apple.com/forums/thread/673143
     private static let kUseTLSBetweenPeers: Bool = false
     
