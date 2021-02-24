@@ -11,33 +11,25 @@ import Combine
 import OSLog
 
 private let logger = Logger(subsystem: "si.jancar.Proxy", category: "app")
-
-///// Stores the `Config` and:
-/////  1. Syncs it to persistent storage, and
-/////  2. Maintains an up-to-date `Mesh` instance.
-//class ConfigAndMesh: ObservableObject {
-//    @Published var config: Config
-//    @Published private(set) var mesh: Mesh
-//    init(config: Config) {
-//        self.config = config
-//
-//    }
-//    private static func createMesh(_ config: Config) -> Mesh {
-//        Mesh(deviceInfo: DeviceInfo.current, config: <#T##Config#>)
-//    }
-//}
+private let isPreview = ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
 
 @main
 struct ProxyApp: App {
-    @StateObject private var model = ProxyAppModel()
+    @State private var config: Config
+    @State private var mesh: Mesh!
+    @State private var settingsPresented: Bool = false
     
+    private var cancellables = Set<AnyCancellable>()
+
     var body: some Scene {
         WindowGroup {
-            HomeView(
-                config: $model.config,
-                settingsPresented: $model.settingsPresented,
-                mesh: model.mesh
-            )
+            if !isPreview {
+                HomeView(
+                    config: $config,
+                    settingsPresented: $settingsPresented,
+                    mesh: mesh
+                )
+            }
         }
         .commands {
             #if targetEnvironment(macCatalyst)
@@ -49,39 +41,29 @@ struct ProxyApp: App {
             //     so we add to the end of the .appInfo group.
             CommandGroup(after: .appInfo) {
                 Button("Preferences...") {
-                    model.settingsPresented = true
+                    settingsPresented = true
                 }
                 .keyboardShortcut(KeyEquivalent(","), modifiers: .command)
             }
             #endif
         }
-    }
-    
-    init() {
-        increaseFileDescriptorLimit(to: 8192)
-    }
-    
-}
-
-class ProxyAppModel: ObservableObject {
-    @Published var settingsPresented: Bool = false
-    @Published var config: Config {
-        didSet {
+        .onChange(of: config) { state in
             try! config.persistToDefaultFile()
             mesh.forceCancel()
             mesh = Mesh(deviceInfo: DeviceInfo.current, config: config)
         }
     }
-    @Published var mesh: Mesh
     
     init() {
-//        if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
-//            fatalError("Refusing to initialize the full (slow) app model in preview. Bug somewhere?")
-//        }
+        increaseFileDescriptorLimit(to: 8192)
+        
         let initialConfig = try! Config.restoreFromDefaultFile()
-        config = initialConfig
-        mesh = Mesh(deviceInfo: DeviceInfo.current, config: initialConfig)
+        _config = State(initialValue: initialConfig)
+        if !isPreview {
+            _mesh = State(initialValue: Mesh(deviceInfo: DeviceInfo.current, config: initialConfig))
+        }
     }
+    
 }
 
 func increaseFileDescriptorLimit(to: rlim_t) {

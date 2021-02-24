@@ -19,5 +19,4 @@ protocol PeerViewModel: ObservableObject, Hashable, Identifiable {
     var connectionsFromCount: Int { get }
     var connectionsToCount: Int { get }
     var bytesPerSec: Int64 { get }
-
 }
