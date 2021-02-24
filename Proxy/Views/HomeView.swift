@@ -39,11 +39,11 @@ struct HomeView<M: MeshViewModel>: View {
                 )
             })
             .withHostingWindow { window in
-                // replace with windowStyle / windowToolbarStyle
                 #if targetEnvironment(macCatalyst)
                 if let window = window {
                     if let scene = window.windowScene {
                         // Hide titlebar
+                        // replace with windowStyle / windowToolbarStyle once available for Catalyst
                         if let titlebar = scene.titlebar {
                             titlebar.titleVisibility = .hidden
                             titlebar.toolbar = nil
@@ -102,7 +102,6 @@ struct PeerCell<P: PeerViewModel>: View {
                 .foregroundColor(.secondary)
             }
         }
-//        Text("\(peer.name) (\(peer.inboundConnectionCount) in, \(peer.outboundConnectionCount) out)")
     }
 }
 
