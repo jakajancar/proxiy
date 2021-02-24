@@ -112,6 +112,7 @@ class Mesh {
     }
     
     func forceCancel() {
+        logger.log("Shutting down")
         self.meshListener.cancel()
         self.meshListener.newConnectionHandler = nil
         
@@ -132,57 +133,38 @@ class Mesh {
         logger.log("De-initializing")
     }
     
-    private func updatePeer(result: NWBrowser.Result) {
-        if case .service(name: let instanceID, type: _, domain: _, interface: _) = result.endpoint {
-            if case .bonjour(let txt) = result.metadata {
-                if let advertisement = PeerAdvertisement.fromTxtRecord(txt, using: self.psk) {
-                    if let existingPeer = self.peerMap[instanceID] {
-                        // Update existing
-                        existingPeer.advertisement = advertisement
-                    } else {
-                        // Add new
-                        self.peerMap[instanceID] = Peer(
-                            instanceID: instanceID,
-                            endpoint: result.endpoint,
-                            advertisement: advertisement)
-                    }
-                    self.refreshLocalListeners()
-                } else {
-                    // Other network
-                    self.removePeer(result: result)
-                }
-            } else {
-                // No metadata. Happens when disconnecting cable while debugging on device (?). Ignore.
-            }
-        } else {
-            fatalError("non-service endpoint: \(result.endpoint)")
-        }
-    }
-    
-    private func removePeer(result: NWBrowser.Result) {
-        if case .service(name: let instanceID, type: _, domain: _, interface: _) = result.endpoint {
-            if let peer = self.peerMap.removeValue(forKey: instanceID) {
-                peer.forceCancel()
-                self.refreshLocalListeners()
-            }
-        } else {
-            fatalError("non-service endpoint?")
-        }
-    }
-    
     private func bonjourChanged(results: Set<NWBrowser.Result>, changes: Set<NWBrowser.Result.Change>) {
-        for change in changes {
-            switch change {
-            case .added(let new):
-                self.updatePeer(result: new)
-            case .removed(let old):
-                self.removePeer(result: old)
-            case .changed(old: let old, new: let new, flags: _):
-                assert(old.endpoint == new.endpoint)
-                self.updatePeer(result: new)
-            default:
-                break
+        refreshPeers()
+    }
+    
+    private func refreshPeers() {
+        var valid: Set<InstanceID> = Set()
+        
+        for result in self.meshBrowser.browseResults {
+            if case .service(name: let instanceID, type: _, domain: _, interface: _) = result.endpoint,
+               case .bonjour(let txt) = result.metadata,
+               let advertisement = PeerAdvertisement.fromTxtRecord(txt, using: self.psk)
+            {
+                valid.insert(instanceID)
+                
+                if let existingPeer = self.peerMap[instanceID] {
+                    // Keep existing Peer
+                    assert(existingPeer.endpoint == result.endpoint)
+                    existingPeer.advertisement = advertisement
+                } else {
+                    // Create new Peer
+                    self.peerMap[instanceID] = Peer(
+                        instanceID: instanceID,
+                        endpoint: result.endpoint,
+                        advertisement: advertisement
+                    )
+                }
             }
+        }
+        
+        for (instanceID, peer) in self.peerMap where !valid.contains(instanceID) {
+            peer.forceCancel()
+            self.peerMap.removeValue(forKey: instanceID)
         }
     }
     

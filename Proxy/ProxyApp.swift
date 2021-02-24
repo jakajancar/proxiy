@@ -16,7 +16,7 @@ private let isPreview = ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_P
 @main
 struct ProxyApp: App {
     @State private var config: Config
-    @State private var mesh: Mesh!
+    @State private var mesh: Mesh?
     @State private var settingsPresented: Bool = false
     
     private var cancellables = Set<AnyCancellable>()
@@ -27,7 +27,7 @@ struct ProxyApp: App {
                 HomeView(
                     config: $config,
                     settingsPresented: $settingsPresented,
-                    mesh: mesh
+                    mesh: mesh!
                 )
             }
         }
@@ -49,7 +49,7 @@ struct ProxyApp: App {
         }
         .onChange(of: config) { state in
             try! config.persistToDefaultFile()
-            mesh.forceCancel()
+            mesh!.forceCancel()
             mesh = Mesh(deviceInfo: DeviceInfo.current, config: config)
         }
     }
