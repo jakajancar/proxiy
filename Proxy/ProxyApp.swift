@@ -47,6 +47,7 @@ struct ProxyApp: App {
     
     init() {
         increaseFileDescriptorLimit(to: 8192)
+        UIApplication.shared.isIdleTimerDisabled = true
     }
 }
 
