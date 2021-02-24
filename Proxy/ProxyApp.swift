@@ -15,19 +15,15 @@ private let isPreview = ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_P
 
 @main
 struct ProxyApp: App {
-    @State private var config: Config
-    @State private var mesh: Mesh?
-    @State private var settingsPresented: Bool = false
+    @StateObject private var state = ProxyAppState()
     
-    private var cancellables = Set<AnyCancellable>()
-
     var body: some Scene {
         WindowGroup {
-            if !isPreview {
+            if let mesh = state.mesh {
                 HomeView(
-                    config: $config,
-                    settingsPresented: $settingsPresented,
-                    mesh: mesh!
+                    config: $state.config,
+                    settingsPresented: $state.settingsPresented,
+                    mesh: mesh
                 )
             }
         }
@@ -41,29 +37,46 @@ struct ProxyApp: App {
             //     so we add to the end of the .appInfo group.
             CommandGroup(after: .appInfo) {
                 Button("Preferences...") {
-                    settingsPresented = true
+                    state.settingsPresented = true
                 }
                 .keyboardShortcut(KeyEquivalent(","), modifiers: .command)
             }
             #endif
         }
-        .onChange(of: config) { state in
-            try! config.persistToDefaultFile()
-            mesh!.forceCancel()
-            mesh = Mesh(deviceInfo: DeviceInfo.current, config: config)
-        }
     }
     
     init() {
         increaseFileDescriptorLimit(to: 8192)
-        
-        let initialConfig = try! Config.restoreFromDefaultFile()
-        _config = State(initialValue: initialConfig)
-        if !isPreview {
-            _mesh = State(initialValue: Mesh(deviceInfo: DeviceInfo.current, config: initialConfig))
-        }
     }
+}
+
+class ProxyAppState: ObservableObject {
+    private var cancellables = Set<AnyCancellable>()
+
+    @Published var config: Config
+    @Published var mesh: Mesh?
+    @Published var settingsPresented: Bool = false
     
+    init() {
+        // Config sync
+        config = try! Config.restoreFromDefaultFile()
+        $config
+            .sink { config in try! config.persistToDefaultFile() }
+            .store(in: &cancellables)
+        
+        // Mesh
+        $config
+            .map { config in config.meshConfig }
+            .removeDuplicates()
+            .sink { meshConfig in
+                if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] != "1" {
+                    logger.info("Recreating mesh")
+                    self.mesh?.forceCancel()
+                    self.mesh = Mesh(deviceInfo: DeviceInfo.current, config: meshConfig)
+                }
+            }
+            .store(in: &cancellables)
+    }
 }
 
 func increaseFileDescriptorLimit(to: rlim_t) {

@@ -192,3 +192,13 @@ extension Config.Listener: Codable {
         }
     }
 }
+
+extension Config {
+    var meshConfig: MeshConfig {
+        MeshConfig(
+            psk: psk,
+            acceptInbound: acceptInbound,
+            listeners: listeners
+        )
+    }
+}

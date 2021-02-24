@@ -16,13 +16,20 @@ private let logger = Logger(subsystem: "si.jancar.Proxy", category: "mesh")
 
 // TODO: consider waiting state everywhere
 
+/// Subset of the config relevant to `Mesh`
+struct MeshConfig: Equatable {
+    var psk: String
+    var acceptInbound: Bool
+    var listeners: Set<Config.Listener>
+}
+
 class Mesh {
     private static let kBonjourServiceType: String = "_jjproxy._tcp"
     // BUG: https://developer.apple.com/forums/thread/673143
     private static let kUseTLSBetweenPeers: Bool = false
     
     private let deviceInfo: DeviceInfo
-    private let config: Config
+    private let config: MeshConfig
     private var psk: SymmetricKey
     
     private let myInstanceID: InstanceID = UUID().uuidString
@@ -37,7 +44,7 @@ class Mesh {
     private var unidentifiedConnectionsFromPeer: Set<ConnectionFromPeer> = []
     
     
-    init(deviceInfo: DeviceInfo, config: Config) {
+    init(deviceInfo: DeviceInfo, config: MeshConfig) {
         logger.log("Initializing")
         self.deviceInfo = deviceInfo
         self.config = config
