@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <rect x="0" y="0" width="1024" height="1024" style="fill:url(#_Linear1);"/>
+    <g id="_x32_hEvr4_2_">
+        <g>
+            <path d="M870.72,446.46C835.75,261.82 665.9,130.89 483.88,148.28C292.69,166.61 150.5,322.31 150.27,513.84C150.15,639.33 150.27,764.87 150.27,890.36L150.22,928.27L150.22,934.32C164.979,919.468 370.97,712.62 371.73,711.93C384.6,699.52 400.26,693.61 421.89,694.42C465.03,696.04 509.28,696.74 551.55,689.26C644.56,672.91 709.98,579.37 696.64,489.03C681.5,386.39 599.22,320.4 494.78,327.24C405.13,333.1 330.32,415.21 329.45,508.8C329.33,520.4 329.39,532 329.39,543.59C329.39,639.21 323.19,651.56 245.02,710.77C245.02,624.42 234.87,537.44 247.34,453.82C267.23,320.5 391.09,230.04 524.12,236.42C660.45,243.03 772.43,343.35 786.23,477.3C797.48,586.84 757.24,677.13 664.45,738.54C591.96,786.5 516.52,797.98 440.09,774.67L376.71,845.53C429.25,866.99 485.32,875.28 545.28,870.52C754.8,854.01 909.81,653.08 870.72,446.46ZM512.76,423.38C559.79,423.32 600.61,462.7 601.54,508.91C602.47,554.61 561.82,596.53 515.54,597.57C467.58,598.61 426.01,558.14 425.83,510.18C425.66,464.09 466.43,423.38 512.76,423.38Z" style="fill:white;fill-rule:nonzero;"/>
+        </g>
+    </g>
+    <defs>
+        <linearGradient id="_Linear1" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-1002.95,868.33,-868.33,-1002.95,1006.42,83.9521)">
+            <stop offset="0" style="stop-color:#3642b4;stop-opacity:1"/>
+            <stop offset="1" style="stop-color:#1c1644;stop-opacity:1"/>
+        </linearGradient>
+    </defs>
+</svg>
