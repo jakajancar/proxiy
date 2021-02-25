@@ -9,57 +9,26 @@ import SwiftUI
 
 struct HomeView<M: MeshViewModel>: View {
     @Binding var config: Config
-    @Binding var settingsPresented: Bool
+    let settingsAction: () -> Void
     @ObservedObject var mesh: M
     
     var body: some View {
-        NavigationView {
-            List(sortedPeers) { peer in
-                PeerCell(peer: peer)
-            }
-            .navigationTitle("Peers")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar(content: {
-                ToolbarItemGroup(placement: .bottomBar) {
-                    Spacer()
-                    
-                    #if !targetEnvironment(macCatalyst)
-                    Button(action: { settingsPresented = true }, label: {
-                        Image(systemName: "gearshape")
-                    })
-                    #endif
-                }
-            })
-            .sheet(isPresented: $settingsPresented, content: {
-                ConfigEditorView(
-                    nearbyDeviceNames: Set(mesh.peers.map({ peer in
-                        peer.deviceInfo.name
-                    })),
-                    config: $config
-                )
-            })
-            .withHostingWindow { window in
-                #if targetEnvironment(macCatalyst)
-                if let window = window {
-                    if let scene = window.windowScene {
-                        // Hide titlebar
-                        // replace with windowStyle / windowToolbarStyle once available for Catalyst
-                        if let titlebar = scene.titlebar {
-                            titlebar.titleVisibility = .hidden
-                            titlebar.toolbar = nil
-                        }
-//                        if let sizeRestrictions = scene.sizeRestrictions {
-////                            let size = CGSize(width: 320, height: 600)
-////                            sizeRestrictions.minimumSize = size
-////                            sizeRestrictions.maximumSize = size
-//                        }
-                    }
-                }
+        List(sortedPeers) { peer in
+            PeerCell(peer: peer)
+        }
+        .navigationTitle("Peers")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(content: {
+            ToolbarItemGroup(placement: .bottomBar) {
+                Spacer()
+                
+                #if !targetEnvironment(macCatalyst)
+                Button(action: { settingsAction() }, label: {
+                    Image(systemName: "gearshape")
+                })
                 #endif
             }
-        }
-        .navigationViewStyle(StackNavigationViewStyle())
-        .colorScheme(alwaysDark: config.alwaysDark)
+        })
     }
     
     var sortedPeers: [M.Peer] {
@@ -110,7 +79,7 @@ struct ContentView_Previews: PreviewProvider {
         Group {
             HomeView(
                 config: .constant(Config()),
-                settingsPresented: .constant(false),
+                settingsAction: {},
                 mesh: MockMesh.forDevelopment
             )
             .previewDevice("iPhone 12 mini")
@@ -118,7 +87,7 @@ struct ContentView_Previews: PreviewProvider {
 
             HomeView(
                 config: .constant(Config(alwaysDark: true)),
-                settingsPresented: .constant(false),
+                settingsAction: {},
                 mesh: MockMesh.forDevelopment
             )
             .previewDevice("Mac Catalyst")

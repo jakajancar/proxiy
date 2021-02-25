@@ -64,7 +64,7 @@ struct AboutView: View {
 
 struct AboutView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
+        MyNavigationView {
             AboutView(config: Config())
         }
         .previewDevice("iPhone 12 mini")

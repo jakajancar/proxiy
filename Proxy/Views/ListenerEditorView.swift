@@ -259,8 +259,7 @@ struct ListenerConfigView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             ForEach(configs, id: \.0) { (name, config, parentError) in
-                // TODO: add NavigationView
-                NavigationView {
+                MyNavigationView {
                     ListenerEditorView(
                         nearbyDeviceNames: nearbyDeviceNames,
                         initialValue: config,

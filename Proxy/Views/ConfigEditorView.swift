@@ -17,94 +17,89 @@ struct ConfigEditorView: View {
     var body: some View {
         let sortedListeners = config.listeners.sorted { $0.bindPort < $1.bindPort }
         
-        NavigationView {
-            Form {
-                Section(
-                    header: Text("Network Key"),
-                    footer: Text("Nearby devices configured with the same key will connect using a peer-to-peer mesh network. ")
-                ) {
-                    TextField("Required", text: $config.psk)
-                }
+        Form {
+            Section(
+                header: Text("Network Key"),
+                footer: Text("Nearby devices configured with the same key will connect using a peer-to-peer mesh network. ")
+            ) {
+                TextField("Required", text: $config.psk)
+            }
 
-                Toggle(isOn: $config.acceptInbound) {
-                    Text("Allow Connections from Peers")
-                }
-                
-                // Dark mode is primarily useful on iOS where we have to remain in the foreground
-                #if !targetEnvironment(macCatalyst)
-                Toggle(isOn: $config.alwaysDark) {
-                    Text("Always Use Dark Mode")
-                }
-                #endif
+            Toggle(isOn: $config.acceptInbound) {
+                Text("Allow Connections from Peers")
+            }
+            
+            // Dark mode is primarily useful on iOS where we have to remain in the foreground
+            #if !targetEnvironment(macCatalyst)
+            Toggle(isOn: $config.alwaysDark) {
+                Text("Always Use Dark Mode")
+            }
+            #endif
 
-                Section(
-                    header: Text("Local Listeners")
-                ) {
-                    List {
-                        ForEach(sortedListeners, id: \.bindPort) { listener in
-                            
-                            NavigationLink(
-                                destination: ListenerEditorView(
-                                    nearbyDeviceNames: nearbyDeviceNames,
-                                    initialValue: listener,
-                                    saveAction: { new in
-                                        updateListener(old: listener, new: new)
-                                    }
-                                )
-                            ) {
-                                VStack(alignment: .leading) {
-                                    Text(listener.cellTitle)
-                                    
-                                    Text(listener.cellViaDescription)
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                    
-                                    Text(listener.cellDestinationDescription)
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-                        }
-                        .onDelete(perform: { indexSet in
-                            let error = updateListener(old: sortedListeners[indexSet.first!], new: nil)
-                            precondition(error == nil)
-                        })
+            Section(
+                header: Text("Local Listeners")
+            ) {
+                List {
+                    ForEach(sortedListeners, id: \.bindPort) { listener in
                         
-                        Button(action: {
-                            showingAddListener = true
-                        }) {
-                            Text("Add Listener...")
-                        }
-                        .sheet(isPresented: $showingAddListener) {
-                            NavigationView {
-                                ListenerEditorView(
-                                    nearbyDeviceNames: nearbyDeviceNames,
-                                    initialValue: nil,
-                                    saveAction: { new in
-                                        updateListener(old: nil, new: new)
-                                    }
-                                )
+                        NavigationLink(
+                            destination: ListenerEditorView(
+                                nearbyDeviceNames: nearbyDeviceNames,
+                                initialValue: listener,
+                                saveAction: { new in
+                                    updateListener(old: listener, new: new)
+                                }
+                            )
+                        ) {
+                            VStack(alignment: .leading) {
+                                Text(listener.cellTitle)
+                                
+                                Text(listener.cellViaDescription)
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                                
+                                Text(listener.cellDestinationDescription)
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
                             }
-                            .navigationViewStyle(StackNavigationViewStyle())
-                            .colorScheme(alwaysDark: config.alwaysDark)
+                        }
+                    }
+                    .onDelete(perform: { indexSet in
+                        let error = updateListener(old: sortedListeners[indexSet.first!], new: nil)
+                        precondition(error == nil)
+                    })
+                    
+                    Button(action: {
+                        showingAddListener = true
+                    }) {
+                        Text("Add Listener...")
+                    }
+                    .sheet(isPresented: $showingAddListener) {
+                        MyNavigationView {
+                            ListenerEditorView(
+                                nearbyDeviceNames: nearbyDeviceNames,
+                                initialValue: nil,
+                                saveAction: { new in
+                                    updateListener(old: nil, new: new)
+                                }
+                            )
                         }
                     }
                 }
-                
-                #if !targetEnvironment(macCatalyst)
-                NavigationLink(
-                    destination: AboutView(config: config)
-                ) {
-                    Text("About")
-                }
-                #endif
             }
-            .navigationTitle("Settings")
-            .primaryButton("Done") {
-                presentationMode.wrappedValue.dismiss()
+            
+            #if !targetEnvironment(macCatalyst)
+            NavigationLink(
+                destination: AboutView(config: config)
+            ) {
+                Text("About")
             }
+            #endif
         }
-        .colorScheme(alwaysDark: config.alwaysDark)
+        .navigationTitle("Settings")
+        .primaryButton("Done") {
+            presentationMode.wrappedValue.dismiss()
+        }
     }
 
     private func updateListener(old: Config.Listener?, new: Config.Listener?) -> UserError? {
