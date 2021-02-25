@@ -91,11 +91,13 @@ struct ConfigEditorView: View {
                     }
                 }
                 
+                #if !targetEnvironment(macCatalyst)
                 NavigationLink(
                     destination: AboutView(config: config)
                 ) {
                     Text("About")
                 }
+                #endif
             }
             .navigationTitle("Settings")
             .primaryButton("Done") {

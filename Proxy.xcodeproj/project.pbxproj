@@ -26,6 +26,7 @@
 		218CE57025CA091300FBDCB2 /* View+WindowHacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 218CE56F25CA091300FBDCB2 /* View+WindowHacks.swift */; };
 		21908CDB25CA2E5800DAF5CB /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21908CDA25CA2E5800DAF5CB /* IOKit.framework */; };
 		21908CE025CB51D900DAF5CB /* NWConnection+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21908CDF25CB51D900DAF5CB /* NWConnection+Extensions.swift */; };
+		219E663E25E81B20002BF949 /* ContactUsButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 219E663D25E81B20002BF949 /* ContactUsButton.swift */; };
 		21A3358025C0BD26007B8C45 /* ProxyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21A3357F25C0BD26007B8C45 /* ProxyApp.swift */; };
 		21A3358225C0BD26007B8C45 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21A3358125C0BD26007B8C45 /* HomeView.swift */; };
 		21A3358425C0BD27007B8C45 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 21A3358325C0BD27007B8C45 /* Assets.xcassets */; };
@@ -77,6 +78,7 @@
 		218CE56F25CA091300FBDCB2 /* View+WindowHacks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+WindowHacks.swift"; sourceTree = "<group>"; };
 		21908CDA25CA2E5800DAF5CB /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
 		21908CDF25CB51D900DAF5CB /* NWConnection+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NWConnection+Extensions.swift"; sourceTree = "<group>"; };
+		219E663D25E81B20002BF949 /* ContactUsButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactUsButton.swift; sourceTree = "<group>"; };
 		21A3357C25C0BD26007B8C45 /* Proxiy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Proxiy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		21A3357F25C0BD26007B8C45 /* ProxyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyApp.swift; sourceTree = "<group>"; };
 		21A3358125C0BD26007B8C45 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -219,6 +221,7 @@
 				216B42E725DE0F07009225AA /* ConfigEditorView.swift */,
 				21B1759C25DDEF9E00CEE91A /* ListenerEditorView.swift */,
 				2132FB8F25E70A3A00196128 /* AboutView.swift */,
+				219E663D25E81B20002BF949 /* ContactUsButton.swift */,
 				218CE56F25CA091300FBDCB2 /* View+WindowHacks.swift */,
 				2154B8A525E23CE900C2DA1D /* View+NavButtons.swift */,
 				2137B56925E5A76800FE04CF /* View+ColorScheme.swift */,
@@ -398,6 +401,7 @@
 				2137B56A25E5A76800FE04CF /* View+ColorScheme.swift in Sources */,
 				2186D33725DF6A7A00361CFD /* UserError.swift in Sources */,
 				21D2EAF825C7B2AC0059C6B0 /* ViewModelProtocols.swift in Sources */,
+				219E663E25E81B20002BF949 /* ContactUsButton.swift in Sources */,
 				21A3358025C0BD26007B8C45 /* ProxyApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

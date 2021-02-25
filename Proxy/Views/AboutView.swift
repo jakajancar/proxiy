@@ -14,10 +14,8 @@ struct AboutView: View {
     
     var body: some View {
         let info = Bundle.main.infoDictionary!
-        let appName = info["CFBundleDisplayName"] as! String
         let version = info["CFBundleShortVersionString"] as! String
         let build = info["CFBundleVersion"] as! String
-
 
         List {
             Section(
@@ -29,7 +27,7 @@ struct AboutView: View {
                         
                         Spacer().frame(height: 18)
 
-                        Text("\(appName) \(version)" + (showingBuild ? " (\(build))" : ""))
+                        Text("\(kAppName) \(version)" + (showingBuild ? " (\(build))" : ""))
                             .bold()
                             .foregroundColor(.primary)
                             .onTapGesture {
@@ -48,25 +46,7 @@ struct AboutView: View {
                     .textCase(.none)
                     .padding()
             ) {
-                Button(
-                    action: {
-                        UIApplication.shared.open(supportURL)
-                    },
-                    label: {
-                        Text("Support")
-                            .foregroundColor(.primary)
-                    }
-                )
-                
-                Button(
-                    action: {
-                        UIApplication.shared.open(feedbackURL)
-                    },
-                    label: {
-                        Text("Feedback")
-                            .foregroundColor(.primary)
-                    }
-                )
+                ContactUsButton(config: config)
 
 //                NavigationLink(
 //                    destination: Text("Foo"),
@@ -79,43 +59,6 @@ struct AboutView: View {
         .navigationTitle("About")
         .navigationBarTitleDisplayMode(.inline)
         .listStyle(InsetGroupedListStyle())
-    }
-    
-    private var supportURL: URL {
-        let config: String = {
-            var censoredConfig = self.config
-            censoredConfig.psk = "***"
-            
-            return String(data: try! JSONEncoder().encode(censoredConfig), encoding: .utf8)!
-        }()
-        
-        let body = """
-            Please describe your problem here.
-            
-            ------------------------------------
-            
-            Configuration:
-            
-            \(config)
-        """
-        // TODO: loggign
-        
-        return mailtoURL(address: Self.kJakaEmail, subject: "Proxiy Support", body: body)
-    }
-    
-    private var feedbackURL: URL {
-        mailtoURL(address: Self.kJakaEmail, subject: "Proxiy Feedback", body: "")
-    }
-    
-    private func mailtoURL(address: String, subject: String, body: String) -> URL {
-        var c = URLComponents()
-        c.scheme = "mailto"
-        c.path = address
-        c.queryItems = [
-            URLQueryItem(name: "subject", value: subject),
-            URLQueryItem(name: "body", value: body.replacingOccurrences(of: "\n", with: "\r\n")),
-        ]
-        return c.url!
     }
 }
 
