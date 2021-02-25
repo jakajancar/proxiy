@@ -1,5 +1,5 @@
 //
-//  ConfigEditorView.swift
+//  SettingsView.swift
 //  Proxy
 //
 //  Created by Jaka Jancar on 2/17/21.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ConfigEditorView: View {
+struct SettingsView: View {
     @Environment(\.presentationMode) private var presentationMode: Binding<PresentationMode>
     
     let nearbyDeviceNames: Set<String>
@@ -115,7 +115,7 @@ struct ConfigEditorView_Previews: PreviewProvider {
     struct PreviewWrapper: View {
         @State private var config: Config = Config()
         var body: some View {
-            ConfigEditorView(
+            SettingsView(
                 nearbyDeviceNames: Set([
                     "Jaka's iPhone",
                     "Jaka's MacBook Pro",

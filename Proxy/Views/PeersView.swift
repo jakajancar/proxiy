@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  PeersView.swift
 //  Proxy
 //
 //  Created by Jaka Jancar on 1/26/21.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct HomeView<M: MeshViewModel>: View {
+struct PeersView<M: MeshViewModel>: View {
     let settingsAction: () -> Void
     @ObservedObject var mesh: M
     
@@ -77,7 +77,7 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             MyNavigationView {
-                HomeView(
+                PeersView(
                     settingsAction: {},
                     mesh: MockMesh.forDevelopment
                 )
@@ -86,7 +86,7 @@ struct ContentView_Previews: PreviewProvider {
             .previewLayout(.sizeThatFits)
 
             MyNavigationView {
-                HomeView(
+                PeersView(
                     settingsAction: {},
                     mesh: MockMesh.forDevelopment
                 )

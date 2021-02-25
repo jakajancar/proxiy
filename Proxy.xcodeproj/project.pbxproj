@@ -18,7 +18,7 @@
 		215EE3B325CA1BCF00045BFB /* DeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215EE3B225CA1BCF00045BFB /* DeviceInfo.swift */; };
 		2162AD8D25CE01BD00193520 /* PeerHello.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2162AD8C25CE01BD00193520 /* PeerHello.swift */; };
 		2162AD9525CE052100193520 /* DataConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2162AD9425CE052100193520 /* DataConvertible.swift */; };
-		216B42E825DE0F07009225AA /* ConfigEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 216B42E725DE0F07009225AA /* ConfigEditorView.swift */; };
+		216B42E825DE0F07009225AA /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 216B42E725DE0F07009225AA /* SettingsView.swift */; };
 		216B4E8525D0556F00486B42 /* ConnectionToPeer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 216B4E8425D0556F00486B42 /* ConnectionToPeer.swift */; };
 		216B4E8A25D0557D00486B42 /* ConnectionFromPeer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 216B4E8925D0557D00486B42 /* ConnectionFromPeer.swift */; };
 		2186D32A25DF253600361CFD /* NWEndpoint+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2186D32925DF253600361CFD /* NWEndpoint+Extensions.swift */; };
@@ -29,7 +29,7 @@
 		21908CE025CB51D900DAF5CB /* NWConnection+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21908CDF25CB51D900DAF5CB /* NWConnection+Extensions.swift */; };
 		219E663E25E81B20002BF949 /* ContactUsButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 219E663D25E81B20002BF949 /* ContactUsButton.swift */; };
 		21A3358025C0BD26007B8C45 /* ProxyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21A3357F25C0BD26007B8C45 /* ProxyApp.swift */; };
-		21A3358225C0BD26007B8C45 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21A3358125C0BD26007B8C45 /* HomeView.swift */; };
+		21A3358225C0BD26007B8C45 /* PeersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21A3358125C0BD26007B8C45 /* PeersView.swift */; };
 		21A3358425C0BD27007B8C45 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 21A3358325C0BD27007B8C45 /* Assets.xcassets */; };
 		21A3358725C0BD27007B8C45 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 21A3358625C0BD27007B8C45 /* Preview Assets.xcassets */; };
 		21A3359225C0BD27007B8C45 /* ProxyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21A3359125C0BD27007B8C45 /* ProxyTests.swift */; };
@@ -71,7 +71,7 @@
 		215EE3B225CA1BCF00045BFB /* DeviceInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfo.swift; sourceTree = "<group>"; };
 		2162AD8C25CE01BD00193520 /* PeerHello.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerHello.swift; sourceTree = "<group>"; };
 		2162AD9425CE052100193520 /* DataConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataConvertible.swift; sourceTree = "<group>"; };
-		216B42E725DE0F07009225AA /* ConfigEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigEditorView.swift; sourceTree = "<group>"; };
+		216B42E725DE0F07009225AA /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		216B4E8425D0556F00486B42 /* ConnectionToPeer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionToPeer.swift; sourceTree = "<group>"; };
 		216B4E8925D0557D00486B42 /* ConnectionFromPeer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionFromPeer.swift; sourceTree = "<group>"; };
 		2186D32925DF253600361CFD /* NWEndpoint+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NWEndpoint+Extensions.swift"; sourceTree = "<group>"; };
@@ -83,7 +83,7 @@
 		219E663D25E81B20002BF949 /* ContactUsButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactUsButton.swift; sourceTree = "<group>"; };
 		21A3357C25C0BD26007B8C45 /* Proxiy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Proxiy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		21A3357F25C0BD26007B8C45 /* ProxyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyApp.swift; sourceTree = "<group>"; };
-		21A3358125C0BD26007B8C45 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		21A3358125C0BD26007B8C45 /* PeersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeersView.swift; sourceTree = "<group>"; };
 		21A3358325C0BD27007B8C45 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		21A3358625C0BD27007B8C45 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		21A3358825C0BD27007B8C45 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -220,8 +220,8 @@
 			children = (
 				21D8020625C8E7D400ABCFA3 /* MockViewModel.swift */,
 				215BF40425E83A9D00BC2A09 /* MainScene.swift */,
-				21A3358125C0BD26007B8C45 /* HomeView.swift */,
-				216B42E725DE0F07009225AA /* ConfigEditorView.swift */,
+				21A3358125C0BD26007B8C45 /* PeersView.swift */,
+				216B42E725DE0F07009225AA /* SettingsView.swift */,
 				21B1759C25DDEF9E00CEE91A /* ListenerEditorView.swift */,
 				2132FB8F25E70A3A00196128 /* AboutView.swift */,
 				219E663D25E81B20002BF949 /* ContactUsButton.swift */,
@@ -381,7 +381,7 @@
 			files = (
 				215BF41A25E8460200BC2A09 /* MyNavigationView.swift in Sources */,
 				216B4E8525D0556F00486B42 /* ConnectionToPeer.swift in Sources */,
-				216B42E825DE0F07009225AA /* ConfigEditorView.swift in Sources */,
+				216B42E825DE0F07009225AA /* SettingsView.swift in Sources */,
 				212AE42C25D0A9D700C3813F /* NWConnection+SOCKS5.swift in Sources */,
 				212AE41525D0984B00C3813F /* AnyObject+Extensions.swift in Sources */,
 				2132FB9025E70A3A00196128 /* AboutView.swift in Sources */,
@@ -402,7 +402,7 @@
 				21908CE025CB51D900DAF5CB /* NWConnection+Extensions.swift in Sources */,
 				215EE3B325CA1BCF00045BFB /* DeviceInfo.swift in Sources */,
 				21D8020725C8E7D400ABCFA3 /* MockViewModel.swift in Sources */,
-				21A3358225C0BD26007B8C45 /* HomeView.swift in Sources */,
+				21A3358225C0BD26007B8C45 /* PeersView.swift in Sources */,
 				2186D33725DF6A7A00361CFD /* UserError.swift in Sources */,
 				21D2EAF825C7B2AC0059C6B0 /* ViewModelProtocols.swift in Sources */,
 				219E663E25E81B20002BF949 /* ContactUsButton.swift in Sources */,

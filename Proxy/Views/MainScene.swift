@@ -23,7 +23,7 @@ struct MainScene: Scene {
         WindowGroup {
             if let mesh = appState.mesh {
                 MyNavigationView {
-                    HomeView(
+                    PeersView(
                         settingsAction: { activeSheet = .settings },
                         mesh: mesh
                     )
@@ -31,7 +31,7 @@ struct MainScene: Scene {
                         MyNavigationView {
                             switch sheet {
                             case .settings:
-                                ConfigEditorView(
+                                SettingsView(
                                     nearbyDeviceNames: Set(mesh.peers.map({ peer in
                                         peer.deviceInfo.name
                                     })),
