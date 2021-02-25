@@ -18,54 +18,7 @@ struct ProxyApp: App {
     @StateObject private var state = ProxyAppState()
     
     var body: some Scene {
-        WindowGroup {
-            if let mesh = state.mesh {
-                HomeView(
-                    config: $state.config,
-                    settingsPresented: $state.settingsPresented,
-                    mesh: mesh
-                )
-                .sheet(isPresented: $state.modalAboutPresented) {
-                    NavigationView {
-                        AboutView(config: state.config)
-                            .navigationBarHidden(true)
-                            .primaryButton("Done") {
-                                state.modalAboutPresented = false
-                            }
-                    }
-                }
-            }
-        }
-        .commands {
-            #if targetEnvironment(macCatalyst)
-            // As of 2021-02-22:
-            //   - The Settings scene does not work under Catalyst
-            //   - I cannot figure out how to have multiple scenes to show Preferences
-            //     in own window, so we still use a modal, just like on iOS.
-            //   - .appSettings group is not shown, even if we replace it here,
-            //     so we add to the end of the .appInfo group.
-            CommandGroup(replacing: .appInfo) {
-                Button("About \(kAppName)") {
-                    // Need to check no modal yet or they will get stuck
-                    if !state.settingsPresented && !state.modalAboutPresented {
-                        state.modalAboutPresented = true
-                    }
-                }
-                
-                Button("Preferences...") {
-                    // Need to check no modal yet or they will get stuck
-                    if !state.settingsPresented && !state.modalAboutPresented {
-                        state.settingsPresented = true
-                    }
-                }
-                .keyboardShortcut(KeyEquivalent(","), modifiers: .command)
-            }
-            
-            CommandGroup(replacing: .help) {
-                ContactUsButton(config: state.config)
-            }
-            #endif
-        }
+        MainScene(appState: state)
     }
     
     init() {
@@ -79,9 +32,6 @@ class ProxyAppState: ObservableObject {
 
     @Published var config: Config
     @Published var mesh: Mesh?
-    @Published var settingsPresented: Bool = false
-    /// About can be pushed from Settings (iOS) or modally globaly (macOS). This models the latter.
-    @Published var modalAboutPresented: Bool = false
     
     init() {
         // Config sync
