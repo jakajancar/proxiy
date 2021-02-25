@@ -77,7 +77,7 @@
 		218CE56F25CA091300FBDCB2 /* View+WindowHacks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+WindowHacks.swift"; sourceTree = "<group>"; };
 		21908CDA25CA2E5800DAF5CB /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
 		21908CDF25CB51D900DAF5CB /* NWConnection+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NWConnection+Extensions.swift"; sourceTree = "<group>"; };
-		21A3357C25C0BD26007B8C45 /* Proxy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Proxy.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		21A3357C25C0BD26007B8C45 /* Proxiy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Proxiy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		21A3357F25C0BD26007B8C45 /* ProxyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyApp.swift; sourceTree = "<group>"; };
 		21A3358125C0BD26007B8C45 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		21A3358325C0BD27007B8C45 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -159,7 +159,7 @@
 		21A3357D25C0BD26007B8C45 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				21A3357C25C0BD26007B8C45 /* Proxy.app */,
+				21A3357C25C0BD26007B8C45 /* Proxiy.app */,
 				21A3358D25C0BD27007B8C45 /* ProxyTests.xctest */,
 				21A3359825C0BD27007B8C45 /* ProxyUITests.xctest */,
 			);
@@ -243,9 +243,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		21A3357B25C0BD26007B8C45 /* Proxy */ = {
+		21A3357B25C0BD26007B8C45 /* Proxiy */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 21A335A125C0BD27007B8C45 /* Build configuration list for PBXNativeTarget "Proxy" */;
+			buildConfigurationList = 21A335A125C0BD27007B8C45 /* Build configuration list for PBXNativeTarget "Proxiy" */;
 			buildPhases = (
 				21A3357825C0BD26007B8C45 /* Sources */,
 				21A3357925C0BD26007B8C45 /* Frameworks */,
@@ -255,11 +255,11 @@
 			);
 			dependencies = (
 			);
-			name = Proxy;
+			name = Proxiy;
 			packageProductDependencies = (
 			);
 			productName = Proxy;
-			productReference = 21A3357C25C0BD26007B8C45 /* Proxy.app */;
+			productReference = 21A3357C25C0BD26007B8C45 /* Proxiy.app */;
 			productType = "com.apple.product-type.application";
 		};
 		21A3358C25C0BD27007B8C45 /* ProxyTests */ = {
@@ -335,7 +335,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				21A3357B25C0BD26007B8C45 /* Proxy */,
+				21A3357B25C0BD26007B8C45 /* Proxiy */,
 				21A3358C25C0BD27007B8C45 /* ProxyTests */,
 				21A3359725C0BD27007B8C45 /* ProxyUITests */,
 			);
@@ -423,12 +423,12 @@
 /* Begin PBXTargetDependency section */
 		21A3358F25C0BD27007B8C45 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 21A3357B25C0BD26007B8C45 /* Proxy */;
+			target = 21A3357B25C0BD26007B8C45 /* Proxiy */;
 			targetProxy = 21A3358E25C0BD27007B8C45 /* PBXContainerItemProxy */;
 		};
 		21A3359A25C0BD27007B8C45 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 21A3357B25C0BD26007B8C45 /* Proxy */;
+			target = 21A3357B25C0BD26007B8C45 /* Proxiy */;
 			targetProxy = 21A3359925C0BD27007B8C45 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -566,7 +566,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = si.jancar.Proxy;
+				PRODUCT_BUNDLE_IDENTIFIER = si.jancar.Proxiy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
@@ -590,7 +590,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = si.jancar.Proxy;
+				PRODUCT_BUNDLE_IDENTIFIER = si.jancar.Proxiy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
@@ -694,7 +694,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		21A335A125C0BD27007B8C45 /* Build configuration list for PBXNativeTarget "Proxy" */ = {
+		21A335A125C0BD27007B8C45 /* Build configuration list for PBXNativeTarget "Proxiy" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				21A335A225C0BD27007B8C45 /* Debug */,
