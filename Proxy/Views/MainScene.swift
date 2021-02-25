@@ -24,7 +24,6 @@ struct MainScene: Scene {
             if let mesh = appState.mesh {
                 MyNavigationView {
                     HomeView(
-                        config: $appState.config,
                         settingsAction: { activeSheet = .settings },
                         mesh: mesh
                     )

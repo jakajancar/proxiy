@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct HomeView<M: MeshViewModel>: View {
-    @Binding var config: Config
     let settingsAction: () -> Void
     @ObservedObject var mesh: M
     
@@ -77,19 +76,22 @@ struct PeerCell<P: PeerViewModel>: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            HomeView(
-                config: .constant(Config()),
-                settingsAction: {},
-                mesh: MockMesh.forDevelopment
-            )
+            MyNavigationView {
+                HomeView(
+                    settingsAction: {},
+                    mesh: MockMesh.forDevelopment
+                )
+            }
             .previewDevice("iPhone 12 mini")
             .previewLayout(.sizeThatFits)
 
-            HomeView(
-                config: .constant(Config(alwaysDark: true)),
-                settingsAction: {},
-                mesh: MockMesh.forDevelopment
-            )
+            MyNavigationView {
+                HomeView(
+                    settingsAction: {},
+                    mesh: MockMesh.forDevelopment
+                )
+            }
+            .environment(\.forcedColorScheme, .dark)
             .previewDevice("Mac Catalyst")
             .previewLayout(.sizeThatFits)
 
