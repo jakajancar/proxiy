@@ -91,10 +91,8 @@ struct ContentView_Previews: PreviewProvider {
                     mesh: MockMesh.forDevelopment
                 )
             }
-            .environment(\.forcedColorScheme, .dark)
             .previewDevice("Mac Catalyst")
             .previewLayout(.sizeThatFits)
-
         }
     }
 }

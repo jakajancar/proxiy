@@ -47,7 +47,7 @@ struct MainScene: Scene {
                         }
                     }
                 }
-                .environment(\.forcedColorScheme, ColorScheme(appState.config.alwaysDark ? .dark : UITraitCollection.current.userInterfaceStyle)!)
+                .preferredColorScheme(ColorScheme(appState.config.alwaysDark ? .dark : UITraitCollection.current.userInterfaceStyle)!)
                 .withHostingWindow { window in
                     #if targetEnvironment(macCatalyst)
                     if let window = window {

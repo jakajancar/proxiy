@@ -32,7 +32,7 @@ struct SettingsView: View {
             // Dark mode is primarily useful on iOS where we have to remain in the foreground
             #if !targetEnvironment(macCatalyst)
             Toggle(isOn: $config.alwaysDark) {
-                Text("Always Use Dark Mode")
+                Text("Use Dark Mode for Status View")
             }
             #endif
 
