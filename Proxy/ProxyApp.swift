@@ -10,8 +10,8 @@ import Network
 import Combine
 import OSLog
 
+let kAppName = "Proxiy"
 private let logger = Logger(subsystem: "si.jancar.Proxy", category: "app")
-private let isPreview = ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
 
 @main
 struct ProxyApp: App {
@@ -25,6 +25,15 @@ struct ProxyApp: App {
                     settingsPresented: $state.settingsPresented,
                     mesh: mesh
                 )
+                .sheet(isPresented: $state.modalAboutPresented) {
+                    NavigationView {
+                    AboutView(config: state.config)
+                        .navigationBarHidden(true)
+                        .primaryButton("Done") {
+                            state.modalAboutPresented = false
+                        }
+                    }
+                }
             }
         }
         .commands {
@@ -35,11 +44,25 @@ struct ProxyApp: App {
             //     in own window, so we still use a modal, just like on iOS.
             //   - .appSettings group is not shown, even if we replace it here,
             //     so we add to the end of the .appInfo group.
-            CommandGroup(after: .appInfo) {
+            CommandGroup(replacing: .appInfo) {
+                Button("About \(kAppName)") {
+                    // Need to check no modal yet or they will get stuck
+                    if !state.settingsPresented && !state.modalAboutPresented {
+                        state.modalAboutPresented = true
+                    }
+                }
+                
                 Button("Preferences...") {
-                    state.settingsPresented = true
+                    // Need to check no modal yet or they will get stuck
+                    if !state.settingsPresented && !state.modalAboutPresented {
+                        state.settingsPresented = true
+                    }
                 }
                 .keyboardShortcut(KeyEquivalent(","), modifiers: .command)
+            }
+            
+            CommandGroup(replacing: .help) {
+                ContactUsButton(config: state.config)
             }
             #endif
         }
@@ -57,6 +80,8 @@ class ProxyAppState: ObservableObject {
     @Published var config: Config
     @Published var mesh: Mesh?
     @Published var settingsPresented: Bool = false
+    /// About can be pushed from Settings (iOS) or modally globaly (macOS). This models the latter.
+    @Published var modalAboutPresented: Bool = false
     
     init() {
         // Config sync
