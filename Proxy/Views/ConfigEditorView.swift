@@ -90,7 +90,12 @@ struct ConfigEditorView: View {
                         }
                     }
                 }
-
+                
+                NavigationLink(
+                    destination: AboutView(config: config)
+                ) {
+                    Text("About")
+                }
             }
             .navigationTitle("Settings")
             .primaryButton("Done") {

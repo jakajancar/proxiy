@@ -10,6 +10,7 @@
 		212AE41525D0984B00C3813F /* AnyObject+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 212AE41425D0984B00C3813F /* AnyObject+Extensions.swift */; };
 		212AE42C25D0A9D700C3813F /* NWConnection+SOCKS5.swift in Sources */ = {isa = PBXBuildFile; fileRef = 212AE42B25D0A9D700C3813F /* NWConnection+SOCKS5.swift */; };
 		212AE44B25D1EEF400C3813F /* IntField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 212AE44A25D1EEF400C3813F /* IntField.swift */; };
+		2132FB9025E70A3A00196128 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2132FB8F25E70A3A00196128 /* AboutView.swift */; };
 		2137B56A25E5A76800FE04CF /* View+ColorScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2137B56925E5A76800FE04CF /* View+ColorScheme.swift */; };
 		213DEC6625D645DF00C0411D /* BindPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 213DEC6525D645DF00C0411D /* BindPort.swift */; };
 		2154B8A625E23CE900C2DA1D /* View+NavButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2154B8A525E23CE900C2DA1D /* View+NavButtons.swift */; };
@@ -60,6 +61,7 @@
 		212AE41425D0984B00C3813F /* AnyObject+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnyObject+Extensions.swift"; sourceTree = "<group>"; };
 		212AE42B25D0A9D700C3813F /* NWConnection+SOCKS5.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NWConnection+SOCKS5.swift"; sourceTree = "<group>"; };
 		212AE44A25D1EEF400C3813F /* IntField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntField.swift; sourceTree = "<group>"; };
+		2132FB8F25E70A3A00196128 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		2137B56925E5A76800FE04CF /* View+ColorScheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+ColorScheme.swift"; sourceTree = "<group>"; };
 		213DEC6525D645DF00C0411D /* BindPort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BindPort.swift; sourceTree = "<group>"; };
 		2154B8A525E23CE900C2DA1D /* View+NavButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+NavButtons.swift"; sourceTree = "<group>"; };
@@ -216,6 +218,7 @@
 				21A3358125C0BD26007B8C45 /* HomeView.swift */,
 				216B42E725DE0F07009225AA /* ConfigEditorView.swift */,
 				21B1759C25DDEF9E00CEE91A /* ListenerEditorView.swift */,
+				2132FB8F25E70A3A00196128 /* AboutView.swift */,
 				218CE56F25CA091300FBDCB2 /* View+WindowHacks.swift */,
 				2154B8A525E23CE900C2DA1D /* View+NavButtons.swift */,
 				2137B56925E5A76800FE04CF /* View+ColorScheme.swift */,
@@ -374,6 +377,7 @@
 				216B42E825DE0F07009225AA /* ConfigEditorView.swift in Sources */,
 				212AE42C25D0A9D700C3813F /* NWConnection+SOCKS5.swift in Sources */,
 				212AE41525D0984B00C3813F /* AnyObject+Extensions.swift in Sources */,
+				2132FB9025E70A3A00196128 /* AboutView.swift in Sources */,
 				2162AD8D25CE01BD00193520 /* PeerHello.swift in Sources */,
 				218CE57025CA091300FBDCB2 /* View+WindowHacks.swift in Sources */,
 				213DEC6625D645DF00C0411D /* BindPort.swift in Sources */,
