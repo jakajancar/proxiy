@@ -32,7 +32,7 @@ class Mesh {
     private let config: MeshConfig
     private var psk: SymmetricKey
     
-    private let myInstanceID: InstanceID = UUID().uuidString
+    fileprivate let myInstanceID: InstanceID = UUID().uuidString
     private var meshListener: NWListener!
     private var meshBrowser: NWBrowser!
     
@@ -171,6 +171,7 @@ class Mesh {
                 } else {
                     // Create new Peer
                     self.peerMap[instanceID] = Peer(
+                        mesh: self,
                         instanceID: instanceID,
                         endpoint: result.endpoint,
                         advertisement: advertisement
@@ -272,6 +273,7 @@ class Mesh {
 }
 
 class Peer {
+    fileprivate unowned let mesh: Mesh
     fileprivate let instanceID: InstanceID
     fileprivate let endpoint: NWEndpoint
     fileprivate var advertisement: PeerAdvertisement
@@ -279,7 +281,8 @@ class Peer {
     @Published var connectionsTo: Set<ConnectionToPeer> = [] // does not include local part
     @Published var connectionsFrom: Set<ConnectionFromPeer> = [] // does not include internet part
     
-    fileprivate init(instanceID: InstanceID, endpoint: NWEndpoint, advertisement: PeerAdvertisement) {
+    fileprivate init(mesh: Mesh, instanceID: InstanceID, endpoint: NWEndpoint, advertisement: PeerAdvertisement) {
+        self.mesh = mesh
         self.instanceID = instanceID
         self.endpoint = endpoint
         self.advertisement = advertisement
@@ -314,6 +317,10 @@ extension Mesh: MeshViewModel {
 }
 
 extension Peer: PeerViewModel {
+    var isMe: Bool {
+        self.instanceID == self.mesh.myInstanceID
+    }
+    
     var deviceInfo: DeviceInfo {
         self.advertisement.deviceInfo
     }

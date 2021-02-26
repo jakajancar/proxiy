@@ -25,6 +25,7 @@ class MockMesh: MeshViewModel {
 }
 
 class MockPeer: PeerViewModel {
+    var isMe: Bool
     var deviceInfo: DeviceInfo
     var acceptsInbound: Bool
     var connectionsFromCount: Int
@@ -32,12 +33,14 @@ class MockPeer: PeerViewModel {
     var bytesPerSec: Int64
 
     init(
+        isMe: Bool = false,
         deviceInfo: DeviceInfo = DeviceInfo(name: "Unknown device", machine: "Unknown"),
         acceptsInbound: Bool = true,
         inboundConnectionCount: Int = 0,
         outboundConnectionCount: Int = 0,
         bytesPerSec: Int64 = 0
     ) {
+        self.isMe = isMe
         self.deviceInfo = deviceInfo
         self.acceptsInbound = acceptsInbound
         self.connectionsFromCount = inboundConnectionCount
@@ -48,7 +51,8 @@ class MockPeer: PeerViewModel {
     static var various: Set<MockPeer> {
         [
             // This device
-            MockPeer(deviceInfo: DeviceInfo(
+            MockPeer(isMe: true,
+                     deviceInfo: DeviceInfo(
                         name: "Jaka's iPhone",
                         machine: "iPhone13,1"),
                      acceptsInbound: true,

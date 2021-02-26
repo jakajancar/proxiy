@@ -14,6 +14,7 @@ protocol MeshViewModel: ObservableObject {
 }
 
 protocol PeerViewModel: ObservableObject, Hashable, Identifiable {
+    var isMe: Bool { get }
     var deviceInfo: DeviceInfo { get }
     var acceptsInbound: Bool { get }
     var connectionsFromCount: Int { get }
