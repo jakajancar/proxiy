@@ -12,24 +12,43 @@ import OSLog
 private let logger = Logger(subsystem: "si.jancar.Proxy", category: "config")
 
 // TODO: https://github.com/gonzalezreal/DefaultCodable
+// TODO: ensure no clashes with LocationListener
 struct Config: Equatable, Hashable, Codable {
     var psk: String
     var acceptInbound: Bool
     private(set) var listeners: Set<Listener>
     var alwaysDark: Bool
-
+    var locationMode: LocationMode = .off {
+        didSet {
+            if locationMode == .off {
+                backgroundMode = .never
+            }
+        }
+    }
+    var backgroundMode: BackgroundMode = .never {
+        didSet {
+            if backgroundMode != .never && locationMode == .off {
+                locationMode = .lowPower
+            }
+        }
+    }
+    
     // Custom memberwise initialized that also does some validation.
     init(
         psk: String = "ChangeMe1234!",
         acceptInbound: Bool = true,
         listeners: Set<Listener> = [ .socks(.socks, .init()) ],
-        alwaysDark: Bool = false
+        alwaysDark: Bool = false,
+        locationMode: LocationMode = .off,
+        backgroundMode: BackgroundMode = .never
     ) {
         precondition(Self.areBindPortsUnique(listeners: listeners), "Bind port conflict")
         self.psk = psk
         self.acceptInbound = acceptInbound
         self.listeners = listeners
         self.alwaysDark = alwaysDark
+        self.locationMode = locationMode
+        self.backgroundMode = backgroundMode
     }
     
     enum ListenerType: String, Codable {
@@ -104,7 +123,19 @@ struct Config: Equatable, Hashable, Codable {
             NWEndpoint.hostPort(host: .name(host, nil), port: port)
         }
     }
+    
+    enum LocationMode: String, Codable {
+        case off
+        case lowPower
+        case bestAccuracy
+    }
 
+    enum BackgroundMode: String, Codable {
+        case never
+        case whilePeersConnected
+        case always
+    }
+    
     /// Returns `nil` if successful, `BindPort` if a bind port conflict would result.
     mutating func updateListener(old: Config.Listener?, new: Config.Listener?) -> BindPort? {
         if let new = new {

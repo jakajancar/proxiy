@@ -24,6 +24,7 @@
 		2186D32A25DF253600361CFD /* NWEndpoint+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2186D32925DF253600361CFD /* NWEndpoint+Extensions.swift */; };
 		2186D32F25DF677300361CFD /* Result+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2186D32E25DF677300361CFD /* Result+Extensions.swift */; };
 		2186D33725DF6A7A00361CFD /* UserError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2186D33625DF6A7A00361CFD /* UserError.swift */; };
+		21882DFD25E88DBB0093B42C /* LocationListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21882DFC25E88DBB0093B42C /* LocationListener.swift */; };
 		218CE57025CA091300FBDCB2 /* View+WindowHacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 218CE56F25CA091300FBDCB2 /* View+WindowHacks.swift */; };
 		21908CDB25CA2E5800DAF5CB /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21908CDA25CA2E5800DAF5CB /* IOKit.framework */; };
 		21908CE025CB51D900DAF5CB /* NWConnection+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21908CDF25CB51D900DAF5CB /* NWConnection+Extensions.swift */; };
@@ -77,6 +78,7 @@
 		2186D32925DF253600361CFD /* NWEndpoint+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NWEndpoint+Extensions.swift"; sourceTree = "<group>"; };
 		2186D32E25DF677300361CFD /* Result+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+Extensions.swift"; sourceTree = "<group>"; };
 		2186D33625DF6A7A00361CFD /* UserError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserError.swift; sourceTree = "<group>"; };
+		21882DFC25E88DBB0093B42C /* LocationListener.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationListener.swift; sourceTree = "<group>"; };
 		218CE56F25CA091300FBDCB2 /* View+WindowHacks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+WindowHacks.swift"; sourceTree = "<group>"; };
 		21908CDA25CA2E5800DAF5CB /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
 		21908CDF25CB51D900DAF5CB /* NWConnection+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NWConnection+Extensions.swift"; sourceTree = "<group>"; };
@@ -179,6 +181,7 @@
 				215EE3B225CA1BCF00045BFB /* DeviceInfo.swift */,
 				213DEC6525D645DF00C0411D /* BindPort.swift */,
 				21D2EAEF25C7B1AF0059C6B0 /* Config.swift */,
+				21882DFC25E88DBB0093B42C /* LocationListener.swift */,
 				21D2EAF725C7B2AC0059C6B0 /* ViewModelProtocols.swift */,
 				21D2EB0D25C8E0F20059C6B0 /* Views */,
 				21D8F06825C2287B009E4190 /* Model */,
@@ -391,6 +394,7 @@
 				21A335B525C0BE9F007B8C45 /* Mesh.swift in Sources */,
 				21D2EAF025C7B1AF0059C6B0 /* Config.swift in Sources */,
 				212AE44B25D1EEF400C3813F /* IntField.swift in Sources */,
+				21882DFD25E88DBB0093B42C /* LocationListener.swift in Sources */,
 				2154B8A625E23CE900C2DA1D /* View+NavButtons.swift in Sources */,
 				2162AD9525CE052100193520 /* DataConvertible.swift in Sources */,
 				21E88A3325C4CB9000F33D72 /* PeerAdvertisement.swift in Sources */,

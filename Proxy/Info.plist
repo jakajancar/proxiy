@@ -33,6 +33,10 @@
 	</dict>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+	</array>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UINavigationBar</key>
@@ -61,5 +65,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>NSLocationAlwaysAndWhenInUseUsageDescription</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>NSLocationWhenInUseUsageDescription</string>
 </dict>
 </plist>

@@ -62,6 +62,7 @@ struct SettingsView: View {
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
                             }
+                            .padding([.top, .bottom], 7)
                         }
                     }
                     .onDelete(perform: { indexSet in
@@ -72,7 +73,7 @@ struct SettingsView: View {
                     Button(action: {
                         showingAddListener = true
                     }) {
-                        Text("Add Listener...")
+                        Text("Add Proxy Listener...")
                     }
                     .sheet(isPresented: $showingAddListener) {
                         MyNavigationView {
@@ -89,10 +90,50 @@ struct SettingsView: View {
             }
             
             #if !targetEnvironment(macCatalyst)
-            NavigationLink(
-                destination: AboutView(config: config)
+            Section(
+//                header: Text("Location Listener"),
+                footer: Text("Provides an HTTP API to retrieve location data. Can be used locally or by other peers through a proxy listener.")
             ) {
-                Text("About")
+                let bindPort = LocationListener.bindPort
+                
+                Picker(
+                    selection: $config.locationMode,
+                    label: VStack(alignment: .leading) {
+                        Text("\(bindPort.namespace.rawValue) \(String(bindPort.number.rawValue))")
+                        
+                        Text("Location API")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding([.top, .bottom], 7)
+
+                ) {
+                    Text("Off").tag(Config.LocationMode.off)
+                    Text("Low Power").tag(Config.LocationMode.lowPower)
+                    Text("Best Accuracy").tag(Config.LocationMode.bestAccuracy)
+                }
+                
+                Picker(
+                    selection: $config.backgroundMode,
+                    label: Text("Run in Background")
+                ) {
+                    Text("Never").tag(Config.BackgroundMode.never)
+                    Text("If Peers Found").tag(Config.BackgroundMode.whilePeersConnected)
+                    Text("Always").tag(Config.BackgroundMode.always)
+                }
+                .disabled(config.locationMode == .off)
+            }
+
+            #endif
+            
+            #if !targetEnvironment(macCatalyst)
+            Section(header: Text("Other").padding(.top, 20)) {
+                NavigationLink(
+                    destination: AboutView(config: config)
+                ) {
+                    Text("About")
+                }
+                
             }
             #endif
         }
@@ -108,26 +149,6 @@ struct SettingsView: View {
         } else {
             return nil
         }
-    }
-}
-
-struct ConfigEditorView_Previews: PreviewProvider {
-    struct PreviewWrapper: View {
-        @State private var config: Config = Config()
-        var body: some View {
-            SettingsView(
-                nearbyDeviceNames: Set([
-                    "Jaka's iPhone",
-                    "Jaka's MacBook Pro",
-                ]),
-                config: $config
-            )
-            .previewDevice("iPhone 12 mini")
-            .previewLayout(.sizeThatFits)
-        }
-    }
-    static var previews: some View {
-        PreviewWrapper()
     }
 }
 
@@ -148,5 +169,27 @@ private extension Config.Listener {
         case .socks(_, _):
             return "to any destination using SOCKS5"
         }
+    }
+}
+
+struct ConfigEditorView_Previews: PreviewProvider {
+    struct PreviewWrapper: View {
+        @State private var config: Config = Config(locationMode: .lowPower, backgroundMode: .whilePeersConnected)
+        var body: some View {
+            MyNavigationView {
+                SettingsView(
+                    nearbyDeviceNames: Set([
+                        "Jaka's iPhone",
+                        "Jaka's MacBook Pro",
+                    ]),
+                    config: $config
+                )
+            }
+            .previewDevice("iPhone 12 mini")
+            .previewLayout(.sizeThatFits)
+        }
+    }
+    static var previews: some View {
+        PreviewWrapper()
     }
 }
