@@ -33,8 +33,8 @@ class Mesh {
     private var psk: SymmetricKey
     
     private let myInstanceID: InstanceID = UUID().uuidString
-    private let meshListener: NWListener
-    private let meshBrowser: NWBrowser
+    private var meshListener: NWListener!
+    private var meshBrowser: NWBrowser!
     
     /// Peers indexed by instance, so that Bonjour updates can be easily applied and inbound connections easily tracked.
     @Published fileprivate var peerMap: [InstanceID : Peer] = [:]
@@ -43,52 +43,27 @@ class Mesh {
     
     private var unidentifiedConnectionsFromPeer: Set<ConnectionFromPeer> = []
     
-    
     init(deviceInfo: DeviceInfo, config: MeshConfig) {
         logger.log("Initializing")
         self.deviceInfo = deviceInfo
         self.config = config
         self.psk = SymmetricKey(data: SHA256.hash(data: config.psk.data(using: .utf8)!))
         
-        // Init listener
-        do {
-            let tcpOpts = NWProtocolTCP.Options()
+        self.refreshLocalListeners()
+        self.recreateAndStartListener()
+        self.recreateAndStartBrowser()
+    }
+    
+    private func recreateAndStartListener() {
+        let tcpOpts = NWProtocolTCP.Options()
 
-            let params = NWParameters.init(
-                tls: Mesh.kUseTLSBetweenPeers ? Self.tlsOptions(psk: psk) : nil,
-                tcp: tcpOpts)
-            params.includePeerToPeer = true
-                        
-            let listener = try! NWListener(using: params)
-            listener.stateUpdateHandler = { state in
-                switch state {
-                case .failed(_):
-                    break // todo
-                case .cancelled:
-                    break // todo
-                default:
-                    break
-                }
-            }
-            
-            self.meshListener = listener
-        }
+        let params = NWParameters.init(
+            tls: Mesh.kUseTLSBetweenPeers ? Self.tlsOptions(psk: psk) : nil,
+            tcp: tcpOpts)
+        params.includePeerToPeer = true
         
-        // Init browser
-        do {
-            let params = NWParameters.tcp
-            params.includePeerToPeer = true
-
-            let browser = NWBrowser.init(
-                for: .bonjourWithTXTRecord(type: Mesh.kBonjourServiceType, domain: nil),
-                using: params)
-            
-            self.meshBrowser = browser
-        }
-        
-        self.refreshLocalListeners() // TODO: dedup
-        
-        self.meshListener.service = NWListener.Service(
+        let listener = try! NWListener(using: params)
+        listener.service = NWListener.Service(
             name: self.myInstanceID,
             type: Mesh.kBonjourServiceType,
             domain: nil,
@@ -97,10 +72,49 @@ class Mesh {
                 acceptsInbound: config.acceptInbound
             ).toTxtRecord(using: self.psk)
         )
-        self.meshListener.newConnectionHandler = self.handleConnectionFromPeer
-        self.meshListener.start(queue: DispatchQueue.main)
+        listener.stateUpdateHandler = { [weak self] state in
+            switch state {
+            case .failed(let error):
+                logger.log("Listener failed: \(String(describing: error))")
+                self?.recreateAndStartListener()
+            case .cancelled:
+                break // todo
+            default:
+                break
+            }
+        }
+        listener.newConnectionHandler = { [weak self] conn in
+            self?.handleConnectionFromPeer(conn: conn)
+        }
         
-        self.meshBrowser.browseResultsChangedHandler = self.bonjourChanged(results:changes:)
+        self.meshListener = listener
+        self.meshListener.start(queue: DispatchQueue.main)
+    }
+    
+    private func recreateAndStartBrowser() {
+        let params = NWParameters.tcp
+        params.includePeerToPeer = true
+
+        let browser = NWBrowser.init(
+            for: .bonjourWithTXTRecord(type: Mesh.kBonjourServiceType, domain: nil),
+            using: params)
+        
+        browser.stateUpdateHandler = { [weak self] state in
+            switch state {
+            case .failed(let error):
+                logger.log("Browser failed: \(String(describing: error))")
+                self?.recreateAndStartBrowser()
+            case .cancelled:
+                break // todo
+            default:
+                break
+            }
+        }
+        browser.browseResultsChangedHandler = { [weak self] (results, changes) in
+            self?.bonjourChanged(results: results, changes: changes)
+        }
+        
+        self.meshBrowser = browser
         self.meshBrowser.start(queue: DispatchQueue.main)
     }
     
@@ -121,14 +135,10 @@ class Mesh {
     func forceCancel() {
         logger.log("Shutting down")
         self.meshListener.cancel()
-        self.meshListener.newConnectionHandler = nil
-        
         self.meshBrowser.cancel()
-        self.meshBrowser.browseResultsChangedHandler = nil
         
         for localListener in self.localListeners.values {
             localListener.cancel()
-            localListener.newConnectionHandler = nil
         }
         
         for peer in self.peerMap.values {
@@ -208,7 +218,7 @@ class Mesh {
 //            listener.stateUpdateHandler = { state in
 ////                    print("local listener state = \(state)")
 //            }
-//            listener.newConnectionHandler = { conn in
+//            listener.newConnectionHandler = { [weak self] conn in
 //                if let targetPeer = self.selectPeer(localPort: port) {
 //                    let connToPeer = ConnectionToPeer(
 //                        local: conn,
