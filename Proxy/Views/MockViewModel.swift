@@ -16,15 +16,7 @@ class MockMesh: MeshViewModel {
     init(status: MeshStatus = .connected, peers: Set<MockPeer> = []) {
         self.status = status
         self.peers = peers
-    }
-    
-    static var forDevelopment: MockMesh {
-        MockMesh(peers: MockPeer.various)
-    }
-    
-    static var forMarketing: MockMesh {
-        forDevelopment
-    }
+    }    
 }
 
 class MockPeer: PeerViewModel {

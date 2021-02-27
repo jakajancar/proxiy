@@ -94,7 +94,10 @@ struct ContentView_Previews: PreviewProvider {
             MyNavigationView {
                 PeersView(
                     settingsAction: {},
-                    mesh: MockMesh.forDevelopment
+                    mesh: MockMesh(
+                        status: .connecting,
+                        peers: Set()
+                    )
                 )
             }
             .previewDevice("iPhone 12 mini")
@@ -103,7 +106,35 @@ struct ContentView_Previews: PreviewProvider {
             MyNavigationView {
                 PeersView(
                     settingsAction: {},
-                    mesh: MockMesh.forDevelopment
+                    mesh: MockMesh(
+                        status: .connected,
+                        peers: MockPeer.various.filter({ p in p.isMe })
+                    )
+                )
+            }
+            .previewDevice("iPhone 12 mini")
+            .previewLayout(.sizeThatFits)
+
+            MyNavigationView {
+                PeersView(
+                    settingsAction: {},
+                    mesh: MockMesh(
+                        status: .connected,
+                        peers: MockPeer.various
+                    )
+                )
+            }
+            .previewDevice("iPhone 12 mini")
+            .previewLayout(.sizeThatFits)
+
+            
+            MyNavigationView {
+                PeersView(
+                    settingsAction: {},
+                    mesh: MockMesh(
+                        status: .connected,
+                        peers: MockPeer.various
+                    )
                 )
             }
             .previewDevice("Mac Catalyst")
