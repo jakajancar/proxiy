@@ -24,6 +24,7 @@ struct AboutView: View {
                         Image("Icon")
                             .resizable()
                             .frame(width: 128, height: 128, alignment: .center)
+                            .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
                         
                         Spacer().frame(height: 18)
 
