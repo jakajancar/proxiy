@@ -8,8 +8,14 @@
 import Foundation
 import Network
 
+enum MeshStatus {
+    case connecting
+    case connected
+}
+
 protocol MeshViewModel: ObservableObject {
     associatedtype Peer: PeerViewModel
+    var status: MeshStatus { get }
     var peers: Set<Peer> { get }
 }
 

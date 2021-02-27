@@ -311,8 +311,13 @@ extension NWConnection: Equatable, Hashable {
 // MARK: ViewModel implementations
 
 extension Mesh: MeshViewModel {
+    var status: MeshStatus {
+        self.peerMap[self.myInstanceID] != nil ? .connected : .connecting
+    }
+    
     var peers: Set<Peer> {
-        Set(peerMap.values)
+        // hide others until we see ourselves
+        status == .connected ? Set(peerMap.values) : Set()
     }
 }
 

@@ -10,8 +10,11 @@ import Foundation
 class MockMesh: MeshViewModel {
     typealias Peer = MockPeer
     
+    var status: MeshStatus
     var peers: Set<MockPeer>
-    init(peers: Set<MockPeer> = []) {
+    
+    init(status: MeshStatus = .connected, peers: Set<MockPeer> = []) {
+        self.status = status
         self.peers = peers
     }
     

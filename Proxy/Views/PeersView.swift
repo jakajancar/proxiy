@@ -19,6 +19,21 @@ struct PeersView<M: MeshViewModel>: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(content: {
             ToolbarItemGroup(placement: .bottomBar) {
+                let status: String = {
+                    switch mesh.status {
+                    case .connecting:
+                        return "Connecting..."
+                    case .connected:
+                        return "Connected"
+                    }
+                }()
+                
+                Spacer()
+
+                Text(status)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                
                 Spacer()
                 
                 #if !targetEnvironment(macCatalyst)
