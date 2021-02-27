@@ -33,8 +33,8 @@ class Mesh {
     private var psk: SymmetricKey
     
     fileprivate let myInstanceID: InstanceID = UUID().uuidString
-    private var meshListener: NWListener!
-    private var meshBrowser: NWBrowser!
+    fileprivate var meshListener: NWListener!
+    fileprivate var meshBrowser: NWBrowser!
     
     /// Peers indexed by instance, so that Bonjour updates can be easily applied and inbound connections easily tracked.
     @Published fileprivate var peerMap: [InstanceID : Peer] = [:]
@@ -312,7 +312,9 @@ extension NWConnection: Equatable, Hashable {
 
 extension Mesh: MeshViewModel {
     var status: MeshStatus {
-        self.peerMap[self.myInstanceID] != nil ? .connected : .connecting
+        self.meshListener.state == .ready &&
+            self.meshBrowser.state == .ready &&
+            self.peerMap[self.myInstanceID] != nil ? .connected : .connecting
     }
     
     var peers: Set<Peer> {
