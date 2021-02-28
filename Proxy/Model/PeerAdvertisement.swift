@@ -22,6 +22,14 @@ struct PeerAdvertisement: Codable {
 
 /// TXT serialization.
 extension PeerAdvertisement {
+    func toTxtRecord(using key: SymmetricKey) -> NWTXTRecord {
+        let jsonData = try! JSONEncoder().encode(self)
+        let box = try! ChaChaPoly.seal(jsonData, using: key)
+        let boxCombined = box.combined
+        let base64 = boxCombined.base64EncodedString()
+        return NWTXTRecord.init(["peerinfo": base64])
+    }
+    
     static func fromTxtRecord(_ txtRecord: NWTXTRecord, using key: SymmetricKey) -> Self? {
         guard let base64 = txtRecord["peerinfo"] else {
             logger.log("malformed TXT")
@@ -41,13 +49,5 @@ extension PeerAdvertisement {
         }
         // Correct version (not yet checked for v1) and correct key, should be OK from here
         return try! JSONDecoder().decode(PeerAdvertisement.self, from: jsonData)
-    }
-    
-    func toTxtRecord(using key: SymmetricKey) -> NWTXTRecord {
-        let jsonData = try! JSONEncoder().encode(self)
-        let box = try! ChaChaPoly.seal(jsonData, using: key)
-        let boxCombined = box.combined
-        let base64 = boxCombined.base64EncodedString()
-        return NWTXTRecord.init(["peerinfo": base64])
     }
 }
