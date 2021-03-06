@@ -307,15 +307,35 @@ class Peer {
 
 extension Mesh: MeshViewModel {
     var status: MeshStatus {
-        self.localListeners.allSatisfy({ $0.state == .ready }) &&
+        var errors = [String]()
+        
+        for listener in self.localListeners {
+            if case .failed(let error) = listener.state {
+                // TODO: have map by config
+                errors.append("Local listener failed: \(error)")
+            }
+        }
+        
+        if errors.count > 0 {
+            return .errors(errors)
+        } else if self.localListeners.allSatisfy({ $0.state == .ready }) &&
             self.meshListener.state == .ready &&
             self.meshBrowser.state == .ready &&
-            self.peerMap[self.myInstanceID] != nil ? .connected : .connecting
+            self.peerMap[self.myInstanceID] != nil
+        {
+            return .connected
+        } else {
+            return .connecting
+        }
     }
     
     var peers: Set<Peer> {
-        // hide others until we see ourselves
-        status == .connected ? Set(peerMap.values) : Set()
+        // hide peers until connected
+        if case .connected = status {
+            return Set(peerMap.values)
+        } else {
+            return Set()
+        }
     }
 }
 

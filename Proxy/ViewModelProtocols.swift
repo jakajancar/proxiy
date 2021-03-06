@@ -11,6 +11,7 @@ import Network
 enum MeshStatus {
     case connecting
     case connected
+    case errors([String])
 }
 
 protocol MeshViewModel: ObservableObject {

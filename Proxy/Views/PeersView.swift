@@ -12,8 +12,19 @@ struct PeersView<M: MeshViewModel>: View {
     @ObservedObject var mesh: M
     
     var body: some View {
-        List(sortedPeers) { peer in
-            PeerCell(peer: peer)
+        ZStack {
+            List(sortedPeers) { peer in
+                PeerCell(peer: peer)
+            }
+            
+            if case .errors(let errors) = mesh.status {
+                VStack {
+                    Text(errors.joined(separator: "\n\n"))
+                        .font(.system(.body, design: .monospaced))
+                        .padding()
+                    Spacer()
+                }
+            }
         }
         .navigationTitle("Peers")
         .navigationBarTitleDisplayMode(.inline)
@@ -25,6 +36,8 @@ struct PeersView<M: MeshViewModel>: View {
                         return "Connecting..."
                     case .connected:
                         return "Connected"
+                    case .errors(_):
+                        return "Error"
                     }
                 }()
                 
@@ -126,7 +139,21 @@ struct ContentView_Previews: PreviewProvider {
             }
             .previewDevice("iPhone 12 mini")
             .previewLayout(.sizeThatFits)
-
+            
+            MyNavigationView {
+                PeersView(
+                    settingsAction: {},
+                    mesh: MockMesh(
+                        status: .errors([
+                            "Local listener TCP 1080 failed: POSIXErrorCode: Address already in use",
+                            "Error 2"
+                        ]),
+                        peers: []
+                    )
+                )
+            }
+            .previewDevice("iPhone 12 mini")
+            .previewLayout(.sizeThatFits)
             
             MyNavigationView {
                 PeersView(
