@@ -8,13 +8,13 @@
 import Foundation
 import Network
 
-enum SOCKS5Error {
+enum SOCKS5Error: Error {
     case network(NWError)
     case proto(String)
 }
 
 enum SOCKS5Request {
-    case connect(NWEndpoint)
+    case connect(NWEndpoint.Host, NWEndpoint.Port)
 //    case udpAssociate(NWEndpoint)
 }
 
@@ -24,114 +24,179 @@ enum SOCKS5Request {
 
 /// Speaking the SOCKS5 protocol for `NWConnection`.
 extension NWConnection {
+    func negotiateNoAuthAndReceiveSocksRequest(completion: @escaping (Result<SOCKS5Request, SOCKS5Error>) -> Void) {
+        self.negotiateNoSocksAuth { result in
+            if case .failure(let error) = result {
+                return completion(.failure(error))
+            }
+            
+            self.receiveSocksRequest(completion: completion)
+        }
+    }
+    
     /// Receive supported auth methods and pick no auth.
-    func negotiateNoSocksAuth(completion: @escaping (SOCKS5Error?) -> Void) {
-        self.receive(length: 1) { (data, error) in
-            guard let data = data else { return completion(.network(error!)) }
+    func negotiateNoSocksAuth(completion: @escaping (Result<Void, SOCKS5Error>) -> Void) {
+        self.receive(length: 1) { result in
+            let data: Data
+            switch result {
+            case .success(let d): data = d
+            case .failure(let error): return completion(.failure(.network(error)))
+            }
             
             let version = data[0]
             if version != 5 {
-                return completion(.proto("invalid socks version: \(version)"))
+                return completion(.failure(.proto("invalid socks version: \(version)")))
             }
             
             // Receive auth methods supported by client
-            self.receive(length: 1) { (data, error) in
-                guard let data = data else { return completion(.network(error!)) }
+            self.receive(length: 1) { result in
+                let data: Data
+                switch result {
+                case .success(let d): data = d
+                case .failure(let error): return completion(.failure(.network(error)))
+                }
 
                 let numMethods = Int(data[0])
-                self.receive(length: numMethods) { (data, error) in
-                    guard let data = data else { return completion(.network(error!)) }
+                self.receive(length: numMethods) { result in
+                    let data: Data
+                    switch result {
+                    case .success(let d): data = d
+                    case .failure(let error): return completion(.failure(.network(error)))
+                    }
 
                     // Choose 0 if possible
                     let methods = data
                     if !methods.contains(0x00) {
-                        return completion(.proto("client does not support authless"))
+                        return completion(.failure(.proto("client does not support authless")))
                     }
                     
                     self.send(content: Data([0x05, 0x00]), completion: .contentProcessed({ error in
-                        guard error == nil else { return completion(.network(error!)) }
+                        if let error = error {
+                            return completion(.failure(.network(error)))
+                        }
                         
-                        completion(nil)
+                        completion(.success(()))
                     }))
                 }
             }
         }
     }
     
-    func receiveSocksRequest(completion: @escaping (SOCKS5Request?, SOCKS5Error?) -> Void) {
-        self.receive(length: 3) { (data, error) in
-            guard let data = data else { return completion(nil, .network(error!)) }
-            
+    func receiveSocksRequest(completion: @escaping (Result<SOCKS5Request, SOCKS5Error>) -> Void) {
+        self.receive(length: 3) { result in
+            let data: Data
+            switch result {
+            case .success(let d): data = d
+            case .failure(let error): return completion(.failure(.network(error)))
+            }
+
             let version = data[0]
             let cmd = data[1]
             if version != 5 {
-                return completion(nil, .proto("invalid socks version: \(version)"))
+                return completion(.failure(.proto("invalid socks version: \(version)")))
             }
             if cmd != 0x01 {
-                return completion(nil, .proto("invalid cmd: \(cmd)"))
+                return completion(.failure(.proto("invalid cmd: \(cmd)")))
             }
 
-            self.receiveSocksRequestHost { (host, error) in
-                guard let host = host else { return completion(nil, error!) }
-                self.receiveSocksRequestPort { (port, error) in
-                    guard let port = port else { return completion(nil, error!) }
-                    let endpoint = NWEndpoint.hostPort(host: host, port: port)
-                    completion(.connect(endpoint), nil)
+            self.receiveSocksRequestHost { result in
+                let host: NWEndpoint.Host
+                switch result {
+                case .success(let h): host = h
+                case .failure(let error): return completion(.failure(error))
+                }
+
+                self.receiveSocksRequestPort { result in
+                    let port: NWEndpoint.Port
+                    switch result {
+                    case .success(let p): port = p
+                    case .failure(let error): return completion(.failure(error))
+                    }
+                    
+                    completion(.success(.connect(host, port)))
                 }
             }
         }
     }
     
-    private func receiveSocksRequestHost(completion: @escaping (NWEndpoint.Host?, SOCKS5Error?) -> Void) {
-        self.receive(length: 1) { (data, error) in
-            guard let data = data else { return completion(nil, .network(error!)) }
+    private func receiveSocksRequestHost(completion: @escaping (Result<NWEndpoint.Host, SOCKS5Error>) -> Void) {
+        self.receive(length: 1) { result in
+            let data: Data
+            switch result {
+            case .success(let d): data = d
+            case .failure(let error): return completion(.failure(.network(error)))
+            }
 
             let atyp = data[0]
             switch atyp {
             case 0x01:
                 // ipv4
-                self.receive(length: 4) { (data, error) in
-                    guard let data = data else { return completion(nil, .network(error!)) }
+                self.receive(length: 4) { result in
+                    let data: Data
+                    switch result {
+                    case .success(let d): data = d
+                    case .failure(let error): return completion(.failure(.network(error)))
+                    }
 
-                    completion(NWEndpoint.Host.ipv4(IPv4Address(data)!), nil)
+                    let host = NWEndpoint.Host.ipv4(IPv4Address(data)!)
+                    completion(.success(host))
                 }
             case 0x03:
                 // domain
-                self.receive(length: 1) { (data, error) in
-                    guard let data = data else { return completion(nil, .network(error!)) }
-                    
+                self.receive(length: 1) { result in
+                    let data: Data
+                    switch result {
+                    case .success(let d): data = d
+                    case .failure(let error): return completion(.failure(.network(error)))
+                    }
+
                     let len = Int(data[0])
                     
-                    self.receive(minimumIncompleteLength: len, maximumLength: len) { (data, ctx, isComplete, error) in
-                        guard let data = data else { return completion(nil, .network(error!)) }
-                        completion(NWEndpoint.Host.name(String(data: data, encoding: .utf8)!, nil), nil)
+                    self.receive(length: len) { result in
+                        let data: Data
+                        switch result {
+                        case .success(let d): data = d
+                        case .failure(let error): return completion(.failure(.network(error)))
+                        }
+                        
+                        let host = NWEndpoint.Host.name(String(data: data, encoding: .utf8)!, nil)
+                        completion(.success(host))
                     }
                 }
 
             case 0x04:
                 // ipv6
-                self.receive(length: 16) { (data, error) in
-                    guard let data = data else { return completion(nil, .network(error!)) }
-                    
-                    completion(NWEndpoint.Host.ipv6(IPv6Address(data, nil)!), nil)
+                self.receive(length: 16) { result in
+                    let data: Data
+                    switch result {
+                    case .success(let d): data = d
+                    case .failure(let error): return completion(.failure(.network(error)))
+                    }
+
+                    let host = NWEndpoint.Host.ipv6(IPv6Address(data, nil)!)
+                    completion(.success(host))
                 }
             default:
-                return completion(nil, .proto("invalid atyp: \(atyp)"))
+                return completion(.failure(.proto("invalid atyp: \(atyp)")))
             }
         }
 
     }
     
-    private func receiveSocksRequestPort(completion: @escaping (NWEndpoint.Port?, SOCKS5Error?) -> Void) {
-        self.receive(length: 2) { (data, error) in
-            guard let data = data else { return completion(nil, .network(error!)) }
+    private func receiveSocksRequestPort(completion: @escaping (Result<NWEndpoint.Port, SOCKS5Error>) -> Void) {
+        self.receive(length: 2) { result in
+            let data: Data
+            switch result {
+            case .success(let d): data = d
+            case .failure(let error): return completion(.failure(.network(error)))
+            }
 
             let port = UInt16(bigEndian: UInt16(data: data)!)
-            completion(NWEndpoint.Port(rawValue: port)!, nil)
+            completion(.success(NWEndpoint.Port(rawValue: port)!))
         }
     }
     
-    func sendSocksReply(code: UInt8, completion: @escaping (SOCKS5Error?) -> Void) {
+    private func sendSocksReply(code: UInt8, completion: @escaping (Result<Void, NWError>) -> Void) {
 //        print("\(self) sending socks reply \(code)")
         let bytes = [
             0x05, // ver
@@ -144,16 +209,24 @@ extension NWConnection {
         let ctx: NWConnection.ContentContext = code == 0 ? .defaultMessage : .finalMessage
         self.send(content: Data(bytes), contentContext: ctx, completion: .contentProcessed({ error in
 //            print("\(self) socks reply send returned with err \(error)")
-            guard error == nil else { return completion(.network(error!)) }
+            if let error = error {
+                return completion(.failure(error))
+            }
 
-            completion(nil)
-            
-            // TODO: explicitly cancel here for TLS?
+            completion(.success(()))
         }))
+    }
+    
+    func sendSocksErrorReplyAndClose(codeForError error: NWError, completion: @escaping (Result<Void, NWError>) -> Void) {
+        sendSocksReply(code: socks5ReplyCode(for: error), completion: completion)
+    }
+    
+    func sendSocksSuccessReply(completion: @escaping (Result<Void, NWError>) -> Void) {
+        sendSocksReply(code: 0, completion: completion)
     }
 }
 
-func socks5ReplyCode(for error: NWError) -> UInt8 {
+private func socks5ReplyCode(for error: NWError) -> UInt8 {
     switch error {
     case .posix(let posixCode):
         switch posixCode {

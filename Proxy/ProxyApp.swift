@@ -42,7 +42,9 @@ class ProxyAppState: ObservableObject {
             .sink { config in try! config.persistToDefaultFile() }
             .store(in: &cancellables)
         
-        if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] != "1" {
+        if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] != "1" &&
+            ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil
+        {
             // Mesh updating based on meshConfig
             $config
                 .map { config in config.meshConfig }
@@ -50,6 +52,7 @@ class ProxyAppState: ObservableObject {
                 .sink { meshConfig in
                     logger.info("Recreating mesh")
                     self.mesh?.forceCancel()
+                    self.mesh = nil // should deinit immediately?
                     self.mesh = Mesh(deviceInfo: DeviceInfo.current, config: meshConfig)
                 }
                 .store(in: &cancellables)
@@ -70,6 +73,7 @@ class ProxyAppState: ObservableObject {
                 let locationMode = $config.map { config in config.locationMode }.removeDuplicates()
                 let backgroundMode = $config.map { config in config.backgroundMode }.removeDuplicates()
                 let havePeers = $mesh
+                    .filter({ $0 != nil })
                     .flatMap { mesh in mesh!.objectWillChange }
                     .receive(on: DispatchQueue.main) // wait until it has changed
                     .map { Void in self.mesh!.peers.contains(where: { peer in !peer.isMe }) }

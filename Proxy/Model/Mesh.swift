@@ -9,6 +9,7 @@ import Foundation
 import Network
 import CryptoKit
 import OSLog
+import Combine
 
 typealias InstanceID = String
 
@@ -25,41 +26,38 @@ struct MeshConfig: Equatable {
 
 class Mesh {
     private static let kBonjourServiceType: String = (Bundle.main.infoDictionary!["NSBonjourServices"] as! [String])[0]
-    // BUG: https://developer.apple.com/forums/thread/673143
-    private static let kUseTLSBetweenPeers: Bool = false
     
     private let deviceInfo: DeviceInfo
     private let config: MeshConfig
     private var psk: SymmetricKey
     
     fileprivate let myInstanceID: InstanceID = UUID().uuidString
+    fileprivate var localListeners: [NWListener]!
     fileprivate var meshListener: NWListener!
     fileprivate var meshBrowser: NWBrowser!
     
     /// Peers indexed by instance, so that Bonjour updates can be easily applied and inbound connections easily tracked.
     @Published fileprivate var peerMap: [InstanceID : Peer] = [:]
+
+    /// Local connections that have not yet chosen a peer to connect to
+    private var unassociatedLocalConnections = ConnectionSet<ConnectionForPeer>()
     
-    private var localListeners: [NWEndpoint.Port : NWListener] = [:]
-    
-    private var unidentifiedConnectionsFromPeer: Set<ConnectionFromPeer> = []
-    
+    /// Connections from peers before the TLS handshake has been performed and `PeerRequest` (containing the peer's `InstanceID`) has been received.
+    private var unidentifiedConnectionsFromPeer = ConnectionSet<ConnectionFromPeer>()
+
     init(deviceInfo: DeviceInfo, config: MeshConfig) {
         logger.log("Initializing")
         self.deviceInfo = deviceInfo
         self.config = config
         self.psk = SymmetricKey(data: SHA256.hash(data: config.psk.data(using: .utf8)!))
         
-        self.refreshLocalListeners()
-        self.recreateAndStartListener()
-        self.recreateAndStartBrowser()
+        self.initLocalListeners()
+        self.recreateAndStartMeshListener()
+        self.recreateAndStartMeshBrowser()
     }
     
-    private func recreateAndStartListener() {
-        let tcpOpts = NWProtocolTCP.Options()
-
-        let params = NWParameters.init(
-            tls: Mesh.kUseTLSBetweenPeers ? Self.tlsOptions(psk: psk) : nil,
-            tcp: tcpOpts)
+    private func recreateAndStartMeshListener() {
+        let params = self.meshParameters()
         params.includePeerToPeer = true
         
         let listener = try! NWListener(using: params)
@@ -75,8 +73,9 @@ class Mesh {
         listener.stateUpdateHandler = { [weak self] state in
             switch state {
             case .failed(let error):
+                // This is expected after suspension (-65569: DefunctConnection)
                 logger.log("Listener failed: \(String(describing: error))")
-                self?.recreateAndStartListener()
+                self?.recreateAndStartMeshListener()
             case .cancelled:
                 break // todo
             default:
@@ -91,7 +90,7 @@ class Mesh {
         self.meshListener.start(queue: DispatchQueue.main)
     }
     
-    private func recreateAndStartBrowser() {
+    private func recreateAndStartMeshBrowser() {
         let params = NWParameters.tcp
         params.includePeerToPeer = true
 
@@ -102,8 +101,9 @@ class Mesh {
         browser.stateUpdateHandler = { [weak self] state in
             switch state {
             case .failed(let error):
+                // This is expected after suspension (-65569: DefunctConnection)
                 logger.log("Browser failed: \(String(describing: error))")
-                self?.recreateAndStartBrowser()
+                self?.recreateAndStartMeshBrowser()
             case .cancelled:
                 break // todo
             default:
@@ -111,35 +111,48 @@ class Mesh {
             }
         }
         browser.browseResultsChangedHandler = { [weak self] (results, changes) in
-            self?.bonjourChanged(results: results, changes: changes)
+            self?.refreshPeers()
         }
         
         self.meshBrowser = browser
         self.meshBrowser.start(queue: DispatchQueue.main)
     }
     
-    private static func tlsOptions(psk: SymmetricKey) -> NWProtocolTLS.Options {
+    /// Parameters for `meshListener` and connections to it.
+    private func meshParameters() -> NWParameters {
+        // WebSocket
+        let wsOpts = NWProtocolWebSocket.Options()
+        wsOpts.skipHandshake = true
+        wsOpts.autoReplyPing = true // not really used atm
+
+        // TLS
         let tlsOpts = NWProtocolTLS.Options()
         let secOpts = tlsOpts.securityProtocolOptions
-        
-        let pskData = psk.withUnsafeBytes { DispatchData(bytes: $0) }
-        let pskIdentityData = "proxy".data(using: .utf8)!.withUnsafeBytes { DispatchData(bytes: $0) }
+        let pskData = self.psk.withUnsafeBytes { DispatchData(bytes: $0) }
+        let pskIdentityData = "proxiy".data(using: .utf8)!.withUnsafeBytes { DispatchData(bytes: $0) }
         sec_protocol_options_add_pre_shared_key(
             secOpts,
             pskData as __DispatchData,
             pskIdentityData as __DispatchData)
         
-        return tlsOpts
+        // TCP
+        let tcpOpts = NWProtocolTCP.Options()
+        tcpOpts.noDelay = true
+        
+        let params = NWParameters(tls: tlsOpts, tcp: tcpOpts)
+        params.defaultProtocolStack.applicationProtocols.insert(wsOpts, at: 0)
+        
+        return params
     }
     
     func forceCancel() {
-        logger.log("Shutting down")
-        self.meshListener.cancel()
-        self.meshBrowser.cancel()
-        
-        for localListener in self.localListeners.values {
+        logger.log("Cancelling")
+        for localListener in self.localListeners {
             localListener.cancel()
         }
+
+        self.meshListener.cancel()
+        self.meshBrowser.cancel()
         
         for peer in self.peerMap.values {
             peer.forceCancel()
@@ -148,10 +161,6 @@ class Mesh {
 
     deinit {
         logger.log("De-initializing")
-    }
-    
-    private func bonjourChanged(results: Set<NWBrowser.Result>, changes: Set<NWBrowser.Result.Change>) {
-        refreshPeers()
     }
     
     private func refreshPeers() {
@@ -193,79 +202,66 @@ class Mesh {
         }
         return matching.randomElement()
     }
+
+    private func initLocalListeners() {
+        self.localListeners = self.config.listeners.map { listenerConfig in
+            // Create local listener
+            let listenerParams: NWParameters
+            switch listenerConfig.bindPort.namespace {
+            case .tcp:
+                listenerParams = NWParameters.tcp
+            case .udp:
+                listenerParams = NWParameters.udp
+            }
+            listenerParams.requiredInterfaceType = .loopback
+            listenerParams.allowLocalEndpointReuse = true // TIME_WAIT doesn't seem to be applied, but just in case
+
+            let listener = try! NWListener(using: listenerParams, on: listenerConfig.bindPort.number)
+            listener.stateUpdateHandler = { state in
+                // TODO: error handling
+            }
+
+            listener.newConnectionHandler = { [weak self] conn in
+                self?.handleLocalConnection(listenerConfig: listenerConfig, conn: conn)
+            }
+
+            listener.start(queue: DispatchQueue.main)
+            return listener
+        }
+    }
     
-    private func refreshLocalListeners() {
-//        // Compute diff
-//        let needed = Set(self.peers.map({ $0.advertisement.port }))
-//        let existing = Set(self.localListeners.keys)
-//        let toRemove = existing.subtracting(needed)
-//        let toAdd = needed.subtracting(existing)
-//
-//        // Remove obsolete listeners
-//        for port in toRemove {
-//            logger.log("Removing listener on \(port.debugDescription)")
-//            self.localListeners[port]!.cancel()
-//            self.localListeners.removeValue(forKey: port)
-//        }
-//
-//        // Add missing listeners
-//        for port in toAdd {
-//            logger.log("Adding listener on \(port.debugDescription)")
-//            let listenerParams = NWParameters.tcp
-//            listenerParams.requiredInterfaceType = .loopback
-//            listenerParams.allowLocalEndpointReuse = true // TIME_WAIT doesn't seem to be applied, but just in case
-//
-//            let listener = try! NWListener(using: listenerParams, on: port)
-//            listener.stateUpdateHandler = { state in
-////                    print("local listener state = \(state)")
-//            }
-//            listener.newConnectionHandler = { [weak self] conn in
-//                if let targetPeer = self.selectPeer(localPort: port) {
-//                    let connToPeer = ConnectionToPeer(
-//                        local: conn,
-//                        peerEndpoint: targetPeer.endpoint,
-//                        tlsOptions: Mesh.kUseTLSBetweenPeers ? Self.tlsOptions(psk: self.psk) : nil,
-//                        myInstanceID: self.myInstanceID
-//                    )
-//                    targetPeer.connectionsTo.insert(connToPeer)
-//                    connToPeer.completedHandler = { [weak targetPeer, weak connToPeer] in
-//                        targetPeer?.connectionsTo.remove(connToPeer!)
-//                    }
-//                    connToPeer.start(queue: DispatchQueue.main)
-//                } else {
-//                    logger.log("no matching peer for connection to listener")
-//                    conn.cancel()
-//                }
-//            }
-//
-//            self.localListeners[port] = listener
-//            listener.start(queue: DispatchQueue.main)
-//        }
+    private func handleLocalConnection(listenerConfig: Config.Listener, conn: NWConnection) {
+        let localConn = ConnectionForPeer(myInstanceID: self.myInstanceID, listenerConfig: listenerConfig, local: conn)
+        self.unassociatedLocalConnections.insert(localConn)
+        localConn.connectPeer = { [weak self, unowned localConn] via in
+            if let self = self, let peer = self.selectPeer(via: via) {
+                self.unassociatedLocalConnections.remove(localConn)
+                peer.connectionsTo.insert(localConn)
+
+                return NWConnection(to: peer.endpoint, using: self.meshParameters())
+            } else {
+                return nil // no matching peer or mesh shut down
+            }
+        }
+        localConn.start(queue: DispatchQueue.main)
     }
 
     private func handleConnectionFromPeer(conn: NWConnection) {
+        if !self.config.acceptInbound {
+            conn.cancel()
+            return
+        }
+        
         let connFromPeer = ConnectionFromPeer(conn)
         self.unidentifiedConnectionsFromPeer.insert(connFromPeer)
-        connFromPeer.identifiedHandler = { [weak self, weak connFromPeer] in
-            let connFromPeer = connFromPeer!
-            if let self = self {
-                // Remove from unidentified
+        connFromPeer.identifiedHandler = { [weak self, unowned connFromPeer] peerInstanceID in
+            if let self = self, let peer = self.peerMap[peerInstanceID] {
                 self.unidentifiedConnectionsFromPeer.remove(connFromPeer)
-                
-                // Add to peer
-                if let peer = self.peerMap[connFromPeer.peerInstanceID!] {
-                    peer.connectionsFrom.insert(connFromPeer)
-                } else {
-                    logger.log("got request from peer not in peerMap")
-                    connFromPeer.forceCancel()
-                    return
-                }
-            }
-        }
-        connFromPeer.completedHandler = { [weak self, weak connFromPeer] in
-            let connFromPeer = connFromPeer!
-            if let self = self, let instanceID = connFromPeer.peerInstanceID, let peer = self.peerMap[instanceID] {
-                peer.connectionsFrom.remove(connFromPeer)
+                peer.connectionsFrom.insert(connFromPeer)
+                return true
+            } else {
+                logger.warning("got request from unknown peer or mesh shut down")
+                return false
             }
         }
         connFromPeer.start(queue: DispatchQueue.main)
@@ -278,14 +274,23 @@ class Peer {
     fileprivate let endpoint: NWEndpoint
     fileprivate var advertisement: PeerAdvertisement
     
-    @Published var connectionsTo: Set<ConnectionToPeer> = [] // does not include local part
-    @Published var connectionsFrom: Set<ConnectionFromPeer> = [] // does not include internet part
+    fileprivate var connectionsTo = ConnectionSet<ConnectionForPeer>()
+    fileprivate var connectionsFrom = ConnectionSet<ConnectionFromPeer>()
+    
+    private var cancellables: Set<AnyCancellable> = []
     
     fileprivate init(mesh: Mesh, instanceID: InstanceID, endpoint: NWEndpoint, advertisement: PeerAdvertisement) {
         self.mesh = mesh
         self.instanceID = instanceID
         self.endpoint = endpoint
         self.advertisement = advertisement
+        
+        self.connectionsTo.objectWillChange
+            .sink { _ in self.objectWillChange.send() }
+            .store(in: &self.cancellables)
+        self.connectionsFrom.objectWillChange
+            .sink { _ in self.objectWillChange.send() }
+            .store(in: &self.cancellables)
     }
     
     fileprivate func forceCancel() {
@@ -298,21 +303,12 @@ class Peer {
     }
 }
 
-extension NWConnection: Equatable, Hashable {
-    public static func == (lhs: NWConnection, rhs: NWConnection) -> Bool {
-        lhs === rhs
-    }
-
-    public func hash(into hasher: inout Hasher) {
-        ObjectIdentifier(self).hash(into: &hasher)
-    }
-}
-
 // MARK: ViewModel implementations
 
 extension Mesh: MeshViewModel {
     var status: MeshStatus {
-        self.meshListener.state == .ready &&
+        self.localListeners.allSatisfy({ $0.state == .ready }) &&
+            self.meshListener.state == .ready &&
             self.meshBrowser.state == .ready &&
             self.peerMap[self.myInstanceID] != nil ? .connected : .connecting
     }

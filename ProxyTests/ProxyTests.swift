@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import Proxy
+@testable import Proxiy
 
 class ProxyTests: XCTestCase {
 

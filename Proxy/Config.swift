@@ -118,10 +118,6 @@ struct Config: Equatable, Hashable, Codable {
     struct Endpoint: Equatable, Hashable, Codable {
         var host: String
         var port: NWEndpoint.Port
-        
-        var nw: NWEndpoint {
-            NWEndpoint.hostPort(host: .name(host, nil), port: port)
-        }
     }
     
     enum LocationMode: String, Codable {
@@ -231,5 +227,26 @@ extension Config {
             acceptInbound: acceptInbound,
             listeners: listeners
         )
+    }
+}
+
+extension Config.Endpoint {
+    var nw: NWEndpoint {
+        NWEndpoint.hostPort(host: .name(host, nil), port: port)
+    }
+    
+    init(nwHost: NWEndpoint.Host, port: NWEndpoint.Port) {
+        // TODO: Fix debugDescription usage, not stable
+        switch nwHost {
+        case .name(let string, _):
+            self = .init(host: string, port: port)
+        case .ipv4(let addr):
+            self = .init(host: addr.debugDescription, port: port)
+        case .ipv6(let addr):
+            self = .init(host: addr.debugDescription, port: port)
+        @unknown default:
+            fatalError("Unexpected host format")
+        }
+
     }
 }

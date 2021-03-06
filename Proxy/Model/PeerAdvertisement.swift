@@ -12,11 +12,10 @@ import OSLog
 
 private let logger = Logger(subsystem: "si.jancar.Proxy", category: "peeradvertisement")
 
-/// Details a peer broadcasts on the network. Only visible within members.
+/// Details a peer broadcasts on the network. Encrypted with the network key.
 struct PeerAdvertisement: Codable {
     let deviceInfo: DeviceInfo
     let acceptsInbound: Bool
-//    let port: NWEndpoint.Port
     // hasInternet? (dynamic)
 }
 
@@ -32,7 +31,7 @@ extension PeerAdvertisement {
     
     static func fromTxtRecord(_ txtRecord: NWTXTRecord, using key: SymmetricKey) -> Self? {
         guard let base64 = txtRecord["peerinfo"] else {
-            logger.log("malformed TXT")
+            logger.log("malformed TXT, missing peerinfo")
             return nil
         }
         guard let boxCombined = Data(base64Encoded: base64) else {
