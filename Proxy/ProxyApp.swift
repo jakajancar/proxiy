@@ -80,21 +80,31 @@ class ProxyAppState: ObservableObject {
                     .removeDuplicates()
                 
                 locationMode.combineLatest(backgroundMode, inForeground, havePeers)
-                    .sink(receiveValue: { (locationMode: Config.LocationMode, backgroundMode, inForeground, havePeers) in
-                        logger.log("Location: locationMode=\(String(describing: locationMode)), backgroundMode=\(String(describing: backgroundMode)), inForeground=\(inForeground), havePeers=\(havePeers)")
-                        
+                    .map({ (locationMode: Config.LocationMode, backgroundMode, inForeground, havePeers) -> Config.LocationMode in
+                        logger.log("Location inputs: locationMode=\(String(describing: locationMode)), backgroundMode=\(String(describing: backgroundMode)), inForeground=\(inForeground), havePeers=\(havePeers)")
+
                         if locationMode != .off && (
                             inForeground ||
                             backgroundMode == .always ||
                             backgroundMode == .whilePeersConnected && havePeers
                         ) {
-                            logger.log("Location Listener enabling (\(String(describing: locationMode)))")
-                            lm.desiredAccuracy = locationMode == .bestAccuracy ? kCLLocationAccuracyBestForNavigation : kCLLocationAccuracyReduced
-                            lm.requestAlwaysAuthorization()
-                            lm.startUpdatingLocation()
+                            // Should be enabled
+                            return locationMode
                         } else {
+                            return .off
+                        }
+                    })
+                    .removeDuplicates()
+                    .sink(receiveValue: { effectiveLocationMode in
+                        switch effectiveLocationMode {
+                        case .off:
                             logger.log("Location Listener disabling")
                             lm.stopUpdatingLocation()
+                        case .lowPower, .bestAccuracy:
+                            logger.log("Location Listener enabling (\(String(describing: effectiveLocationMode)))")
+                            lm.desiredAccuracy = effectiveLocationMode == .bestAccuracy ? kCLLocationAccuracyBestForNavigation : kCLLocationAccuracyReduced
+                            lm.requestAlwaysAuthorization()
+                            lm.startUpdatingLocation()
                         }
                     })
                     .store(in: &cancellables)
