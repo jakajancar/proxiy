@@ -32,7 +32,7 @@ class Mesh {
     private var psk: SymmetricKey
     
     fileprivate let myInstanceID: InstanceID = UUID().uuidString
-    fileprivate var localListeners: [NWListener]!
+    fileprivate var localListeners: [Config.Listener: NWListener]!
     fileprivate var meshListener: NWListener!
     fileprivate var meshBrowser: NWBrowser!
     
@@ -167,7 +167,7 @@ class Mesh {
     
     func forceCancel() {
         logger.log("Cancelling")
-        for localListener in self.localListeners {
+        for (_, localListener) in self.localListeners {
             localListener.cancel()
         }
 
@@ -245,7 +245,8 @@ class Mesh {
     }
 
     private func initLocalListeners() {
-        self.localListeners = self.config.listeners.map { listenerConfig in
+        
+        self.localListeners = Dictionary(uniqueKeysWithValues: self.config.listeners.map { listenerConfig in
             // Create local listener
             let listenerParams: NWParameters
             switch listenerConfig.bindPort.namespace {
@@ -267,8 +268,8 @@ class Mesh {
             }
 
             listener.start(queue: DispatchQueue.main)
-            return listener
-        }
+            return (listenerConfig, listener)
+        })
     }
     
     private func handleLocalConnection(listenerConfig: Config.Listener, conn: NWConnection) {
@@ -358,16 +359,16 @@ extension Mesh: MeshViewModel {
             errors.append("Peer listener failed: \(error)")
         }
 
-        for listener in self.localListeners {
+        for (listenerConfig, listener) in self.localListeners {
             if case .failed(let error) = listener.state {
                 // TODO: have map by config
-                errors.append("Local listener failed: \(error)")
+                errors.append("Local listener \(listenerConfig.bindPort.debugDescription) failed: \(error)")
             }
         }
         
         if errors.count > 0 {
             return .errors(errors)
-        } else if self.localListeners.allSatisfy({ $0.state == .ready }) &&
+        } else if self.localListeners.values.allSatisfy({ $0.state == .ready }) &&
             self.meshListener.state == .ready &&
             self.meshBrowser.state == .ready &&
             self.peerMap[self.myInstanceID] != nil
