@@ -350,6 +350,14 @@ extension Mesh: MeshViewModel {
     var status: MeshStatus {
         var errors = [String]()
         
+        if case .failed(let error) = meshBrowser.state {
+            errors.append("Peer browser failed: \(error)")
+        }
+        
+        if case .failed(let error) = meshListener.state {
+            errors.append("Peer listener failed: \(error)")
+        }
+
         for listener in self.localListeners {
             if case .failed(let error) = listener.state {
                 // TODO: have map by config
