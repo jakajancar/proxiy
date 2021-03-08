@@ -36,6 +36,10 @@ class Mesh {
     fileprivate var meshListener: NWListener!
     fileprivate var meshBrowser: NWBrowser!
     
+    // Reset to false on successful start. Used to throttle retriest to at most once.
+    private var meshListenerRetried: Bool = false
+    private var meshBrowserRetried: Bool = false
+
     /// Peers indexed by instance, so that Bonjour updates can be easily applied and inbound connections easily tracked.
     @Published fileprivate var peerMap: [InstanceID : Peer] = [:]
 
@@ -71,11 +75,19 @@ class Mesh {
             ).toTxtRecord(using: self.psk)
         )
         listener.stateUpdateHandler = { [weak self] state in
+            guard let self = self else { return }
+            
             switch state {
+            case .ready:
+                // Reset retries
+                self.meshListenerRetried = false
             case .failed(let error):
                 // This is expected after suspension (-65569: DefunctConnection)
                 logger.log("Listener failed: \(String(describing: error))")
-                self?.recreateAndStartMeshListener()
+                if !self.meshListenerRetried {
+                    self.meshListenerRetried = true
+                    self.recreateAndStartMeshListener()
+                }
             case .cancelled:
                 break // todo
             default:
@@ -99,11 +111,19 @@ class Mesh {
             using: params)
         
         browser.stateUpdateHandler = { [weak self] state in
+            guard let self = self else { return }
+
             switch state {
+            case .ready:
+                // Reset retries
+                self.meshBrowserRetried = false
             case .failed(let error):
                 // This is expected after suspension (-65569: DefunctConnection)
                 logger.log("Browser failed: \(String(describing: error))")
-                self?.recreateAndStartMeshBrowser()
+                if !self.meshBrowserRetried {
+                    self.meshBrowserRetried = true
+                    self.recreateAndStartMeshBrowser()
+                }
             case .cancelled:
                 break // todo
             default:
