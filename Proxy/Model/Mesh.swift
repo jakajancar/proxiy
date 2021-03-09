@@ -282,6 +282,7 @@ class Mesh {
 
                 return NWConnection(to: peer.endpoint, using: self.meshParameters())
             } else {
+                logger.notice("No matching peer found or mesh shut down.")
                 return nil // no matching peer or mesh shut down
             }
         }
