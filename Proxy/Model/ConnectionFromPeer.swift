@@ -9,7 +9,7 @@ import Foundation
 import Network
 import OSLog
 
-private let logger = Logger(subsystem: "si.jancar.Proxy", category: "frompeer")
+private let logger = Logger(subsystem: "si.jancar.Proxiy", category: "frompeer")
 
 /// Should be created before `fromPeer` is started, to ensure `completedHandler` is called.
 class ConnectionFromPeer: Connection {

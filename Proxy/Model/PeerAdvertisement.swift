@@ -10,7 +10,7 @@ import Network
 import CryptoKit
 import OSLog
 
-private let logger = Logger(subsystem: "si.jancar.Proxy", category: "peeradvertisement")
+private let logger = Logger(subsystem: "si.jancar.Proxiy", category: "peeradvertisement")
 
 /// Details a peer broadcasts on the network. Encrypted with the network key.
 struct PeerAdvertisement: Codable {

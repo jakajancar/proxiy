@@ -12,7 +12,7 @@ import OSLog
 import CoreLocation
 
 let kAppName = "Proxiy"
-private let logger = Logger(subsystem: "si.jancar.Proxy", category: "app")
+private let logger = Logger(subsystem: "si.jancar.Proxiy", category: "app")
 
 @main
 struct ProxyApp: App {

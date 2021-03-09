@@ -9,7 +9,7 @@ import Foundation
 import Network
 import OSLog
 
-private let logger = Logger(subsystem: "si.jancar.Proxy", category: "config")
+private let logger = Logger(subsystem: "si.jancar.Proxiy", category: "config")
 
 // TODO: https://github.com/gonzalezreal/DefaultCodable
 // TODO: ensure no clashes with LocationListener

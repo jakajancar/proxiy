@@ -9,7 +9,7 @@ import Foundation
 import Network
 import OSLog
 
-private let logger = Logger(subsystem: "si.jancar.Proxy", category: "forpeer")
+private let logger = Logger(subsystem: "si.jancar.Proxiy", category: "forpeer")
 
 class ConnectionForPeer: Connection {
     private let myInstanceID: InstanceID

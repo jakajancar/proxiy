@@ -13,7 +13,7 @@ import Combine
 
 typealias InstanceID = String
 
-private let logger = Logger(subsystem: "si.jancar.Proxy", category: "mesh")
+private let logger = Logger(subsystem: "si.jancar.Proxiy", category: "mesh")
 
 // TODO: consider waiting state everywhere
 
