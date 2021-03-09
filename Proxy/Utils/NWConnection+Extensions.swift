@@ -10,7 +10,6 @@ import Network
 
 extension NWConnection {
     /// Reads exactly `length` bytes from the connection. Exactly one `completion` parameter will be non-`nil`.
-    ///
     func receive(length: Int, expectComplete: Bool = false, completion: @escaping (Result<Data, NWError>) -> Void) {
         self.receive(minimumIncompleteLength: length, maximumLength: length) { (data, ctx, isComplete, error) in
             if let error = error {

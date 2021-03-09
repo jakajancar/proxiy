@@ -34,7 +34,15 @@ class ConnectionForPeer: Connection {
     
     func start(queue: DispatchQueue) {
         self.queue = queue
-        self.local.stateUpdateHandler = self.eitherConnectionStateChanged(_:)
+        self.local.stateUpdateHandler = { [weak self] state in
+            guard let self = self else { return }
+            switch state {
+            case .waiting(_), .failed(_), .cancelled:
+                self.forceCancel() // interest lost
+            default:
+                break
+            }
+        }
         self.local.start(queue: queue)
 
         switch listenerConfig {
@@ -56,11 +64,10 @@ class ConnectionForPeer: Connection {
                         logger.log("Remote connect error: \(String(describing: remoteError))")
                         self.forceCancel()
                     } else {
-                        self.toPeer!.connectTunnel(toRaw: self.local) { result in
+                        self.toPeer!.connectTunnel(debugIdentifier: "src peer (raw)", toRaw: self.local) { result in
                             switch result {
                             case .success():
                                 // connection gracefully finished in both directions
-//                                logger.log("Local<->Peer raw connection gracefully finished")
                                 break
                             case .failure(_):
                                 self.forceCancel()
@@ -100,11 +107,10 @@ class ConnectionForPeer: Connection {
                                     case .failure(_):
                                         self.forceCancel()
                                     case .success():
-                                        self.toPeer!.connectTunnel(toRaw: self.local) { result in
+                                        self.toPeer!.connectTunnel(debugIdentifier: "src peer (socks)", toRaw: self.local) { result in
                                             switch result {
                                             case .success():
                                                 // connection gracefully finished in both directions
-//                                                logger.log("Local<->Peer SOCKS connection gracefully finished")
                                                 break
                                             case .failure(_):
                                                 self.forceCancel()
@@ -123,7 +129,6 @@ class ConnectionForPeer: Connection {
     private func startPeerConnection(request: PeerRequest, completion: @escaping (Result<PeerResponse, NWError>) -> Void) {
         guard let toPeer = self.connectPeer!(self.listenerConfig.via) else { return self.forceCancel() }
         self.toPeer = toPeer
-        toPeer.stateUpdateHandler = self.eitherConnectionStateChanged(_:)
         toPeer.start(queue: self.queue!)
         
         toPeer.send(peerMessage: request) { result in
@@ -160,15 +165,4 @@ class ConnectionForPeer: Connection {
             }
         }
     }
-    
-    private func eitherConnectionStateChanged(_ state: NWConnection.State) {
-        // If either fails or gets cancelled, ensure both are cancelled.
-        switch state {
-        case .waiting(_), .failed(_), .cancelled:
-            self.forceCancel()
-        default:
-            break
-        }
-    }
-    
 }

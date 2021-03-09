@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		21283DC225EF30150002D3FF /* NWConnection+Forwarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21A1109125EF2CB500209D7C /* NWConnection+Forwarding.swift */; };
 		21283DCA25EF344B0002D3FF /* PeerResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21283DC925EF344B0002D3FF /* PeerResponse.swift */; };
 		212AE41525D0984B00C3813F /* AnyObject+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 212AE41425D0984B00C3813F /* AnyObject+Extensions.swift */; };
 		212AE42C25D0A9D700C3813F /* NWConnection+SOCKS5.swift in Sources */ = {isa = PBXBuildFile; fileRef = 212AE42B25D0A9D700C3813F /* NWConnection+SOCKS5.swift */; };
@@ -152,7 +151,6 @@
 				2162AD9425CE052100193520 /* DataConvertible.swift */,
 				2186D32E25DF677300361CFD /* Result+Extensions.swift */,
 				21908CDF25CB51D900DAF5CB /* NWConnection+Extensions.swift */,
-				21A1109125EF2CB500209D7C /* NWConnection+Forwarding.swift */,
 				212AE42B25D0A9D700C3813F /* NWConnection+SOCKS5.swift */,
 				2186D32925DF253600361CFD /* NWEndpoint+Extensions.swift */,
 			);
@@ -223,6 +221,7 @@
 				21A3359125C0BD27007B8C45 /* ProxyTests.swift */,
 				21A1107325EF1EEC00209D7C /* Echo.swift */,
 				21A1107825EF1F2E00209D7C /* EchoTests.swift */,
+				21A1109125EF2CB500209D7C /* NWConnection+Forwarding.swift */,
 			);
 			path = ProxyTests;
 			sourceTree = "<group>";
@@ -404,7 +403,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				21283DC225EF30150002D3FF /* NWConnection+Forwarding.swift in Sources */,
 				215BF41A25E8460200BC2A09 /* MyNavigationView.swift in Sources */,
 				21283DCA25EF344B0002D3FF /* PeerResponse.swift in Sources */,
 				21882E4025EDC1D60093B42C /* NWConnection+Peer.swift in Sources */,

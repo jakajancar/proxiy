@@ -31,7 +31,15 @@ class ConnectionFromPeer: Connection {
     
     func start(queue: DispatchQueue) {
         self.queue = queue
-        self.fromPeer.stateUpdateHandler = self.eitherConnectionStateChanged(_:)
+        self.fromPeer.stateUpdateHandler = { [weak self] state in
+            guard let self = self else { return }
+            switch state {
+            case .waiting(_), .failed(_), .cancelled:
+                self.forceCancel() // interest lost
+            default:
+                break
+            }
+        }
         self.fromPeer.start(queue: queue)
         
         self.fromPeer.receivePeerMessage { (result: Result<PeerRequest, NWError>) in
@@ -52,11 +60,10 @@ class ConnectionFromPeer: Connection {
                         }
                     case .success():
                         self.fromPeer.send(peerMessage: PeerResponse(error: nil)) { result in
-                            self.fromPeer.connectTunnel(toRaw: self.outbound!) { result in
+                            self.fromPeer.connectTunnel(debugIdentifier: "dst peer", toRaw: self.outbound!) { result in
                                 switch result {
                                 case .success():
                                     // connection gracefully finished in both directions
-//                                    logger.log("Peer<->Outbound connection gracefully finished")
                                     break
                                 case .failure(_):
                                     self.forceCancel()
@@ -90,10 +97,8 @@ class ConnectionFromPeer: Connection {
         outbound.stateUpdateHandler = { state in
             switch state {
             case .waiting(let error), .failed(let error):
-                outbound.stateUpdateHandler = self.eitherConnectionStateChanged(_:)
                 completion(.failure(error))
             case .ready:
-                outbound.stateUpdateHandler = self.eitherConnectionStateChanged(_:)
                 completion(.success(()))
             default:
                 break
@@ -117,16 +122,6 @@ class ConnectionFromPeer: Connection {
             if let handler = self.completedHandler {
                 handler()
             }
-        }
-    }
-    
-    private func eitherConnectionStateChanged(_ state: NWConnection.State) {
-        // If either fails or gets cancelled, ensure both are cancelled.
-        switch state {
-        case .waiting(_), .failed(_), .cancelled:
-            self.forceCancel()
-        default:
-            break
         }
     }
 }

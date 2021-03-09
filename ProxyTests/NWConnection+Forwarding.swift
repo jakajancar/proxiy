@@ -66,39 +66,4 @@ extension NWConnection {
             }
         }
     }
-
-    /// Forwards a signle message, mapping each context, in both directions.
-    static func forwardMessageBetween(
-        a: NWConnection,
-        b: NWConnection,
-        mappingContextFromA aMapper: @escaping (NWConnection.ContentContext) -> NWConnection.ContentContext,
-        mappingContextFromB bMapper: @escaping (NWConnection.ContentContext) -> NWConnection.ContentContext,
-        completion: @escaping (Result<Void, NWError>) -> Void
-    ) {
-        enum Status {
-            case bothOpen
-            case oneSideCleanlyClosed
-            case oneSideFailed
-        }
-
-        var status = Status.bothOpen
-        let wrappedCompletion = { (result: Result<Bool, NWError>) in
-            switch (status, result) {
-            case (.bothOpen, .success(_)):
-                status = .oneSideCleanlyClosed
-            case (.bothOpen, .failure(let error)):
-                status = .oneSideFailed
-                completion(.failure(error)) // fail immediately so pipe gets shut down eagerly
-            case (.oneSideCleanlyClosed, .success(_)):
-                completion(.success(()))
-            case (.oneSideCleanlyClosed, .failure(let error)):
-                completion(.failure(error))
-            case (.oneSideFailed, _):
-                break // already sent
-            }
-        }
-        
-        a.forwardMessage(to: b, mappingContext: aMapper, completion: wrappedCompletion)
-        b.forwardMessage(to: a, mappingContext: bMapper, completion: wrappedCompletion)
-    }
 }
