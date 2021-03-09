@@ -84,8 +84,9 @@ extension NWConnection {
         case is NWProtocolTCP.Options:
             // 1 WS binary message == entire TCP connection
             let wsCtx = ContentContext.wsBinary("wstcp")
+            let tcpCtx = ContentContext.defaultStream
             self.pumpFromTCP(debugPrint: debugPrint, raw: raw, wsCtx: wsCtx, completion: wrappedCompletion)
-            self.pumpToTCP(debugPrint: debugPrint, raw: raw, completion: wrappedCompletion)
+            self.pumpToTCP(debugPrint: debugPrint, raw: raw, tcpCtx: tcpCtx, completion: wrappedCompletion)
 
         case is NWProtocolUDP.Options:
             // 1 WS binary message == 1 UDP datagram
@@ -122,7 +123,7 @@ extension NWConnection {
         }
     }
     
-    private func pumpToTCP(debugPrint: @escaping DebugPrint, raw: NWConnection, completion: @escaping PumpCompletion) {
+    private func pumpToTCP(debugPrint: @escaping DebugPrint, raw: NWConnection, tcpCtx: ContentContext, completion: @escaping PumpCompletion) {
         self.receive(minimumIncompleteLength: 1, maximumLength: Int.max) { (data, ctx, isComplete, error) in
             switch (data, ctx, isComplete, error) {
             case (_, _, _, .some(let error)):
@@ -132,15 +133,14 @@ extension NWConnection {
                 return completion(.failure(.posix(.ENODATA)))
             case (let data, .some(let ctx), isComplete, .none) where !ctx.isFinal && ctx.wsMetadata?.opcode == .binary:
                 debugPrint("WS->TCP received \(String(describing: data)), isComplete = \(isComplete)")
-                let tcpCtx: ContentContext = isComplete ? .finalMessage : .defaultMessage
-                raw.send(content: data, contentContext: tcpCtx, completion: .contentProcessed({ error in
+                raw.send(content: data, contentContext: tcpCtx, isComplete: isComplete, completion: .contentProcessed({ error in
                     if let error = error {
                         return completion(.failure(error))
                     }
                     if isComplete {
                         return completion(.success(()))
                     } else {
-                        return self.pumpToTCP(debugPrint: debugPrint, raw: raw, completion: completion)
+                        return self.pumpToTCP(debugPrint: debugPrint, raw: raw, tcpCtx: tcpCtx, completion: completion)
                     }
                 }))
             case (let data, let ctx, let isComplete, let error):
