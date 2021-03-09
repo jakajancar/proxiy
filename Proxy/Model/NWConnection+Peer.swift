@@ -103,23 +103,18 @@ extension NWConnection {
             case (_, _, _, .some(let error)):
                 debugPrint("TCP->WS receive error: \(error)")
                 return completion(.failure(error))
-            case (.some(let data), .some(let ctx), false, .none) where ctx.isFinal /* always for TCP */:
-                debugPrint("TCP->WS received \(data)")
-                self.send(content: data, contentContext: wsCtx, isComplete: false, completion: .contentProcessed({ error in
+            case (let data, .some(let ctx), let isComplete, .none) where ctx.isFinal /* always for TCP */:
+                debugPrint("TCP->WS received \(String(describing: data)), isComplete = \(isComplete)")
+                self.send(content: data, contentContext: wsCtx, isComplete: isComplete, completion: .contentProcessed({ error in
                     if let error = error {
-                        debugPrint("TCP->WS data send error: \(error)")
+                        debugPrint("TCP->WS send error: \(error)")
                         return completion(.failure(error))
                     }
-                    return self.pumpFromTCP(debugPrint: debugPrint, raw: raw, wsCtx: wsCtx, completion: completion)
-                }))
-            case (nil, .some(let ctx), true, .none) where ctx.isFinal /* always for TCP */:
-                debugPrint("TCP->WS received eof")
-                self.send(content: nil, contentContext: wsCtx, isComplete: true, completion: .contentProcessed({ error in
-                    if let error = error {
-                        debugPrint("TCP->WS eof send error: \(error)")
-                        return completion(.failure(error))
+                    if isComplete {
+                        return completion(.success(()))
+                    } else {
+                        return self.pumpFromTCP(debugPrint: debugPrint, raw: raw, wsCtx: wsCtx, completion: completion)
                     }
-                    return completion(.success(()))
                 }))
             case (let data, let ctx, let isComplete, let error):
                 fatalError("Unexpected callback pumping TCP>WS: " + Self.callbackDesription(data: data, ctx: ctx, isComplete: isComplete, error: error))
@@ -135,21 +130,18 @@ extension NWConnection {
             case (nil, .some(let ctx), true, .none) where ctx.isFinal:
                 debugPrint("WS->TCP terminated uncleanly")
                 return completion(.failure(.posix(.ENODATA)))
-            case (.some(let data), .some(let ctx), false, .none) where !ctx.isFinal && ctx.wsMetadata?.opcode == .binary:
-                debugPrint("WS->TCP received \(data)")
-                raw.send(content: data, completion: .contentProcessed({ error in
+            case (let data, .some(let ctx), isComplete, .none) where !ctx.isFinal && ctx.wsMetadata?.opcode == .binary:
+                debugPrint("WS->TCP received \(String(describing: data)), isComplete = \(isComplete)")
+                let tcpCtx: ContentContext = isComplete ? .finalMessage : .defaultMessage
+                raw.send(content: data, contentContext: tcpCtx, completion: .contentProcessed({ error in
                     if let error = error {
                         return completion(.failure(error))
                     }
-                    return self.pumpToTCP(debugPrint: debugPrint, raw: raw, completion: completion)
-                }))
-            case (nil, .some(let ctx), true, .none) where !ctx.isFinal && ctx.wsMetadata?.opcode == .binary:
-                debugPrint("WS->TCP received eof")
-                raw.send(content: nil, contentContext: .finalMessage, completion: .contentProcessed({ error in
-                    if let error = error {
-                        return completion(.failure(error))
+                    if isComplete {
+                        return completion(.success(()))
+                    } else {
+                        return self.pumpToTCP(debugPrint: debugPrint, raw: raw, completion: completion)
                     }
-                    return completion(.success(()))
                 }))
             case (let data, let ctx, let isComplete, let error):
                 fatalError("Unexpected callback pumping WS>TCP: " + Self.callbackDesription(data: data, ctx: ctx, isComplete: isComplete, error: error))
