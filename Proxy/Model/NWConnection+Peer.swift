@@ -127,6 +127,7 @@ extension NWConnection {
         self.receive(minimumIncompleteLength: 1, maximumLength: Int.max) { (data, ctx, isComplete, error) in
             switch (data, ctx, isComplete, error) {
             case (_, _, _, .some(let error)):
+                debugPrint("WS->TCP receive error: \(error)")
                 return completion(.failure(error))
             case (nil, .some(let ctx), true, .none) where ctx.isFinal:
                 debugPrint("WS->TCP terminated uncleanly")
