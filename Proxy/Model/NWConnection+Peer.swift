@@ -102,13 +102,13 @@ extension NWConnection {
         raw.receive(minimumIncompleteLength: 1, maximumLength: Int.max) { (data, ctx, isComplete, error) in
             switch (data, ctx, isComplete, error) {
             case (_, _, _, .some(let error)):
-                debugPrint("TCP->WS receive error: \(error)")
+                debugPrint("TCP>WS receive error: \(error)")
                 return completion(.failure(error))
             case (let data, .some(let ctx), let isComplete, .none) where ctx.isFinal /* always for TCP */:
-                debugPrint("TCP->WS received \(String(describing: data)), isComplete = \(isComplete)")
+                debugPrint("TCP>WS received \(String(describing: data)), isComplete = \(isComplete)")
                 self.send(content: data, contentContext: wsCtx, isComplete: isComplete, completion: .contentProcessed({ error in
                     if let error = error {
-                        debugPrint("TCP->WS send error: \(error)")
+                        debugPrint("TCP>WS send error: \(error)")
                         return completion(.failure(error))
                     }
                     if isComplete {
@@ -127,13 +127,13 @@ extension NWConnection {
         self.receive(minimumIncompleteLength: 1, maximumLength: Int.max) { (data, ctx, isComplete, error) in
             switch (data, ctx, isComplete, error) {
             case (_, _, _, .some(let error)):
-                debugPrint("WS->TCP receive error: \(error)")
+                debugPrint("WS>TCP receive error: \(error)")
                 return completion(.failure(error))
             case (nil, .some(let ctx), true, .none) where ctx.isFinal:
-                debugPrint("WS->TCP terminated uncleanly")
+                debugPrint("WS>TCP terminated uncleanly")
                 return completion(.failure(.posix(.ENODATA)))
             case (let data, .some(let ctx), isComplete, .none) where !ctx.isFinal && ctx.wsMetadata?.opcode == .binary:
-                debugPrint("WS->TCP received \(String(describing: data)), isComplete = \(isComplete)")
+                debugPrint("WS>TCP received \(String(describing: data)), isComplete = \(isComplete)")
                 raw.send(content: data, contentContext: tcpCtx, isComplete: isComplete, completion: .contentProcessed({ error in
                     if let error = error {
                         return completion(.failure(error))
@@ -154,9 +154,10 @@ extension NWConnection {
         raw.receiveMessage { (data, ctx, isComplete, error) in
             switch (data, ctx, isComplete, error) {
             case (_, _, _, .some(let error)):
+                debugPrint("UDP>WS receive error: \(error)")
                 return completion(.failure(error))
             case (.some(let data), .some(let ctx), true, .none) where !ctx.isFinal:
-                debugPrint("UDP->WS received \(data)")
+                debugPrint("UDP>WS received \(data)")
                 let wsCtx = ContentContext.wsBinary("wsudp")
                 self.send(content: data, contentContext: wsCtx, completion: .contentProcessed({ error in
                     if let error = error {
@@ -174,9 +175,10 @@ extension NWConnection {
         self.receiveMessage { (data, ctx, isComplete, error) in
             switch (data, ctx, isComplete, error) {
             case (_, _, _, .some(let error)):
+                debugPrint("WS>UDP receive error: \(error)")
                 return completion(.failure(error))
             case (.some(let data), .some(let ctx), true, .none) where !ctx.isFinal && ctx.wsMetadata?.opcode == .binary:
-                debugPrint("WS->UDP received \(data)")
+                debugPrint("WS>UDP received \(data)")
                 raw.send(content: data, completion: .contentProcessed({ error in
                     if let error = error {
                         return completion(.failure(error))
