@@ -62,7 +62,6 @@ class Mesh {
     
     private func recreateAndStartMeshListener() {
         let params = self.meshParameters()
-        params.includePeerToPeer = true
         
         let listener = try! NWListener(using: params)
         listener.service = NWListener.Service(
@@ -103,8 +102,7 @@ class Mesh {
     }
     
     private func recreateAndStartMeshBrowser() {
-        let params = NWParameters.tcp
-        params.includePeerToPeer = true
+        let params = self.meshParameters()
 
         let browser = NWBrowser.init(
             for: .bonjourWithTXTRecord(type: Mesh.kBonjourServiceType, domain: nil),
@@ -161,7 +159,8 @@ class Mesh {
         
         let params = NWParameters(tls: tlsOpts, tcp: tcpOpts)
         params.defaultProtocolStack.applicationProtocols.insert(wsOpts, at: 0)
-        
+        params.includePeerToPeer = true
+
         return params
     }
     
