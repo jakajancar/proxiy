@@ -33,12 +33,12 @@ class Mesh {
     
     fileprivate let myInstanceID: InstanceID = UUID().uuidString
     fileprivate var localListeners: [Config.Listener: NWListener]!
-    fileprivate var meshListener: NWListener!
-    fileprivate var meshBrowser: NWBrowser!
+    fileprivate var peerListener: NWListener!
+    fileprivate var peerBrowser: NWBrowser!
     
     // Reset to false on successful start. Used to throttle retriest to at most once.
-    private var meshListenerRetried: Bool = false
-    private var meshBrowserRetried: Bool = false
+    private var peerListenerRetried: Bool = false
+    private var peerBrowserRetried: Bool = false
 
     /// Peers indexed by instance, so that Bonjour updates can be easily applied and inbound connections easily tracked.
     @Published fileprivate var peerMap: [InstanceID : Peer] = [:]
@@ -56,12 +56,12 @@ class Mesh {
         self.psk = SymmetricKey(data: SHA256.hash(data: config.psk.data(using: .utf8)!))
         
         self.initLocalListeners()
-        self.recreateAndStartMeshListener()
-        self.recreateAndStartMeshBrowser()
+        self.recreateAndStartPeerListener()
+        self.recreateAndStartPeerBrowser()
     }
     
-    private func recreateAndStartMeshListener() {
-        let params = self.meshParameters()
+    private func recreateAndStartPeerListener() {
+        let params = self.peerParameters()
         
         let listener = try! NWListener(using: params)
         listener.service = NWListener.Service(
@@ -79,13 +79,13 @@ class Mesh {
             switch state {
             case .ready:
                 // Reset retries
-                self.meshListenerRetried = false
+                self.peerListenerRetried = false
             case .failed(let error):
                 // This is expected after suspension (-65569: DefunctConnection)
                 logger.log("Listener failed: \(String(describing: error))")
-                if !self.meshListenerRetried {
-                    self.meshListenerRetried = true
-                    self.recreateAndStartMeshListener()
+                if !self.peerListenerRetried {
+                    self.peerListenerRetried = true
+                    self.recreateAndStartPeerListener()
                 }
             case .cancelled:
                 break // todo
@@ -97,12 +97,12 @@ class Mesh {
             self?.handleConnectionFromPeer(conn: conn)
         }
         
-        self.meshListener = listener
-        self.meshListener.start(queue: DispatchQueue.main)
+        self.peerListener = listener
+        self.peerListener.start(queue: DispatchQueue.main)
     }
     
-    private func recreateAndStartMeshBrowser() {
-        let params = self.meshParameters()
+    private func recreateAndStartPeerBrowser() {
+        let params = self.peerParameters()
 
         let browser = NWBrowser.init(
             for: .bonjourWithTXTRecord(type: Mesh.kBonjourServiceType, domain: nil),
@@ -114,13 +114,13 @@ class Mesh {
             switch state {
             case .ready:
                 // Reset retries
-                self.meshBrowserRetried = false
+                self.peerBrowserRetried = false
             case .failed(let error):
                 // This is expected after suspension (-65569: DefunctConnection)
                 logger.log("Browser failed: \(String(describing: error))")
-                if !self.meshBrowserRetried {
-                    self.meshBrowserRetried = true
-                    self.recreateAndStartMeshBrowser()
+                if !self.peerBrowserRetried {
+                    self.peerBrowserRetried = true
+                    self.recreateAndStartPeerBrowser()
                 }
             case .cancelled:
                 break // todo
@@ -132,12 +132,12 @@ class Mesh {
             self?.bonjourChanged(results: results, changes: changes)
         }
         
-        self.meshBrowser = browser
-        self.meshBrowser.start(queue: DispatchQueue.main)
+        self.peerBrowser = browser
+        self.peerBrowser.start(queue: DispatchQueue.main)
     }
     
-    /// Parameters for `meshListener` and connections to it.
-    private func meshParameters() -> NWParameters {
+    /// Parameters for `peerBrowser`, `peerListener`, and connections to it.
+    private func peerParameters() -> NWParameters {
         // WebSocket
         let wsOpts = NWProtocolWebSocket.Options()
         wsOpts.skipHandshake = true
@@ -170,8 +170,8 @@ class Mesh {
             localListener.cancel()
         }
 
-        self.meshListener.cancel()
-        self.meshBrowser.cancel()
+        self.peerListener.cancel()
+        self.peerBrowser.cancel()
         
         for peer in self.peerMap.values {
             peer.forceCancel()
@@ -279,7 +279,7 @@ class Mesh {
                 self.unassociatedLocalConnections.remove(localConn)
                 peer.connectionsTo.insert(localConn)
 
-                return NWConnection(to: peer.endpoint, using: self.meshParameters())
+                return NWConnection(to: peer.endpoint, using: self.peerParameters())
             } else {
                 logger.notice("No matching peer found or mesh shut down.")
                 return nil // no matching peer or mesh shut down
@@ -360,11 +360,11 @@ extension Mesh: MeshViewModel {
     var status: MeshStatus {
         var errors = [String]()
         
-        if case .failed(let error) = meshBrowser.state {
+        if case .failed(let error) = peerBrowser.state {
             errors.append("Peer browser failed: \(error)")
         }
         
-        if case .failed(let error) = meshListener.state {
+        if case .failed(let error) = peerListener.state {
             errors.append("Peer listener failed: \(error)")
         }
 
@@ -378,8 +378,8 @@ extension Mesh: MeshViewModel {
         if errors.count > 0 {
             return .errors(errors)
         } else if self.localListeners.values.allSatisfy({ $0.state == .ready }) &&
-            self.meshListener.state == .ready &&
-            self.meshBrowser.state == .ready &&
+            self.peerListener.state == .ready &&
+            self.peerBrowser.state == .ready &&
             self.peerMap[self.myInstanceID] != nil
         {
             return .connected
