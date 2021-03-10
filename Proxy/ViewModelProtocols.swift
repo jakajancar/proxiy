@@ -26,5 +26,5 @@ protocol PeerViewModel: ObservableObject, Hashable, Identifiable {
     var acceptsInbound: Bool { get }
     var connectionsFromCount: Int { get }
     var connectionsToCount: Int { get }
-    var bytesPerSec: Int64 { get }
+    var bytesPerSec: UInt64 { get }
 }

@@ -319,6 +319,7 @@ class Peer {
     fileprivate var connectionsTo = ConnectionSet<ConnectionForPeer>()
     fileprivate var connectionsFrom = ConnectionSet<ConnectionFromPeer>()
     
+    @Published private(set) var bytesPerSec: UInt64 = 0
     private var cancellables: Set<AnyCancellable> = []
     
     fileprivate init(mesh: Mesh, instanceID: InstanceID, endpoint: NWEndpoint, advertisement: PeerAdvertisement) {
@@ -332,6 +333,14 @@ class Peer {
             .store(in: &self.cancellables)
         self.connectionsFrom.objectWillChange
             .sink { _ in self.objectWillChange.send() }
+            .store(in: &self.cancellables)
+        DispatchQueue.main
+            .schedule(after: DispatchQueue.main.now, interval: .seconds(1)) { [weak self] in
+                guard let self = self else { return }
+                let bytesPerSecToPeer = self.isMe ? 0 : self.connectionsTo.map({ $0.bytesPerSec }).reduce(0, +) // Mesh traffic
+                let bytesPerSecFromPeer = self.connectionsFrom.map({ $0.bytesPerSec }).reduce(0, +) // Internet traffic
+                self.bytesPerSec = bytesPerSecToPeer + bytesPerSecFromPeer
+            }
             .store(in: &self.cancellables)
     }
     
@@ -409,6 +418,4 @@ extension Peer: PeerViewModel {
     var connectionsToCount: Int {
         self.connectionsTo.count
     }
-    
-    var bytesPerSec: Int64 { 0 }
 }

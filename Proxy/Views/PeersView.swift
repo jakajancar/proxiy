@@ -92,7 +92,7 @@ struct PeerCell<P: PeerViewModel>: View {
                     
                     Spacer()
                     
-                    Text(bandwidthFormatter.string(fromByteCount: peer.bytesPerSec) + "/sec")
+                    Text(bandwidthFormatter.string(fromByteCount: Int64(peer.bytesPerSec)) + "/sec")
                 }
                 .font(.subheadline)
                 .foregroundColor(.secondary)

@@ -25,7 +25,7 @@ class MockPeer: PeerViewModel {
     var acceptsInbound: Bool
     var connectionsFromCount: Int
     var connectionsToCount: Int
-    var bytesPerSec: Int64
+    var bytesPerSec: UInt64
 
     init(
         isMe: Bool = false,
@@ -33,7 +33,7 @@ class MockPeer: PeerViewModel {
         acceptsInbound: Bool = true,
         inboundConnectionCount: Int = 0,
         outboundConnectionCount: Int = 0,
-        bytesPerSec: Int64 = 0
+        bytesPerSec: UInt64 = 0
     ) {
         self.isMe = isMe
         self.deviceInfo = deviceInfo

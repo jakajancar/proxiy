@@ -18,6 +18,7 @@ class ConnectionForPeer: Connection {
     
     private var queue: DispatchQueue?
     private var toPeer: NWConnection?
+    private let toPeerCounter = RateCounter()
     private var completed: Bool = false
     
     /// Called at most once. If peer is matched returns a connection, otherwise nil.
@@ -25,6 +26,8 @@ class ConnectionForPeer: Connection {
 
     /// Called exactly once.
     var completedHandler: (() -> Void)?
+    
+    var bytesPerSec: UInt64 { toPeerCounter.value }
     
     init(myInstanceID: InstanceID, listenerConfig: Config.Listener, local: NWConnection) {
         self.myInstanceID = myInstanceID
@@ -64,7 +67,7 @@ class ConnectionForPeer: Connection {
                         logger.log("Remote connect error: \(String(describing: remoteError))")
                         self.forceCancel()
                     } else {
-                        self.toPeer!.connectTunnel(debugIdentifier: "src peer (raw)", toRaw: self.local) { result in
+                        self.toPeer!.connectTunnel(debugIdentifier: "src peer (raw)", toRaw: self.local, counter: self.toPeerCounter) { result in
                             switch result {
                             case .success():
                                 // connection gracefully finished in both directions
@@ -107,7 +110,7 @@ class ConnectionForPeer: Connection {
                                     case .failure(_):
                                         self.forceCancel()
                                     case .success():
-                                        self.toPeer!.connectTunnel(debugIdentifier: "src peer (socks)", toRaw: self.local) { result in
+                                        self.toPeer!.connectTunnel(debugIdentifier: "src peer (socks)", toRaw: self.local, counter: self.toPeerCounter) { result in
                                             switch result {
                                             case .success():
                                                 // connection gracefully finished in both directions

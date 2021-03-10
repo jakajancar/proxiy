@@ -14,7 +14,8 @@ private let logger = Logger(subsystem: "si.jancar.Proxiy", category: "frompeer")
 /// Should be created before `fromPeer` is started, to ensure `completedHandler` is called.
 class ConnectionFromPeer: Connection {
     private let fromPeer: NWConnection
-    
+    private let fromPeerCounter = RateCounter()
+
     private var queue: DispatchQueue?
     private var outbound: NWConnection?
     private var completed: Bool = false
@@ -24,6 +25,8 @@ class ConnectionFromPeer: Connection {
 
     /// Called exactly once.
     var completedHandler: (() -> Void)?
+    
+    var bytesPerSec: UInt64 { fromPeerCounter.value }
     
     init(_ fromPeer: NWConnection) {
         self.fromPeer = fromPeer
@@ -60,7 +63,7 @@ class ConnectionFromPeer: Connection {
                         }
                     case .success():
                         self.fromPeer.send(peerMessage: PeerResponse(error: nil)) { result in
-                            self.fromPeer.connectTunnel(debugIdentifier: "dst peer", toRaw: self.outbound!) { result in
+                            self.fromPeer.connectTunnel(debugIdentifier: "dst peer", toRaw: self.outbound!, counter: self.fromPeerCounter) { result in
                                 switch result {
                                 case .success():
                                     // connection gracefully finished in both directions

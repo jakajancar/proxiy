@@ -50,6 +50,7 @@
 		21D2EAF825C7B2AC0059C6B0 /* ViewModelProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D2EAF725C7B2AC0059C6B0 /* ViewModelProtocols.swift */; };
 		21D8020725C8E7D400ABCFA3 /* MockViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D8020625C8E7D400ABCFA3 /* MockViewModel.swift */; };
 		21E88A3325C4CB9000F33D72 /* PeerAdvertisement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21E88A3225C4CB9000F33D72 /* PeerAdvertisement.swift */; };
+		21E9C86B25F9556700726898 /* RateCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21E9C86A25F9556700726898 /* RateCounter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -120,6 +121,7 @@
 		21D2EAF725C7B2AC0059C6B0 /* ViewModelProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelProtocols.swift; sourceTree = "<group>"; };
 		21D8020625C8E7D400ABCFA3 /* MockViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockViewModel.swift; sourceTree = "<group>"; };
 		21E88A3225C4CB9000F33D72 /* PeerAdvertisement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerAdvertisement.swift; sourceTree = "<group>"; };
+		21E9C86A25F9556700726898 /* RateCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateCounter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -272,6 +274,7 @@
 				216B4E8425D0556F00486B42 /* ConnectionForPeer.swift */,
 				216B4E8925D0557D00486B42 /* ConnectionFromPeer.swift */,
 				21882E3F25EDC1D60093B42C /* NWConnection+Peer.swift */,
+				21E9C86A25F9556700726898 /* RateCounter.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -410,6 +413,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				215BF41A25E8460200BC2A09 /* MyNavigationView.swift in Sources */,
+				21E9C86B25F9556700726898 /* RateCounter.swift in Sources */,
 				21283DCA25EF344B0002D3FF /* PeerResponse.swift in Sources */,
 				21882E4025EDC1D60093B42C /* NWConnection+Peer.swift in Sources */,
 				216B4E8525D0556F00486B42 /* ConnectionForPeer.swift in Sources */,

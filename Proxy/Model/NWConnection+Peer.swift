@@ -49,6 +49,7 @@ extension NWConnection {
     func connectTunnel(
         debugIdentifier: String,
         toRaw raw: NWConnection,
+        counter: RateCounter,
         completion: @escaping (Result<Void, NWError>) -> Void)
     {
 //        let debugPrint = { (msg: String) in print("\(debugIdentifier): \(msg)") }
@@ -85,20 +86,20 @@ extension NWConnection {
             // 1 WS binary message == entire TCP connection
             let wsCtx = ContentContext.wsBinary("wstcp")
             let tcpCtx = ContentContext.defaultStream
-            self.pumpFromTCP(debugPrint: debugPrint, raw: raw, wsCtx: wsCtx, completion: wrappedCompletion)
-            self.pumpToTCP(debugPrint: debugPrint, raw: raw, tcpCtx: tcpCtx, completion: wrappedCompletion)
+            self.pumpFromTCP(debugPrint: debugPrint, raw: raw, wsCtx: wsCtx, counter: counter, completion: wrappedCompletion)
+            self.pumpToTCP(debugPrint: debugPrint, raw: raw, tcpCtx: tcpCtx, counter: counter, completion: wrappedCompletion)
 
         case is NWProtocolUDP.Options:
             // 1 WS binary message == 1 UDP datagram
-            self.pumpFromUDP(debugPrint: debugPrint, raw: raw, completion: wrappedCompletion)
-            self.pumpToUDP(debugPrint: debugPrint, raw: raw, completion: wrappedCompletion)
+            self.pumpFromUDP(debugPrint: debugPrint, raw: raw, counter: counter, completion: wrappedCompletion)
+            self.pumpToUDP(debugPrint: debugPrint, raw: raw, counter: counter, completion: wrappedCompletion)
             
         default:
             fatalError("Unknown transport protocol")
         }
     }
     
-    private func pumpFromTCP(debugPrint: @escaping DebugPrint, raw: NWConnection, wsCtx: ContentContext, completion: @escaping PumpCompletion) {
+    private func pumpFromTCP(debugPrint: @escaping DebugPrint, raw: NWConnection, wsCtx: ContentContext, counter: RateCounter, completion: @escaping PumpCompletion) {
         raw.receive(minimumIncompleteLength: 1, maximumLength: Int.max) { (data, ctx, isComplete, error) in
             switch (data, ctx, isComplete, error) {
             case (_, _, _, .some(let error)):
@@ -106,6 +107,7 @@ extension NWConnection {
                 return completion(.failure(error))
             case (let data, .some(let ctx), let isComplete, .none) where ctx.isFinal /* always for TCP */:
                 debugPrint("TCP>WS received \(String(describing: data)), isComplete = \(isComplete)")
+                counter.add(data?.count ?? 0)
                 self.send(content: data, contentContext: wsCtx, isComplete: isComplete, completion: .contentProcessed({ error in
                     if let error = error {
                         debugPrint("TCP>WS send error: \(error)")
@@ -114,7 +116,7 @@ extension NWConnection {
                     if isComplete {
                         return completion(.success(()))
                     } else {
-                        return self.pumpFromTCP(debugPrint: debugPrint, raw: raw, wsCtx: wsCtx, completion: completion)
+                        return self.pumpFromTCP(debugPrint: debugPrint, raw: raw, wsCtx: wsCtx, counter: counter, completion: completion)
                     }
                 }))
             case (let data, let ctx, let isComplete, let error):
@@ -123,7 +125,7 @@ extension NWConnection {
         }
     }
     
-    private func pumpToTCP(debugPrint: @escaping DebugPrint, raw: NWConnection, tcpCtx: ContentContext, completion: @escaping PumpCompletion) {
+    private func pumpToTCP(debugPrint: @escaping DebugPrint, raw: NWConnection, tcpCtx: ContentContext, counter: RateCounter, completion: @escaping PumpCompletion) {
         self.receive(minimumIncompleteLength: 1, maximumLength: Int.max) { (data, ctx, isComplete, error) in
             switch (data, ctx, isComplete, error) {
             case (_, _, _, .some(let error)):
@@ -134,6 +136,7 @@ extension NWConnection {
                 return completion(.failure(.posix(.ENODATA)))
             case (let data, .some(let ctx), isComplete, .none) where !ctx.isFinal && ctx.wsMetadata?.opcode == .binary:
                 debugPrint("WS>TCP received \(String(describing: data)), isComplete = \(isComplete)")
+                counter.add(data?.count ?? 0)
                 raw.send(content: data, contentContext: tcpCtx, isComplete: isComplete, completion: .contentProcessed({ error in
                     if let error = error {
                         return completion(.failure(error))
@@ -141,7 +144,7 @@ extension NWConnection {
                     if isComplete {
                         return completion(.success(()))
                     } else {
-                        return self.pumpToTCP(debugPrint: debugPrint, raw: raw, tcpCtx: tcpCtx, completion: completion)
+                        return self.pumpToTCP(debugPrint: debugPrint, raw: raw, tcpCtx: tcpCtx, counter: counter, completion: completion)
                     }
                 }))
             case (let data, let ctx, let isComplete, let error):
@@ -150,7 +153,7 @@ extension NWConnection {
         }
     }
     
-    private func pumpFromUDP(debugPrint: @escaping DebugPrint, raw: NWConnection, completion: @escaping PumpCompletion) {
+    private func pumpFromUDP(debugPrint: @escaping DebugPrint, raw: NWConnection, counter: RateCounter, completion: @escaping PumpCompletion) {
         raw.receiveMessage { (data, ctx, isComplete, error) in
             switch (data, ctx, isComplete, error) {
             case (_, _, _, .some(let error)):
@@ -158,12 +161,13 @@ extension NWConnection {
                 return completion(.failure(error))
             case (.some(let data), .some(let ctx), true, .none) where !ctx.isFinal:
                 debugPrint("UDP>WS received \(data)")
+                counter.add(data.count)
                 let wsCtx = ContentContext.wsBinary("wsudp")
                 self.send(content: data, contentContext: wsCtx, completion: .contentProcessed({ error in
                     if let error = error {
                         return completion(.failure(error))
                     }
-                    return self.pumpToUDP(debugPrint: debugPrint, raw: raw, completion: completion)
+                    return self.pumpToUDP(debugPrint: debugPrint, raw: raw, counter: counter, completion: completion)
                 }))
             case (let data, let ctx, let isComplete, let error):
                 fatalError("Unexpected callback pumping UDP>WS: " + Self.callbackDesription(data: data, ctx: ctx, isComplete: isComplete, error: error))
@@ -171,7 +175,7 @@ extension NWConnection {
         }
     }
     
-    private func pumpToUDP(debugPrint: @escaping DebugPrint, raw: NWConnection, completion: @escaping PumpCompletion) {
+    private func pumpToUDP(debugPrint: @escaping DebugPrint, raw: NWConnection, counter: RateCounter, completion: @escaping PumpCompletion) {
         self.receiveMessage { (data, ctx, isComplete, error) in
             switch (data, ctx, isComplete, error) {
             case (_, _, _, .some(let error)):
@@ -179,11 +183,12 @@ extension NWConnection {
                 return completion(.failure(error))
             case (.some(let data), .some(let ctx), true, .none) where !ctx.isFinal && ctx.wsMetadata?.opcode == .binary:
                 debugPrint("WS>UDP received \(data)")
+                counter.add(data.count)
                 raw.send(content: data, completion: .contentProcessed({ error in
                     if let error = error {
                         return completion(.failure(error))
                     }
-                    return self.pumpToUDP(debugPrint: debugPrint, raw: raw, completion: completion)
+                    return self.pumpToUDP(debugPrint: debugPrint, raw: raw, counter: counter, completion: completion)
                 }))
             case (let data, let ctx, let isComplete, let error):
                 fatalError("Unexpected callback pumping WS>UDP: " + Self.callbackDesription(data: data, ctx: ctx, isComplete: isComplete, error: error))
