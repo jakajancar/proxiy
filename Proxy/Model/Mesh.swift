@@ -208,8 +208,7 @@ class Mesh {
                     } else {
                         // Add new
                         self.peerMap[instanceID] = Peer(
-                            mesh: self,
-                            instanceID: instanceID,
+                            isMe: self.myInstanceID == instanceID,
                             endpoint: result.endpoint,
                             advertisement: advertisement)
                     }
@@ -311,8 +310,7 @@ class Mesh {
 }
 
 class Peer {
-    fileprivate unowned let mesh: Mesh
-    fileprivate let instanceID: InstanceID
+    let isMe: Bool
     fileprivate let endpoint: NWEndpoint
     fileprivate var advertisement: PeerAdvertisement
     
@@ -322,9 +320,8 @@ class Peer {
     @Published private(set) var bytesPerSec: UInt64 = 0
     private var cancellables: Set<AnyCancellable> = []
     
-    fileprivate init(mesh: Mesh, instanceID: InstanceID, endpoint: NWEndpoint, advertisement: PeerAdvertisement) {
-        self.mesh = mesh
-        self.instanceID = instanceID
+    fileprivate init(isMe: Bool, endpoint: NWEndpoint, advertisement: PeerAdvertisement) {
+        self.isMe = isMe
         self.endpoint = endpoint
         self.advertisement = advertisement
         
@@ -399,10 +396,6 @@ extension Mesh: MeshViewModel {
 }
 
 extension Peer: PeerViewModel {
-    var isMe: Bool {
-        self.instanceID == self.mesh.myInstanceID
-    }
-    
     var deviceInfo: DeviceInfo {
         self.advertisement.deviceInfo
     }
