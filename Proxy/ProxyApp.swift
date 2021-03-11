@@ -52,8 +52,10 @@ class ProxyAppState: ObservableObject {
                 .sink { meshConfig in
                     logger.info("Recreating mesh")
                     self.mesh?.forceCancel()
-                    self.mesh = nil // should deinit immediately?
-                    self.mesh = Mesh(deviceInfo: DeviceInfo.current, config: meshConfig)
+                    // Wait a bit so that we can reuse local listener ports
+                    DispatchQueue.main.async {
+                        self.mesh = Mesh(deviceInfo: DeviceInfo.current, config: meshConfig)
+                    }
                 }
                 .store(in: &cancellables)
             
