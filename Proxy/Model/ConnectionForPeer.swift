@@ -19,6 +19,7 @@ class ConnectionForPeer: Connection {
     private var queue: DispatchQueue?
     private var toPeer: NWConnection?
     private let toPeerCounter = RateCounter()
+    private var timeout: DispatchWorkItem?
     private var completed: Bool = false
     
     /// Called at most once. If peer is matched returns a connection, otherwise nil.
@@ -67,7 +68,11 @@ class ConnectionForPeer: Connection {
                         logger.log("Remote connect error: \(String(describing: remoteError))")
                         self.forceCancel()
                     } else {
-                        self.toPeer!.connectTunnel(debugIdentifier: "src peer (raw)", toRaw: self.local, counter: self.toPeerCounter) { result in
+                        self.toPeer!.connectTunnel(
+                            debugIdentifier: "src peer (raw)",
+                            toRaw: self.local,
+                            onTransfer: { [weak self] bytes in self?.onTransfer(bytes) }
+                        ) { result in
                             switch result {
                             case .success():
                                 // connection gracefully finished in both directions
@@ -110,7 +115,11 @@ class ConnectionForPeer: Connection {
                                     case .failure(_):
                                         self.forceCancel()
                                     case .success():
-                                        self.toPeer!.connectTunnel(debugIdentifier: "src peer (socks)", toRaw: self.local, counter: self.toPeerCounter) { result in
+                                        self.toPeer!.connectTunnel(
+                                            debugIdentifier: "src peer (socks)",
+                                            toRaw: self.local,
+                                            onTransfer: { [weak self] bytes in self?.onTransfer(bytes) }
+                                        ) { result in
                                             switch result {
                                             case .success():
                                                 // connection gracefully finished in both directions
@@ -151,9 +160,25 @@ class ConnectionForPeer: Connection {
         }
     }
     
+    private func onTransfer(_ bytes: Int) {
+        self.toPeerCounter.add(bytes)
+        
+        if self.listenerConfig.bindPort.namespace == .udp {
+            // Cancel previous if exists
+            self.timeout?.cancel()
+            
+            // Create new timeout task
+            let task = DispatchWorkItem { self.forceCancel() }
+            self.timeout = task
+            self.queue!.asyncAfter(deadline: .now() + 60, execute: task)
+        }
+    }
+
     func forceCancel() {
         if !self.completed {
             self.completed = true
+            
+            self.timeout?.cancel()
             
             if self.local.state != .cancelled {
                 self.local.forceCancel()

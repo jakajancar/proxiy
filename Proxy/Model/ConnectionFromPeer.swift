@@ -63,7 +63,11 @@ class ConnectionFromPeer: Connection {
                         }
                     case .success():
                         self.fromPeer.send(peerMessage: PeerResponse(error: nil)) { result in
-                            self.fromPeer.connectTunnel(debugIdentifier: "dst peer", toRaw: self.outbound!, counter: self.fromPeerCounter) { result in
+                            self.fromPeer.connectTunnel(
+                                debugIdentifier: "dst peer",
+                                toRaw: self.outbound!,
+                                onTransfer: { [weak self] bytes in self?.onTransfer(bytes) }
+                            ) { result in
                                 switch result {
                                 case .success():
                                     // connection gracefully finished in both directions
@@ -108,6 +112,10 @@ class ConnectionFromPeer: Connection {
             }
         }
         outbound.start(queue: self.queue!)
+    }
+    
+    private func onTransfer(_ bytes: Int) {
+        self.fromPeerCounter.add(bytes)
     }
     
     func forceCancel() {
