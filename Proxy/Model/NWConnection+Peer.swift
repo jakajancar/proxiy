@@ -7,10 +7,13 @@
 
 import Foundation
 import Network
+import OSLog
 
 typealias OnTransferCallback = (Int) -> Void
 private typealias DebugPrint = (String) -> Void
 private typealias PumpCompletion = (Result<Void, NWError>) -> Void
+
+private let logger = Logger(subsystem: "si.jancar.Proxiy", category: "protocol")
 
 /// Extensions for the WebSocket-based connection to peer.
 extension NWConnection {
@@ -121,7 +124,8 @@ extension NWConnection {
                     }
                 }))
             case (let data, let ctx, let isComplete, let error):
-                fatalError("Unexpected callback pumping TCP>WS: " + Self.callbackDesription(data: data, ctx: ctx, isComplete: isComplete, error: error))
+                logger.error("Unexpected callback pumping TCP>WS: \(Self.callbackDesription(data: data, ctx: ctx, isComplete: isComplete, error: error))")
+                assertionFailure()
             }
         }
     }
@@ -149,7 +153,8 @@ extension NWConnection {
                     }
                 }))
             case (let data, let ctx, let isComplete, let error):
-                fatalError("Unexpected callback pumping WS>TCP: " + Self.callbackDesription(data: data, ctx: ctx, isComplete: isComplete, error: error))
+                logger.error("Unexpected callback pumping WS>TCP: \(Self.callbackDesription(data: data, ctx: ctx, isComplete: isComplete, error: error))")
+                assertionFailure()
             }
         }
     }
@@ -171,7 +176,8 @@ extension NWConnection {
                     return self.pumpToUDP(debugPrint: debugPrint, raw: raw, onTransfer: onTransfer, completion: completion)
                 }))
             case (let data, let ctx, let isComplete, let error):
-                fatalError("Unexpected callback pumping UDP>WS: " + Self.callbackDesription(data: data, ctx: ctx, isComplete: isComplete, error: error))
+                logger.error("Unexpected callback pumping UDP>WS: \(Self.callbackDesription(data: data, ctx: ctx, isComplete: isComplete, error: error))")
+                assertionFailure()
             }
         }
     }
@@ -183,7 +189,7 @@ extension NWConnection {
                 debugPrint("WS>UDP receive error: \(error)")
                 return completion(.failure(error))
             case (nil, .some(let ctx), true, .none) where ctx.isFinal:
-                debugPrint("WS>UDO terminated uncleanly (cancelled?)")
+                debugPrint("WS>UDP terminated uncleanly (cancelled?)")
                 return completion(.failure(.posix(.ENODATA))) // must be failure otherwise other side will remain open
             case (.some(let data), .some(let ctx), true, .none) where !ctx.isFinal && ctx.wsMetadata?.opcode == .binary:
                 debugPrint("WS>UDP received \(data)")
@@ -195,7 +201,8 @@ extension NWConnection {
                     return self.pumpToUDP(debugPrint: debugPrint, raw: raw, onTransfer: onTransfer, completion: completion)
                 }))
             case (let data, let ctx, let isComplete, let error):
-                fatalError("Unexpected callback pumping WS>UDP: " + Self.callbackDesription(data: data, ctx: ctx, isComplete: isComplete, error: error))
+                logger.error("Unexpected callback pumping WS>UDP: \(Self.callbackDesription(data: data, ctx: ctx, isComplete: isComplete, error: error))")
+                assertionFailure()
             }
         }
     }
