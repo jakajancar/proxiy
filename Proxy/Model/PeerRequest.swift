@@ -33,7 +33,6 @@ extension PeerRequest.ConnectInstructions: Codable {
         case type, target
     }
     
-    // TODO: Separate types
     private var type: BindPort.Namespace {
         switch self {
         case .tcp(_): return .tcp

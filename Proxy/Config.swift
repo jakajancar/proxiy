@@ -12,7 +12,6 @@ import OSLog
 private let logger = Logger(subsystem: "si.jancar.Proxiy", category: "config")
 
 // TODO: https://github.com/gonzalezreal/DefaultCodable
-// TODO: ensure no clashes with LocationListener
 struct Config: Equatable, Hashable, Codable {
     var psk: String
     var acceptInbound: Bool

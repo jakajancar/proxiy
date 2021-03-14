@@ -15,8 +15,6 @@ typealias InstanceID = String
 
 private let logger = Logger(subsystem: "si.jancar.Proxiy", category: "mesh")
 
-// TODO: consider waiting state everywhere
-
 /// Subset of the config relevant to `Mesh`
 struct MeshConfig: Equatable {
     var psk: String
@@ -87,8 +85,6 @@ class Mesh {
                     self.peerListenerRetried = true
                     self.recreateAndStartPeerListener()
                 }
-            case .cancelled:
-                break // todo
             default:
                 break
             }
@@ -122,8 +118,6 @@ class Mesh {
                     self.peerBrowserRetried = true
                     self.recreateAndStartPeerBrowser()
                 }
-            case .cancelled:
-                break // todo
             default:
                 break
             }
@@ -257,10 +251,6 @@ class Mesh {
             listenerParams.allowLocalEndpointReuse = true // TIME_WAIT doesn't seem to be applied, but just in case
 
             let listener = try! NWListener(using: listenerParams, on: listenerConfig.bindPort.number)
-            listener.stateUpdateHandler = { state in
-                // TODO: error handling
-            }
-
             listener.newConnectionHandler = { [weak self] conn in
                 self?.handleLocalConnection(listenerConfig: listenerConfig, conn: conn)
             }
@@ -367,7 +357,6 @@ extension Mesh: MeshViewModel {
 
         for (listenerConfig, listener) in self.localListeners {
             if case .failed(let error) = listener.state {
-                // TODO: have map by config
                 errors.append("Local listener \(listenerConfig.bindPort.debugDescription) failed: \(error)")
             }
         }
