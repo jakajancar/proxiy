@@ -251,6 +251,10 @@ class Mesh {
             listenerParams.allowLocalEndpointReuse = true // TIME_WAIT doesn't seem to be applied, but just in case
 
             let listener = try! NWListener(using: listenerParams, on: listenerConfig.bindPort.number)
+            listener.stateUpdateHandler = { state in
+                // Needed, or listener never starts 🤷‍♂️
+            }
+
             listener.newConnectionHandler = { [weak self] conn in
                 self?.handleLocalConnection(listenerConfig: listenerConfig, conn: conn)
             }
