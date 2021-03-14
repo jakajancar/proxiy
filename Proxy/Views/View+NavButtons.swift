@@ -17,25 +17,21 @@ extension View {
 //            .keyboardShortcut(.defaultAction) -- add when confirmed working
         
         #if targetEnvironment(macCatalyst)
-            return AnyView(
-                self
-                    .navigationBarBackButtonHidden(true)
-                    .navigationBarTitleDisplayMode(.inline) // otherwise wierd space at top, plus heading looks funny
-                    .toolbar {
-                        ToolbarItemGroup(placement: .bottomBar) {
-                            Spacer()
-                            button
-                        }
+            return self
+                .navigationBarBackButtonHidden(true)
+                .navigationBarTitleDisplayMode(.inline) // otherwise wierd space at top, plus heading looks funny
+                .toolbar {
+                    ToolbarItemGroup(placement: .bottomBar) {
+                        Spacer()
+                        button
                     }
-            )
+                }
         #else
-            return AnyView(
-                self
-                    .navigationBarBackButtonHidden(true)
-                    .toolbar {
-                        ToolbarItem(placement: .primaryAction) { button }
-                    }
-            )
+            return self
+                .navigationBarBackButtonHidden(true)
+                .toolbar {
+                    ToolbarItem(placement: .primaryAction) { button }
+                }
         #endif
     }
     
@@ -50,27 +46,23 @@ extension View {
 //            .keyboardShortcut(.cancelAction) -- add when confirmed working
 
         #if targetEnvironment(macCatalyst)
-            return AnyView(
-                self
-                    .navigationBarBackButtonHidden(true)
-                    .navigationBarTitleDisplayMode(.inline) // otherwise wierd space at top, plus heading looks funny
-                    .toolbar {
-                        ToolbarItemGroup(placement: .bottomBar) {
-                            Spacer()
-                            cancelButton.padding(.trailing, 10)
-                            confirmButton
-                        }
+            return self
+                .navigationBarBackButtonHidden(true)
+                .navigationBarTitleDisplayMode(.inline) // otherwise wierd space at top, plus heading looks funny
+                .toolbar {
+                    ToolbarItemGroup(placement: .bottomBar) {
+                        Spacer()
+                        cancelButton.padding(.trailing, 10)
+                        confirmButton
                     }
-            )
+                }
         #else
-            return AnyView(
-                self
-                    .navigationBarBackButtonHidden(true)
-                    .toolbar {
-                        ToolbarItem(placement: .confirmationAction) { confirmButton }
-                        ToolbarItem(placement: .cancellationAction) { cancelButton }
-                    }
-            )
+            return self
+                .navigationBarBackButtonHidden(true)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) { confirmButton }
+                    ToolbarItem(placement: .cancellationAction) { cancelButton }
+                }
         #endif
     }
 }
