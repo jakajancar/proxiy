@@ -17,7 +17,7 @@ struct AboutView: View {
         let version = info["CFBundleShortVersionString"] as! String
         let build = info["CFBundleVersion"] as! String
 
-        List {
+        Form {
             Section(
                 header:
                     VStack(alignment: .center) {
@@ -48,18 +48,43 @@ struct AboutView: View {
                     .padding()
             ) {
                 ContactUsButton(config: config)
-
-//                NavigationLink(
-//                    destination: Text("Foo"),
-//                    label: {
-//                        Text("Legal Notices")
-//                    }
-//                )
+            }
+            
+            Section(header: Text("Open Source Components")) {
+                ForEach(OpenSourceComponent.all) { component in
+                    let licenseView = ScrollView {
+                        Text(component.license)
+                    }
+                    .navigationTitle(component.name)
+                    
+                    NavigationLink(
+                        destination: licenseView,
+                        label: {
+                            Text(component.name)
+                        }
+                    )
+                }
             }
         }
         .navigationTitle("About")
         .navigationBarTitleDisplayMode(.inline)
         .listStyle(InsetGroupedListStyle())
+    }
+}
+
+private struct OpenSourceComponent: Identifiable {
+    var id: String { name }
+    let name: String
+    let license: String
+    
+    static var all: [Self] {
+        let files = Bundle.main.urls(forResourcesWithExtension: "txt", subdirectory: "Licenses")!
+        return files.map { url in
+            Self(
+                name: url.deletingPathExtension().lastPathComponent,
+                license: try! String(contentsOf: url)
+            )
+        }
     }
 }
 
