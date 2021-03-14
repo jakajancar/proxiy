@@ -126,6 +126,7 @@ extension NWConnection {
             case (let data, let ctx, let isComplete, let error):
                 logger.error("Unexpected callback pumping TCP>WS: \(Self.callbackDesription(data: data, ctx: ctx, isComplete: isComplete, error: error))")
                 assertionFailure()
+                return completion(.failure(.posix(.ENOTRECOVERABLE)))
             }
         }
     }
@@ -155,6 +156,7 @@ extension NWConnection {
             case (let data, let ctx, let isComplete, let error):
                 logger.error("Unexpected callback pumping WS>TCP: \(Self.callbackDesription(data: data, ctx: ctx, isComplete: isComplete, error: error))")
                 assertionFailure()
+                return completion(.failure(.posix(.ENOTRECOVERABLE)))
             }
         }
     }
@@ -178,6 +180,7 @@ extension NWConnection {
             case (let data, let ctx, let isComplete, let error):
                 logger.error("Unexpected callback pumping UDP>WS: \(Self.callbackDesription(data: data, ctx: ctx, isComplete: isComplete, error: error))")
                 assertionFailure()
+                return completion(.failure(.posix(.ENOTRECOVERABLE)))
             }
         }
     }
@@ -203,6 +206,7 @@ extension NWConnection {
             case (let data, let ctx, let isComplete, let error):
                 logger.error("Unexpected callback pumping WS>UDP: \(Self.callbackDesription(data: data, ctx: ctx, isComplete: isComplete, error: error))")
                 assertionFailure()
+                return completion(.failure(.posix(.ENOTRECOVERABLE)))
             }
         }
     }
