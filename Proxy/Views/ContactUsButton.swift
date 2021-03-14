@@ -15,22 +15,23 @@ struct ContactUsButton: View {
     var body: some View {
         Button(
             action: {
-                let configJson: String = {
-                    var censoredConfig = self.config
-                    censoredConfig.psk = "***"
-                    
-                    return String(data: try! JSONEncoder().encode(censoredConfig), encoding: .utf8)!
-                }()
-                
-                let body = """
-                    Please describe your problem here.
-                    
-                    ------------------------------------
-                    
-                    Configuration:
-                    
-                    \(configJson)
-                    """
+//                let configJson: String = {
+//                    var censoredConfig = self.config
+//                    censoredConfig.psk = "***"
+//                    
+//                    return String(data: try! JSONEncoder().encode(censoredConfig), encoding: .utf8)!
+//                }()
+//                
+//                let body = """
+//                    Please describe your problem here.
+//                    
+//                    ------------------------------------
+//                    
+//                    Configuration:
+//                    
+//                    \(configJson)
+//                    """
+                let body = ""
                 
                 // TODO: add logs here once it works:
                 // https://steipete.com/posts/logging-in-swift/#does-oslogstore-work-yet
