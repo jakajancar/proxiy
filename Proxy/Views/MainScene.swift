@@ -12,6 +12,7 @@ struct MainScene: Scene {
     @ObservedObject var appState: ProxyAppState
     @State private var activeSheet: ActiveSheet?
     @Environment(\.colorScheme) private var colorScheme: ColorScheme
+//    @State private var refresh = UUID()
 
     private enum ActiveSheet: Identifiable {
         case settings
@@ -39,10 +40,10 @@ struct MainScene: Scene {
                                 )
                             case .about:
                                 AboutView(config: appState.config)
-                                .navigationBarHidden(true)
-                                .primaryButton("Done") {
-                                    activeSheet = nil
-                                }
+                                    .navigationBarHidden(true)
+                                    .primaryButton("Done") {
+                                        activeSheet = nil
+                                    }
                             }
                         }
                     }

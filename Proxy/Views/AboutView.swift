@@ -11,6 +11,9 @@ struct AboutView: View {
     static let kJakaEmail = "Jaka Jancar <jaka@kubje.org>"
     let config: Config
     @State private var showingBuild = false
+
+    @State private var refreshOnNextAppear = false
+    @State private var refresh = UUID()
     
     var body: some View {
         let info = Bundle.main.infoDictionary!
@@ -56,6 +59,9 @@ struct AboutView: View {
                         Text(component.license)
                     }
                     .navigationTitle(component.name)
+                    .onAppear(perform: {
+                        refreshOnNextAppear = true
+                    })
                     
                     NavigationLink(
                         destination: licenseView,
@@ -69,6 +75,17 @@ struct AboutView: View {
         .navigationTitle("About")
         .navigationBarTitleDisplayMode(.inline)
         .listStyle(InsetGroupedListStyle())
+        .id(refresh)
+        .onAppear(perform: {
+            if refreshOnNextAppear {
+                refreshOnNextAppear = false
+                // Force reset on re-appearing. Fixes:
+                //  - leftover highlight on iOS
+                //  - missing tab bar on Mac
+                print("Forcing about view refresh")
+                refresh = UUID()
+            }
+        })
     }
 }
 
