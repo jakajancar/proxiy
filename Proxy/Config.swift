@@ -35,8 +35,8 @@ struct Config: Equatable, Hashable, Codable {
     // Custom memberwise initialized that also does some validation.
     init(
         psk: String = "ChangeMe1234!",
-        acceptInbound: Bool = true,
-        listeners: Set<Listener> = [ .socks(.socks, .init()) ],
+        acceptInbound: Bool = false,
+        listeners: Set<Listener> = [],
         alwaysDark: Bool = false,
         locationMode: LocationMode = .off,
         backgroundMode: BackgroundMode = .never
@@ -180,8 +180,19 @@ extension Config {
                 return Self()
             }
         } else {
-            logger.log("No config file exists, initializing with defaults")
-            return Self()
+            #if targetEnvironment(macCatalyst)
+            logger.log("No config file exists, initializing with Mac defaults")
+            return Self(
+                acceptInbound: false,
+                listeners: [ .socks(.socks, .init()) ]
+            )
+            #else
+            logger.log("No config file exists, initializing with iOS defaults")
+            return Self(
+                acceptInbound: true,
+                listeners: []
+            )
+            #endif
         }
     }
     
