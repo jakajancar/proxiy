@@ -33,7 +33,7 @@ class ProxyAppState: ObservableObject {
 
     @Published var config: Config
     @Published var mesh: Mesh?
-    @Published var locationManager: CLLocationManager?
+    @Published var locationListner: LocationListener?
     
     init() {
         // Config sync
@@ -59,15 +59,8 @@ class ProxyAppState: ObservableObject {
                 }
                 .store(in: &cancellables)
             
-            // LocationManager updating based on all sorts
+            // LocationListener updating based on all sorts
             do {
-                let lm = CLLocationManager()
-                lm.activityType = .other
-                lm.allowsBackgroundLocationUpdates = true
-                lm.pausesLocationUpdatesAutomatically = false
-                lm.showsBackgroundLocationIndicator = true
-                self.locationManager = lm
-
                 let inForeground1 = NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification).map { _ in true }
                 let inForeground2 = NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification).map { _ in false }
                 let inForeground = inForeground1.merge(with: inForeground2)
@@ -82,7 +75,7 @@ class ProxyAppState: ObservableObject {
                     .removeDuplicates()
                 
                 locationMode.combineLatest(backgroundMode, inForeground, havePeers)
-                    .map({ (locationMode: Config.LocationMode, backgroundMode, inForeground, havePeers) -> Config.LocationMode in
+                    .map({ (locationMode: Config.LocationMode, backgroundMode, inForeground, havePeers) -> CLLocationAccuracy? in
                         logger.log("Location inputs: locationMode=\(String(describing: locationMode)), backgroundMode=\(String(describing: backgroundMode)), inForeground=\(inForeground), havePeers=\(havePeers)")
 
                         if locationMode != .off && (
@@ -91,22 +84,20 @@ class ProxyAppState: ObservableObject {
                             backgroundMode == .whilePeersConnected && havePeers
                         ) {
                             // Should be enabled
-                            return locationMode
+                            return locationMode == .bestAccuracy ? kCLLocationAccuracyBestForNavigation : kCLLocationAccuracyReduced
                         } else {
-                            return .off
+                            return nil
                         }
                     })
                     .removeDuplicates()
-                    .sink(receiveValue: { effectiveLocationMode in
-                        switch effectiveLocationMode {
-                        case .off:
-                            logger.log("Location Listener disabling")
-                            lm.stopUpdatingLocation()
-                        case .lowPower, .bestAccuracy:
-                            logger.log("Location Listener enabling (\(String(describing: effectiveLocationMode)))")
-                            lm.desiredAccuracy = effectiveLocationMode == .bestAccuracy ? kCLLocationAccuracyBestForNavigation : kCLLocationAccuracyReduced
-                            lm.requestAlwaysAuthorization()
-                            lm.startUpdatingLocation()
+                    .sink(receiveValue: { [unowned self] accuracy in
+                        self.locationListner?.cancel()
+                        self.locationListner = nil
+                        if let accuracy = accuracy {
+                            logger.log("Location Listener starting with desired accuracy \(accuracy)")
+                            self.locationListner = LocationListener(accuracy: accuracy)
+                        } else {
+                            logger.log("Location Listener disabled")
                         }
                     })
                     .store(in: &cancellables)

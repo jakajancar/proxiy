@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "NWHTTPProtocol",
+        "repositoryURL": "https://github.com/AlwaysRightInstitute/NWHTTPProtocol",
+        "state": {
+          "branch": null,
+          "revision": "eefe85493f6b8d3186a5790a5cb86a900fd6f291",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}

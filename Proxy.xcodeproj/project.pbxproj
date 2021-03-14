@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -19,6 +19,7 @@
 		215BF40525E83A9D00BC2A09 /* MainScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215BF40425E83A9D00BC2A09 /* MainScene.swift */; };
 		215BF41A25E8460200BC2A09 /* MyNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215BF41925E8460200BC2A09 /* MyNavigationView.swift */; };
 		215EE3B325CA1BCF00045BFB /* DeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215EE3B225CA1BCF00045BFB /* DeviceInfo.swift */; };
+		2161EAE925FD8DB0002CDF5B /* NWHTTPServer in Frameworks */ = {isa = PBXBuildFile; productRef = 2161EAE825FD8DB0002CDF5B /* NWHTTPServer */; };
 		2162AD8D25CE01BD00193520 /* PeerRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2162AD8C25CE01BD00193520 /* PeerRequest.swift */; };
 		2162AD9525CE052100193520 /* DataConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2162AD9425CE052100193520 /* DataConvertible.swift */; };
 		216B42E825DE0F07009225AA /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 216B42E725DE0F07009225AA /* SettingsView.swift */; };
@@ -130,6 +131,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				21908CDB25CA2E5800DAF5CB /* IOKit.framework in Frameworks */,
+				2161EAE925FD8DB0002CDF5B /* NWHTTPServer in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -296,6 +298,7 @@
 			);
 			name = Proxiy;
 			packageProductDependencies = (
+				2161EAE825FD8DB0002CDF5B /* NWHTTPServer */,
 			);
 			productName = Proxy;
 			productReference = 21A3357C25C0BD26007B8C45 /* Proxiy.app */;
@@ -369,6 +372,7 @@
 			);
 			mainGroup = 21A3357325C0BD26007B8C45;
 			packageReferences = (
+				2161EAE725FD8DB0002CDF5B /* XCRemoteSwiftPackageReference "NWHTTPProtocol" */,
 			);
 			productRefGroup = 21A3357D25C0BD26007B8C45 /* Products */;
 			projectDirPath = "";
@@ -774,6 +778,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2161EAE725FD8DB0002CDF5B /* XCRemoteSwiftPackageReference "NWHTTPProtocol" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AlwaysRightInstitute/NWHTTPProtocol";
+			requirement = {
+				kind = revision;
+				revision = eefe85493f6b8d3186a5790a5cb86a900fd6f291;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2161EAE825FD8DB0002CDF5B /* NWHTTPServer */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2161EAE725FD8DB0002CDF5B /* XCRemoteSwiftPackageReference "NWHTTPProtocol" */;
+			productName = NWHTTPServer;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 21A3357425C0BD26007B8C45 /* Project object */;
 }
