@@ -43,13 +43,13 @@ class LocationListener {
                     unixTimestamp: location.timestamp.timeIntervalSince1970
                 )
                 response.status = .ok
-                try! response.sendJSON(body)
+                try! response.sendPrettyJSON(body)
             } else {
                 let body = ErrorResponse(
                     message: "Location is not yet available."
                 )
                 response.status = .notFound
-                try! response.sendJSON(body)
+                try! response.sendPrettyJSON(body)
             }
         }
         server.resume()
@@ -76,4 +76,14 @@ private struct LocationResponse: Encodable {
 
 private struct ErrorResponse: Encodable {
     let message: String
+}
+
+private extension ServerResponse {
+    func sendPrettyJSON<T: Encodable>(_ value: T) throws {
+        headers["Content-Type"] = "application/json; charset=UTF-8"
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        let data = try encoder.encode(value)
+        send(data)
+    }
 }
