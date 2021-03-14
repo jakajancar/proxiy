@@ -73,7 +73,8 @@ class Mesh {
         )
         listener.stateUpdateHandler = { [weak self] state in
             guard let self = self else { return }
-            
+            self.objectWillChange.send()
+
             switch state {
             case .ready:
                 // Reset retries
@@ -106,7 +107,8 @@ class Mesh {
         
         browser.stateUpdateHandler = { [weak self] state in
             guard let self = self else { return }
-
+            self.objectWillChange.send()
+            
             switch state {
             case .ready:
                 // Reset retries
@@ -251,8 +253,10 @@ class Mesh {
             listenerParams.allowLocalEndpointReuse = true // TIME_WAIT doesn't seem to be applied, but just in case
 
             let listener = try! NWListener(using: listenerParams, on: listenerConfig.bindPort.number)
-            listener.stateUpdateHandler = { state in
-                // Needed, or listener never starts 🤷‍♂️
+            listener.stateUpdateHandler = { [weak self] state in
+                // State update handler needed, or listener never starts 🤷‍♂️
+                guard let self = self else { return }
+                self.objectWillChange.send()
             }
 
             listener.newConnectionHandler = { [weak self] conn in
@@ -355,13 +359,25 @@ extension Mesh: MeshViewModel {
             errors.append("Peer browser failed: \(error)")
         }
         
+        if case .waiting(let error) = peerBrowser.state {
+            errors.append("Peer browser waiting: \(error)")
+        }
+
         if case .failed(let error) = peerListener.state {
             errors.append("Peer listener failed: \(error)")
+        }
+
+        if case .waiting(let error) = peerListener.state {
+            errors.append("Peer listener waiting: \(error)")
         }
 
         for (listenerConfig, listener) in self.localListeners {
             if case .failed(let error) = listener.state {
                 errors.append("Local listener \(listenerConfig.bindPort.debugDescription) failed: \(error)")
+            }
+            
+            if case .waiting(let error) = listener.state {
+                errors.append("Local listener \(listenerConfig.bindPort.debugDescription) waiting: \(error)")
             }
         }
         
