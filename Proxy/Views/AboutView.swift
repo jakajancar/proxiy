@@ -53,7 +53,7 @@ struct AboutView: View {
                 ContactUsButton(config: config)
                 
                 NavigationLink(
-                    destination: WebView(url: URL(string: "https://proxiy.app/app-privacy-policy/")!)
+                    destination: WebView(url: URL(string: "https://proxiy.app/privacy/")!)
                         .navigationTitle("Privacy Policy")
                         .onAppear(perform: {
                             refreshOnNextAppear = true
