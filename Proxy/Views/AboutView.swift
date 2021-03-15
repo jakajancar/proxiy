@@ -51,12 +51,25 @@ struct AboutView: View {
                     .padding()
             ) {
                 ContactUsButton(config: config)
+                
+                NavigationLink(
+                    destination: WebView(url: URL(string: "https://proxiy.app/app-privacy-policy/")!)
+                        .navigationTitle("Privacy Policy")
+                        .onAppear(perform: {
+                            refreshOnNextAppear = true
+                        })
+                    ,
+                    label: {
+                        Text("Privacy Policy")
+                    }
+                )
+
             }
             
             Section(header: Text("Open Source Components")) {
                 ForEach(OpenSourceComponent.all) { component in
                     let licenseView = ScrollView {
-                        Text(component.license)
+                        Text(component.license).padding()
                     }
                     .navigationTitle(component.name)
                     .onAppear(perform: {
