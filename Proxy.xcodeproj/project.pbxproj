@@ -7,6 +7,49 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		210D3753260026B10028D898 /* ProxyAppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210D3752260026B10028D898 /* ProxyAppState.swift */; };
+		210D3758260026B40028D898 /* ProxyAppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210D3752260026B10028D898 /* ProxyAppState.swift */; };
+		2114FAC32600243E00F75C1A /* MyNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215BF41925E8460200BC2A09 /* MyNavigationView.swift */; };
+		2114FAC42600243E00F75C1A /* RateCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21E9C86A25F9556700726898 /* RateCounter.swift */; };
+		2114FAC52600243E00F75C1A /* PeerResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21283DC925EF344B0002D3FF /* PeerResponse.swift */; };
+		2114FAC62600243E00F75C1A /* NWConnection+Peer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21882E3F25EDC1D60093B42C /* NWConnection+Peer.swift */; };
+		2114FAC72600243E00F75C1A /* ConnectionForPeer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 216B4E8425D0556F00486B42 /* ConnectionForPeer.swift */; };
+		2114FAC82600243E00F75C1A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 216B42E725DE0F07009225AA /* SettingsView.swift */; };
+		2114FAC92600243E00F75C1A /* NWConnection+SOCKS5.swift in Sources */ = {isa = PBXBuildFile; fileRef = 212AE42B25D0A9D700C3813F /* NWConnection+SOCKS5.swift */; };
+		2114FACA2600243E00F75C1A /* AnyObject+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 212AE41425D0984B00C3813F /* AnyObject+Extensions.swift */; };
+		2114FACB2600243E00F75C1A /* ConnectionSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 219FF05A25F153C2006856EE /* ConnectionSet.swift */; };
+		2114FACC2600243E00F75C1A /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2132FB8F25E70A3A00196128 /* AboutView.swift */; };
+		2114FACD2600243E00F75C1A /* PeerRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2162AD8C25CE01BD00193520 /* PeerRequest.swift */; };
+		2114FACE2600243E00F75C1A /* View+WindowHacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 218CE56F25CA091300FBDCB2 /* View+WindowHacks.swift */; };
+		2114FACF2600243E00F75C1A /* BindPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 213DEC6525D645DF00C0411D /* BindPort.swift */; };
+		2114FAD02600243E00F75C1A /* Mesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21A335B425C0BE9F007B8C45 /* Mesh.swift */; };
+		2114FAD12600243E00F75C1A /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D2EAEF25C7B1AF0059C6B0 /* Config.swift */; };
+		2114FAD22600243E00F75C1A /* IntField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 212AE44A25D1EEF400C3813F /* IntField.swift */; };
+		2114FAD32600243E00F75C1A /* LocationListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21882DFC25E88DBB0093B42C /* LocationListener.swift */; };
+		2114FAD42600243E00F75C1A /* View+NavButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2154B8A525E23CE900C2DA1D /* View+NavButtons.swift */; };
+		2114FAD52600243E00F75C1A /* DataConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2162AD9425CE052100193520 /* DataConvertible.swift */; };
+		2114FAD62600243E00F75C1A /* PeerAdvertisement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21E88A3225C4CB9000F33D72 /* PeerAdvertisement.swift */; };
+		2114FAD72600243E00F75C1A /* Result+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2186D32E25DF677300361CFD /* Result+Extensions.swift */; };
+		2114FAD82600243E00F75C1A /* ConnectionFromPeer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 216B4E8925D0557D00486B42 /* ConnectionFromPeer.swift */; };
+		2114FAD92600243E00F75C1A /* NWEndpoint+Codable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2186D32925DF253600361CFD /* NWEndpoint+Codable.swift */; };
+		2114FADA2600243E00F75C1A /* MainScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215BF40425E83A9D00BC2A09 /* MainScene.swift */; };
+		2114FADB2600243E00F75C1A /* ListenerEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21B1759C25DDEF9E00CEE91A /* ListenerEditorView.swift */; };
+		2114FADC2600243E00F75C1A /* NWConnection+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21908CDF25CB51D900DAF5CB /* NWConnection+Extensions.swift */; };
+		2114FADD2600243E00F75C1A /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 219FF05225F15343006856EE /* Connection.swift */; };
+		2114FADE2600243E00F75C1A /* NWError+Codable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21351D1F25F825E300DC24B7 /* NWError+Codable.swift */; };
+		2114FADF2600243E00F75C1A /* DeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215EE3B225CA1BCF00045BFB /* DeviceInfo.swift */; };
+		2114FAE02600243E00F75C1A /* MockViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D8020625C8E7D400ABCFA3 /* MockViewModel.swift */; };
+		2114FAE12600243E00F75C1A /* PeersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21A3358125C0BD26007B8C45 /* PeersView.swift */; };
+		2114FAE22600243E00F75C1A /* UserError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2186D33625DF6A7A00361CFD /* UserError.swift */; };
+		2114FAE32600243E00F75C1A /* ViewModelProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D2EAF725C7B2AC0059C6B0 /* ViewModelProtocols.swift */; };
+		2114FAE42600243E00F75C1A /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215F780E25FFB4AC00792945 /* WebView.swift */; };
+		2114FAE52600243E00F75C1A /* ContactUsButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 219E663D25E81B20002BF949 /* ContactUsButton.swift */; };
+		2114FAE62600243E00F75C1A /* ProxyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21A3357F25C0BD26007B8C45 /* ProxyApp.swift */; };
+		2114FAE82600243E00F75C1A /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21908CDA25CA2E5800DAF5CB /* IOKit.framework */; };
+		2114FAE92600243E00F75C1A /* NWHTTPServer in Frameworks */ = {isa = PBXBuildFile; productRef = 2114FAC02600243E00F75C1A /* NWHTTPServer */; };
+		2114FAEB2600243E00F75C1A /* Licenses in Resources */ = {isa = PBXBuildFile; fileRef = 2161EAF125FD93D0002CDF5B /* Licenses */; };
+		2114FAEC2600243E00F75C1A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 21A3358625C0BD27007B8C45 /* Preview Assets.xcassets */; };
+		2114FAED2600243E00F75C1A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 21A3358325C0BD27007B8C45 /* Assets.xcassets */; };
 		21283DCA25EF344B0002D3FF /* PeerResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21283DC925EF344B0002D3FF /* PeerResponse.swift */; };
 		212AE41525D0984B00C3813F /* AnyObject+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 212AE41425D0984B00C3813F /* AnyObject+Extensions.swift */; };
 		212AE42C25D0A9D700C3813F /* NWConnection+SOCKS5.swift in Sources */ = {isa = PBXBuildFile; fileRef = 212AE42B25D0A9D700C3813F /* NWConnection+SOCKS5.swift */; };
@@ -74,6 +117,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		210D3752260026B10028D898 /* ProxyAppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyAppState.swift; sourceTree = "<group>"; };
+		2114FAF12600243E00F75C1A /* ProxiyMarketing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProxiyMarketing.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2114FAF22600243E00F75C1A /* Proxiy copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Proxiy copy-Info.plist"; path = "/Users/jaka/Development/proxiy/Proxiy copy-Info.plist"; sourceTree = "<absolute>"; };
 		21283DC925EF344B0002D3FF /* PeerResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerResponse.swift; sourceTree = "<group>"; };
 		212AE41425D0984B00C3813F /* AnyObject+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnyObject+Extensions.swift"; sourceTree = "<group>"; };
 		212AE42B25D0A9D700C3813F /* NWConnection+SOCKS5.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NWConnection+SOCKS5.swift"; sourceTree = "<group>"; };
@@ -130,6 +176,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		2114FAE72600243E00F75C1A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2114FAE82600243E00F75C1A /* IOKit.framework in Frameworks */,
+				2114FAE92600243E00F75C1A /* NWHTTPServer in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		21A3357925C0BD26007B8C45 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -186,6 +241,7 @@
 				21A3359B25C0BD27007B8C45 /* ProxiyUITests */,
 				21A3357D25C0BD26007B8C45 /* Products */,
 				21908CD925CA2E5800DAF5CB /* Frameworks */,
+				2114FAF22600243E00F75C1A /* Proxiy copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -195,6 +251,7 @@
 				21A3357C25C0BD26007B8C45 /* Proxiy.app */,
 				21A3358D25C0BD27007B8C45 /* ProxiyTests.xctest */,
 				21A3359825C0BD27007B8C45 /* ProxiyUITests.xctest */,
+				2114FAF12600243E00F75C1A /* ProxiyMarketing.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -205,6 +262,7 @@
 				21A3358825C0BD27007B8C45 /* Info.plist */,
 				21A335AD25C0BD6B007B8C45 /* Proxy.entitlements */,
 				21A3357F25C0BD26007B8C45 /* ProxyApp.swift */,
+				210D3752260026B10028D898 /* ProxyAppState.swift */,
 				215EE3B225CA1BCF00045BFB /* DeviceInfo.swift */,
 				213DEC6525D645DF00C0411D /* BindPort.swift */,
 				21D2EAEF25C7B1AF0059C6B0 /* Config.swift */,
@@ -290,6 +348,26 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		2114FABF2600243E00F75C1A /* ProxiyMarketing */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2114FAEE2600243E00F75C1A /* Build configuration list for PBXNativeTarget "ProxiyMarketing" */;
+			buildPhases = (
+				2114FAC22600243E00F75C1A /* Sources */,
+				2114FAE72600243E00F75C1A /* Frameworks */,
+				2114FAEA2600243E00F75C1A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ProxiyMarketing;
+			packageProductDependencies = (
+				2114FAC02600243E00F75C1A /* NWHTTPServer */,
+			);
+			productName = Proxy;
+			productReference = 2114FAF12600243E00F75C1A /* ProxiyMarketing.app */;
+			productType = "com.apple.product-type.application";
+		};
 		21A3357B25C0BD26007B8C45 /* Proxiy */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 21A335A125C0BD27007B8C45 /* Build configuration list for PBXNativeTarget "Proxiy" */;
@@ -385,6 +463,7 @@
 			projectRoot = "";
 			targets = (
 				21A3357B25C0BD26007B8C45 /* Proxiy */,
+				2114FABF2600243E00F75C1A /* ProxiyMarketing */,
 				21A3358C25C0BD27007B8C45 /* ProxiyTests */,
 				21A3359725C0BD27007B8C45 /* ProxiyUITests */,
 			);
@@ -392,6 +471,16 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		2114FAEA2600243E00F75C1A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2114FAEB2600243E00F75C1A /* Licenses in Resources */,
+				2114FAEC2600243E00F75C1A /* Preview Assets.xcassets in Resources */,
+				2114FAED2600243E00F75C1A /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		21A3357A25C0BD26007B8C45 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -419,6 +508,50 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		2114FAC22600243E00F75C1A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2114FAC32600243E00F75C1A /* MyNavigationView.swift in Sources */,
+				2114FAC42600243E00F75C1A /* RateCounter.swift in Sources */,
+				2114FAC52600243E00F75C1A /* PeerResponse.swift in Sources */,
+				2114FAC62600243E00F75C1A /* NWConnection+Peer.swift in Sources */,
+				2114FAC72600243E00F75C1A /* ConnectionForPeer.swift in Sources */,
+				2114FAC82600243E00F75C1A /* SettingsView.swift in Sources */,
+				2114FAC92600243E00F75C1A /* NWConnection+SOCKS5.swift in Sources */,
+				2114FACA2600243E00F75C1A /* AnyObject+Extensions.swift in Sources */,
+				2114FACB2600243E00F75C1A /* ConnectionSet.swift in Sources */,
+				210D3758260026B40028D898 /* ProxyAppState.swift in Sources */,
+				2114FACC2600243E00F75C1A /* AboutView.swift in Sources */,
+				2114FACD2600243E00F75C1A /* PeerRequest.swift in Sources */,
+				2114FACE2600243E00F75C1A /* View+WindowHacks.swift in Sources */,
+				2114FACF2600243E00F75C1A /* BindPort.swift in Sources */,
+				2114FAD02600243E00F75C1A /* Mesh.swift in Sources */,
+				2114FAD12600243E00F75C1A /* Config.swift in Sources */,
+				2114FAD22600243E00F75C1A /* IntField.swift in Sources */,
+				2114FAD32600243E00F75C1A /* LocationListener.swift in Sources */,
+				2114FAD42600243E00F75C1A /* View+NavButtons.swift in Sources */,
+				2114FAD52600243E00F75C1A /* DataConvertible.swift in Sources */,
+				2114FAD62600243E00F75C1A /* PeerAdvertisement.swift in Sources */,
+				2114FAD72600243E00F75C1A /* Result+Extensions.swift in Sources */,
+				2114FAD82600243E00F75C1A /* ConnectionFromPeer.swift in Sources */,
+				2114FAD92600243E00F75C1A /* NWEndpoint+Codable.swift in Sources */,
+				2114FADA2600243E00F75C1A /* MainScene.swift in Sources */,
+				2114FADB2600243E00F75C1A /* ListenerEditorView.swift in Sources */,
+				2114FADC2600243E00F75C1A /* NWConnection+Extensions.swift in Sources */,
+				2114FADD2600243E00F75C1A /* Connection.swift in Sources */,
+				2114FADE2600243E00F75C1A /* NWError+Codable.swift in Sources */,
+				2114FADF2600243E00F75C1A /* DeviceInfo.swift in Sources */,
+				2114FAE02600243E00F75C1A /* MockViewModel.swift in Sources */,
+				2114FAE12600243E00F75C1A /* PeersView.swift in Sources */,
+				2114FAE22600243E00F75C1A /* UserError.swift in Sources */,
+				2114FAE32600243E00F75C1A /* ViewModelProtocols.swift in Sources */,
+				2114FAE42600243E00F75C1A /* WebView.swift in Sources */,
+				2114FAE52600243E00F75C1A /* ContactUsButton.swift in Sources */,
+				2114FAE62600243E00F75C1A /* ProxyApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		21A3357825C0BD26007B8C45 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -432,6 +565,7 @@
 				212AE42C25D0A9D700C3813F /* NWConnection+SOCKS5.swift in Sources */,
 				212AE41525D0984B00C3813F /* AnyObject+Extensions.swift in Sources */,
 				219FF05B25F153C2006856EE /* ConnectionSet.swift in Sources */,
+				210D3753260026B10028D898 /* ProxyAppState.swift in Sources */,
 				2132FB9025E70A3A00196128 /* AboutView.swift in Sources */,
 				2162AD8D25CE01BD00193520 /* PeerRequest.swift in Sources */,
 				218CE57025CA091300FBDCB2 /* View+WindowHacks.swift in Sources */,
@@ -498,6 +632,56 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		2114FAEF2600243E00F75C1A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Proxiy/Proxy.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "\"Proxiy/Preview Content\"";
+				DEVELOPMENT_TEAM = 9N2BT52DHB;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = "Proxiy copy-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = si.jancar.ProxiyMarketing;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG MARKETING";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,6";
+			};
+			name = Debug;
+		};
+		2114FAF02600243E00F75C1A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Proxiy/Proxy.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "\"Proxiy/Preview Content\"";
+				DEVELOPMENT_TEAM = 9N2BT52DHB;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = "Proxiy copy-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = si.jancar.ProxiyMarketing;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = MARKETING;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,6";
+			};
+			name = Release;
+		};
 		21A3359F25C0BD27007B8C45 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -608,6 +792,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
@@ -749,6 +934,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		2114FAEE2600243E00F75C1A /* Build configuration list for PBXNativeTarget "ProxiyMarketing" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2114FAEF2600243E00F75C1A /* Debug */,
+				2114FAF02600243E00F75C1A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		21A3357725C0BD26007B8C45 /* Build configuration list for PBXProject "Proxy" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -788,6 +982,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		2114FAC12600243E00F75C1A /* XCRemoteSwiftPackageReference "NWHTTPProtocol" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AlwaysRightInstitute/NWHTTPProtocol";
+			requirement = {
+				kind = revision;
+				revision = eefe85493f6b8d3186a5790a5cb86a900fd6f291;
+			};
+		};
 		2161EAE725FD8DB0002CDF5B /* XCRemoteSwiftPackageReference "NWHTTPProtocol" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/AlwaysRightInstitute/NWHTTPProtocol";
@@ -799,6 +1001,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		2114FAC02600243E00F75C1A /* NWHTTPServer */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2114FAC12600243E00F75C1A /* XCRemoteSwiftPackageReference "NWHTTPProtocol" */;
+			productName = NWHTTPServer;
+		};
 		2161EAE825FD8DB0002CDF5B /* NWHTTPServer */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 2161EAE725FD8DB0002CDF5B /* XCRemoteSwiftPackageReference "NWHTTPProtocol" */;

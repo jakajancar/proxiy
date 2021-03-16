@@ -121,7 +121,7 @@ struct ContentView_Previews: PreviewProvider {
                     settingsAction: {},
                     mesh: MockMesh(
                         status: .connected,
-                        peers: MockPeer.various.filter({ p in p.isMe })
+                        peers: various.filter({ p in p.isMe })
                     )
                 )
             }
@@ -133,7 +133,7 @@ struct ContentView_Previews: PreviewProvider {
                     settingsAction: {},
                     mesh: MockMesh(
                         status: .connected,
-                        peers: MockPeer.various
+                        peers: various
                     )
                 )
             }
@@ -160,7 +160,7 @@ struct ContentView_Previews: PreviewProvider {
                     settingsAction: {},
                     mesh: MockMesh(
                         status: .connected,
-                        peers: MockPeer.various
+                        peers: various
                     )
                 )
             }
@@ -168,4 +168,62 @@ struct ContentView_Previews: PreviewProvider {
             .previewLayout(.sizeThatFits)
         }
     }
+    
+    private static var various: Set<MockPeer> {
+        [
+            // This device
+            MockPeer(isMe: true,
+                     deviceInfo: DeviceInfo(
+                        name: "Jaka's iPhone",
+                        machine: "iPhone13,1"),
+                     acceptsInbound: true,
+                     inboundConnectionCount: 0,
+                     outboundConnectionCount: 0,
+                     bytesPerSec: 0),
+            
+            // Laptops
+            MockPeer(deviceInfo: DeviceInfo(
+                        name: "Jaka's MacBook Pro",
+                        machine: "MacBookPro16,1"),
+                     acceptsInbound: false,
+                     inboundConnectionCount: 33,
+                     outboundConnectionCount: 0,
+                     bytesPerSec: 3293291843),
+            
+            MockPeer(deviceInfo: DeviceInfo(
+                        name: "Leah's MacBook Pro",
+                        machine: "MacBookPro15,2"),
+                     acceptsInbound: true,
+                     inboundConnectionCount: 8,
+                     outboundConnectionCount: 0,
+                     bytesPerSec: 23929100),
+
+            // Tablet
+            MockPeer(deviceInfo: DeviceInfo(
+                        name: "Jaka's iPad Pro",
+                        machine: "iPad7,1"),
+                     acceptsInbound: true,
+                     inboundConnectionCount: 0,
+                     outboundConnectionCount: 0,
+                     bytesPerSec: 0),
+
+            
+            // Test for long name
+            MockPeer(deviceInfo: DeviceInfo(
+                        name: "A device with a very very very very very very very long name",
+                        machine: "Unknown"),
+                    acceptsInbound: true,
+                    inboundConnectionCount: 1234,
+                    outboundConnectionCount: 9876,
+                    bytesPerSec: 239291000
+            ),
+
+            // Test for sorting of rows with same bw
+            MockPeer(deviceInfo: DeviceInfo(name: "Device A", machine: "Unknown"), bytesPerSec: 1),
+            MockPeer(deviceInfo: DeviceInfo(name: "Device D", machine: "Unknown"), bytesPerSec: 1),
+            MockPeer(deviceInfo: DeviceInfo(name: "Device C", machine: "Unknown"), bytesPerSec: 1),
+            MockPeer(deviceInfo: DeviceInfo(name: "Device B", machine: "Unknown"), bytesPerSec: 1),
+        ]
+    }
+
 }
