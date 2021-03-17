@@ -69,6 +69,8 @@
 	<string>Proxiy uses the local network and peer-to-peer Wi-Fi to connect to other instances of Proxiy.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Proxiy needs access to your location to provide the Location API.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Proxiy needs access to your location to provide the Location API.</string>
 </dict>
