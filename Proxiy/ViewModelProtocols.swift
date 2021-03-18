@@ -9,7 +9,8 @@ import Foundation
 import Network
 
 enum MeshStatus {
-    case connecting
+    case starting
+    case searching
     case connected
     case errors([String])
 }

@@ -353,44 +353,50 @@ class Peer {
 
 extension Mesh: MeshViewModel {
     var status: MeshStatus {
+        var stillWorking = 0
         var errors = [String]()
         
-        if case .failed(let error) = peerBrowser.state {
-            errors.append("Peer browser failed: \(error)")
+        // TODO: account for unknown status
+        
+        switch peerBrowser.state {
+        case .failed(let error): errors.append("Peer browser failed: \(error)")
+        case .waiting(let error): errors.append("Peer browser waiting: \(error)")
+        case .cancelled: errors.append("Peer browser cancelled")
+        case .ready: break
+        case .setup: stillWorking += 1
+        @unknown default: stillWorking += 1 // assume transient state
         }
         
-        if case .waiting(let error) = peerBrowser.state {
-            errors.append("Peer browser waiting: \(error)")
-        }
-
-        if case .failed(let error) = peerListener.state {
-            errors.append("Peer listener failed: \(error)")
-        }
-
-        if case .waiting(let error) = peerListener.state {
-            errors.append("Peer listener waiting: \(error)")
+        switch peerListener.state {
+        case .failed(let error): errors.append("Peer listener failed: \(error)")
+        case .waiting(let error): errors.append("Peer listener waiting: \(error)")
+        case .cancelled: errors.append("Peer listener cancelled")
+        case .ready: break
+        case .setup: stillWorking += 1
+        @unknown default: stillWorking += 1 // assume transient state
         }
 
         for (listenerConfig, listener) in self.localListeners {
-            if case .failed(let error) = listener.state {
-                errors.append("Local listener \(listenerConfig.bindPort.debugDescription) failed: \(error)")
-            }
+            let name = "Local listener \(listenerConfig.bindPort.debugDescription)"
             
-            if case .waiting(let error) = listener.state {
-                errors.append("Local listener \(listenerConfig.bindPort.debugDescription) waiting: \(error)")
+            switch listener.state {
+            case .failed(let error): errors.append("\(name) failed: \(error)")
+            case .waiting(let error): errors.append("\(name) waiting: \(error)")
+            case .cancelled: errors.append("\(name) cancelled")
+            case .ready: break
+            case .setup: stillWorking += 1
+            @unknown default: stillWorking += 1 // assume transient state
             }
         }
         
         if errors.count > 0 {
             return .errors(errors)
-        } else if self.localListeners.values.allSatisfy({ $0.state == .ready }) &&
-            self.peerListener.state == .ready &&
-            self.peerBrowser.state == .ready &&
-            self.peerMap[self.myInstanceID] != nil
-        {
-            return .connected
+        } else if stillWorking > 0 {
+            return .starting
+        } else if self.peerMap[self.myInstanceID] == nil {
+            return .searching
         } else {
-            return .connecting
+            return .connected
         }
     }
     

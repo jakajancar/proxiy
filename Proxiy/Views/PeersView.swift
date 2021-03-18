@@ -32,8 +32,10 @@ struct PeersView<M: MeshViewModel>: View {
             ToolbarItemGroup(placement: .bottomBar) {
                 let status: String = {
                     switch mesh.status {
-                    case .connecting:
-                        return "Connecting..."
+                    case .starting:
+                        return "Starting..."
+                    case .searching:
+                        return "Searching..."
                     case .connected:
                         return "Connected"
                     case .errors(_):
@@ -108,7 +110,7 @@ struct ContentView_Previews: PreviewProvider {
                 PeersView(
                     settingsAction: {},
                     mesh: MockMesh(
-                        status: .connecting,
+                        status: .searching,
                         peers: Set()
                     )
                 )
