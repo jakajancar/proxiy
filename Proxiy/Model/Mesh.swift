@@ -356,8 +356,6 @@ extension Mesh: MeshViewModel {
         var stillWorking = 0
         var errors = [String]()
         
-        // TODO: account for unknown status
-        
         switch peerBrowser.state {
         case .failed(let error): errors.append("Peer browser failed: \(error)")
         case .waiting(let error): errors.append("Peer browser waiting: \(error)")
