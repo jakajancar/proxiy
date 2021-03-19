@@ -138,7 +138,7 @@ extension NWConnection {
                 debugPrint("WS>TCP receive error: \(error)")
                 return completion(.failure(error))
             case (nil, .some(let ctx), true, .none) where ctx.isFinal:
-                debugPrint("WS>TCP terminated uncleanly")
+                debugPrint("WS>TCP closed before receiving EOF")
                 return completion(.failure(.posix(.ENODATA)))
             case (let data, .some(let ctx), isComplete, .none) where !ctx.isFinal && ctx.wsMetadata?.opcode == .binary:
                 debugPrint("WS>TCP received \(String(describing: data)), isComplete = \(isComplete)")
@@ -175,7 +175,7 @@ extension NWConnection {
                     if let error = error {
                         return completion(.failure(error))
                     }
-                    return self.pumpToUDP(debugPrint: debugPrint, raw: raw, onTransfer: onTransfer, completion: completion)
+                    return self.pumpFromUDP(debugPrint: debugPrint, raw: raw, onTransfer: onTransfer, completion: completion)
                 }))
             case (let data, let ctx, let isComplete, let error):
                 logger.error("Unexpected callback pumping UDP>WS: \(Self.callbackDesription(data: data, ctx: ctx, isComplete: isComplete, error: error))")
@@ -192,7 +192,7 @@ extension NWConnection {
                 debugPrint("WS>UDP receive error: \(error)")
                 return completion(.failure(error))
             case (nil, .some(let ctx), true, .none) where ctx.isFinal:
-                debugPrint("WS>UDP terminated uncleanly (cancelled?)")
+                debugPrint("WS>UDP closed")
                 return completion(.failure(.posix(.ENODATA))) // must be failure otherwise other side will remain open
             case (.some(let data), .some(let ctx), true, .none) where !ctx.isFinal && ctx.wsMetadata?.opcode == .binary:
                 debugPrint("WS>UDP received \(data)")
