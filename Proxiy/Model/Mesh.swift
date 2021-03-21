@@ -310,7 +310,7 @@ class Mesh {
 class Peer {
     let isMe: Bool
     fileprivate let endpoint: NWEndpoint
-    fileprivate var advertisement: PeerAdvertisement
+    @Published fileprivate var advertisement: PeerAdvertisement
     
     fileprivate var connectionsTo = ConnectionSet<ConnectionForPeer>()
     fileprivate var connectionsFrom = ConnectionSet<ConnectionFromPeer>()
