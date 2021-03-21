@@ -8,7 +8,7 @@
 import Foundation
 import Network
 
-enum MeshStatus {
+enum MeshStatus: Equatable {
     case starting
     case searching
     case connected

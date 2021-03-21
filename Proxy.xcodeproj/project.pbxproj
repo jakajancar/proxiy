@@ -59,6 +59,7 @@
 		21351D2825F8261800DC24B7 /* NWError+CodableTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21351D2725F8261800DC24B7 /* NWError+CodableTest.swift */; };
 		213DEC6625D645DF00C0411D /* BindPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 213DEC6525D645DF00C0411D /* BindPort.swift */; };
 		2154B8A625E23CE900C2DA1D /* View+NavButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2154B8A525E23CE900C2DA1D /* View+NavButtons.swift */; };
+		215A22982606B4C400681672 /* E2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215A22972606B4C400681672 /* E2ETest.swift */; };
 		215BF40525E83A9D00BC2A09 /* MainScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215BF40425E83A9D00BC2A09 /* MainScene.swift */; };
 		215BF41A25E8460200BC2A09 /* MyNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215BF41925E8460200BC2A09 /* MyNavigationView.swift */; };
 		215EE3B325CA1BCF00045BFB /* DeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215EE3B225CA1BCF00045BFB /* DeviceInfo.swift */; };
@@ -129,6 +130,7 @@
 		21351D2725F8261800DC24B7 /* NWError+CodableTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NWError+CodableTest.swift"; sourceTree = "<group>"; };
 		213DEC6525D645DF00C0411D /* BindPort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BindPort.swift; sourceTree = "<group>"; };
 		2154B8A525E23CE900C2DA1D /* View+NavButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+NavButtons.swift"; sourceTree = "<group>"; };
+		215A22972606B4C400681672 /* E2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2ETest.swift; sourceTree = "<group>"; };
 		215BF40425E83A9D00BC2A09 /* MainScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScene.swift; sourceTree = "<group>"; };
 		215BF41925E8460200BC2A09 /* MyNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyNavigationView.swift; sourceTree = "<group>"; };
 		215EE3B225CA1BCF00045BFB /* DeviceInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfo.swift; sourceTree = "<group>"; };
@@ -293,6 +295,7 @@
 				21A3359125C0BD27007B8C45 /* ProxyTests.swift */,
 				21A1107325EF1EEC00209D7C /* Echo.swift */,
 				21A1107825EF1F2E00209D7C /* EchoTests.swift */,
+				215A22972606B4C400681672 /* E2ETest.swift */,
 				21351D2725F8261800DC24B7 /* NWError+CodableTest.swift */,
 				21A1109125EF2CB500209D7C /* NWConnection+Forwarding.swift */,
 			);
@@ -600,6 +603,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				215A22982606B4C400681672 /* E2ETest.swift in Sources */,
 				21A1107925EF1F2E00209D7C /* EchoTests.swift in Sources */,
 				21351D2825F8261800DC24B7 /* NWError+CodableTest.swift in Sources */,
 				21A1107425EF1EEC00209D7C /* Echo.swift in Sources */,
