@@ -7,6 +7,7 @@
 
 import XCTest
 import Combine
+import Network
 @testable import Proxiy
 
 class E2ETest: XCTestCase {
@@ -30,6 +31,45 @@ class E2ETest: XCTestCase {
         }
         waitForExpectations(timeout: 5, handler: nil)
     }
+
+    func testTCPProxying() throws {
+        let finishedExpectation = expectation(description: "finished")
+        createEchoListener(params: .tcp) { (listener, listenerEndpoint) in
+            createMeshPair(
+                configA: MeshConfig(psk: "testTCPProxying", acceptInbound: false, listeners: [.tcp(1234, .init(), .init(host: "localhost", port: listener.port!))]),
+                configB: MeshConfig(psk: "testTCPProxying", acceptInbound: true, listeners: [])
+            ) { (srcMesh, relayMesh) in
+                let conn = NWConnection(host: "localhost", port: 1234, using: .tcp)
+                conn.startAndAwaitReady {
+                    conn.benchmarkSendAndReceive {
+                        let _ = (srcMesh, relayMesh)
+                        finishedExpectation.fulfill()
+                    }
+                }
+            }
+        }
+        waitForExpectations(timeout: 30, handler: nil)
+    }
+
+    func testUDPProxying() throws {
+        let finishedExpectation = expectation(description: "finished")
+        createEchoListener(params: .udp) { (listener, listenerEndpoint) in
+            createMeshPair(
+                configA: MeshConfig(psk: "testUDPProxying", acceptInbound: false, listeners: [.udp(1234, .init(), .init(host: "localhost", port: listener.port!))]),
+                configB: MeshConfig(psk: "testUDPProxying", acceptInbound: true, listeners: [])
+            ) { (srcMesh, relayMesh) in
+                let conn = NWConnection(host: "localhost", port: 1234, using: .udp)
+                conn.startAndAwaitReady {
+                    conn.benchmarkSendAndReceive {
+                        let _ = (srcMesh, relayMesh)
+                        finishedExpectation.fulfill()
+                    }
+                }
+            }
+        }
+        waitForExpectations(timeout: 30, handler: nil)
+    }
+
 }
 
 
@@ -43,7 +83,7 @@ func createMeshPair(configA: MeshConfig, configB: MeshConfig, completion: @escap
         .sink { Void in
             switch (meshA.status, meshB.status) {
             case (.errors(let errors), _), (_, .errors(let errors)):
-                fatalError("mesh startup failed: \(errors)")
+                print("mesh startup failed: \(errors)")
             case (.connected, .connected) where meshA.peers.count == 2 && meshB.peers.count == 2:
                 precondition(subscriber != nil)
                 subscriber = nil // ensures sub is retained, as well as cancels it on first match
