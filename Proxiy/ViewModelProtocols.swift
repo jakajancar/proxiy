@@ -12,6 +12,7 @@ enum MeshStatus: Equatable {
     case starting
     case searching
     case connected
+    case noLocalNetworkPermission
     case errors([String])
 }
 

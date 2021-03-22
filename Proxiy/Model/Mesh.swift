@@ -387,7 +387,10 @@ extension Mesh: MeshViewModel {
             }
         }
         
-        if errors.count > 0 {
+        let permissionError = NWError.dns(DNSServiceErrorType(kDNSServiceErr_PolicyDenied))
+        if peerBrowser.state == .waiting(permissionError) || peerBrowser.state == .failed(permissionError) {
+            return .noLocalNetworkPermission
+        } else if errors.count > 0 {
             return .errors(errors)
         } else if stillWorking > 0 {
             return .starting

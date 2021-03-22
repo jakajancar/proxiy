@@ -23,11 +23,18 @@ struct MainScene: Scene {
     var body: some Scene {
         WindowGroup {
             if let mesh = appState.mesh {
+                let rootView: AnyView = {
+                    if mesh.status == .noLocalNetworkPermission {
+                        return AnyView(LocalNetworkPermissionView().navigationBarHidden(true))
+                    } else {
+                        return AnyView(PeersView(
+                            settingsAction: { activeSheet = .settings },
+                            mesh: mesh
+                        ))
+                    }
+                }()
                 MyNavigationView {
-                    PeersView(
-                        settingsAction: { activeSheet = .settings },
-                        mesh: mesh
-                    )
+                    rootView
                     .sheet(item: $activeSheet) { sheet in
                         MyNavigationView {
                             switch sheet {

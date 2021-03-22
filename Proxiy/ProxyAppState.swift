@@ -30,6 +30,13 @@ class ProxyAppState: ObservableObject {
             .sink { config in try! config.persistToDefaultFile() }
             .store(in: &cancellables)
         
+        // Mesh changes are AppState changes
+        $mesh
+            .filter({ $0 != nil })
+            .flatMap { mesh in mesh!.objectWillChange }
+            .sink { _ in self.objectWillChange.send() }
+            .store(in: &cancellables)
+        
         if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] != "1" &&
             ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil
         {

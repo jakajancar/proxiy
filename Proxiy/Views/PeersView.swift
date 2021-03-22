@@ -38,7 +38,7 @@ struct PeersView<M: MeshViewModel>: View {
                         return "Searching..."
                     case .connected:
                         return "Connected"
-                    case .errors(_):
+                    case .errors(_), .noLocalNetworkPermission:
                         return "Error"
                     }
                 }()
@@ -157,17 +157,17 @@ struct ContentView_Previews: PreviewProvider {
             .previewDevice("iPhone 12 mini")
             .previewLayout(.sizeThatFits)
             
-            MyNavigationView {
-                PeersView(
-                    settingsAction: {},
-                    mesh: MockMesh(
-                        status: .connected,
-                        peers: various
-                    )
-                )
-            }
-            .previewDevice("Mac Catalyst")
-            .previewLayout(.sizeThatFits)
+//            MyNavigationView {
+//                PeersView(
+//                    settingsAction: {},
+//                    mesh: MockMesh(
+//                        status: .connected,
+//                        peers: various
+//                    )
+//                )
+//            }
+//            .previewDevice("Mac Catalyst")
+//            .previewLayout(.sizeThatFits)
         }
     }
     
