@@ -32,14 +32,31 @@ class E2ETest: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
     }
 
+    func testTCPEstablishment() throws {
+        let finishedExpectation = expectation(description: "finished")
+        createEchoListener(params: .tcp) { (listener, listenerEndpoint) in
+            createMeshPair(
+                configA: MeshConfig(psk: "testTCPEstablishment", acceptInbound: false, listeners: [.tcp(1101, .init(), .init(host: "localhost", port: listener.port!))]),
+                configB: MeshConfig(psk: "testTCPEstablishment", acceptInbound: true, listeners: [])
+            ) { (srcMesh, relayMesh) in
+                let localEndpoint = NWEndpoint.hostPort(host: .name("localhost", nil), port: 1101)
+                NWConnection.benchmarkEstablishment(endpoint: localEndpoint, params: .tcp) {
+                    let _ = (srcMesh, relayMesh)
+                    finishedExpectation.fulfill()
+                }
+            }
+        }
+        waitForExpectations(timeout: 30, handler: nil)
+    }
+    
     func testTCPProxying() throws {
         let finishedExpectation = expectation(description: "finished")
         createEchoListener(params: .tcp) { (listener, listenerEndpoint) in
             createMeshPair(
-                configA: MeshConfig(psk: "testTCPProxying", acceptInbound: false, listeners: [.tcp(1234, .init(), .init(host: "localhost", port: listener.port!))]),
+                configA: MeshConfig(psk: "testTCPProxying", acceptInbound: false, listeners: [.tcp(1102, .init(), .init(host: "localhost", port: listener.port!))]),
                 configB: MeshConfig(psk: "testTCPProxying", acceptInbound: true, listeners: [])
             ) { (srcMesh, relayMesh) in
-                let conn = NWConnection(host: "localhost", port: 1234, using: .tcp)
+                let conn = NWConnection(host: "localhost", port: 1102, using: .tcp)
                 conn.startAndAwaitReady {
                     conn.benchmarkSendAndReceive {
                         let _ = (srcMesh, relayMesh)
@@ -55,10 +72,10 @@ class E2ETest: XCTestCase {
         let finishedExpectation = expectation(description: "finished")
         createEchoListener(params: .udp) { (listener, listenerEndpoint) in
             createMeshPair(
-                configA: MeshConfig(psk: "testUDPProxying", acceptInbound: false, listeners: [.udp(1234, .init(), .init(host: "localhost", port: listener.port!))]),
+                configA: MeshConfig(psk: "testUDPProxying", acceptInbound: false, listeners: [.udp(1202, .init(), .init(host: "localhost", port: listener.port!))]),
                 configB: MeshConfig(psk: "testUDPProxying", acceptInbound: true, listeners: [])
             ) { (srcMesh, relayMesh) in
-                let conn = NWConnection(host: "localhost", port: 1234, using: .udp)
+                let conn = NWConnection(host: "localhost", port: 1202, using: .udp)
                 conn.startAndAwaitReady {
                     conn.benchmarkSendAndReceive {
                         let _ = (srcMesh, relayMesh)

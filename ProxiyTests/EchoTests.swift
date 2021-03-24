@@ -7,7 +7,6 @@
 
 import XCTest
 import Network
-@testable import Proxiy
 
 class EchoTests: XCTestCase {
     func testEchoConnectionTCP() {

@@ -94,6 +94,7 @@
 		21A3359D25C0BD27007B8C45 /* ProxyUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21A3359C25C0BD27007B8C45 /* ProxyUITests.swift */; };
 		21A335B525C0BE9F007B8C45 /* Mesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21A335B425C0BE9F007B8C45 /* Mesh.swift */; };
 		21B1759D25DDEF9E00CEE91A /* ListenerEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21B1759C25DDEF9E00CEE91A /* ListenerEditorView.swift */; };
+		21B8FA1E260B692A00F35489 /* NWConnection+Testing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21B8FA1D260B692A00F35489 /* NWConnection+Testing.swift */; };
 		21D2EAF025C7B1AF0059C6B0 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D2EAEF25C7B1AF0059C6B0 /* Config.swift */; };
 		21D2EAF825C7B2AC0059C6B0 /* ViewModelProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D2EAF725C7B2AC0059C6B0 /* ViewModelProtocols.swift */; };
 		21D8020725C8E7D400ABCFA3 /* MockViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D8020625C8E7D400ABCFA3 /* MockViewModel.swift */; };
@@ -172,6 +173,7 @@
 		21A335AD25C0BD6B007B8C45 /* Proxy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Proxy.entitlements; sourceTree = "<group>"; };
 		21A335B425C0BE9F007B8C45 /* Mesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mesh.swift; sourceTree = "<group>"; };
 		21B1759C25DDEF9E00CEE91A /* ListenerEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenerEditorView.swift; sourceTree = "<group>"; };
+		21B8FA1D260B692A00F35489 /* NWConnection+Testing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NWConnection+Testing.swift"; sourceTree = "<group>"; };
 		21D2EAEF25C7B1AF0059C6B0 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		21D2EAF725C7B2AC0059C6B0 /* ViewModelProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelProtocols.swift; sourceTree = "<group>"; };
 		21D8020625C8E7D400ABCFA3 /* MockViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockViewModel.swift; sourceTree = "<group>"; };
@@ -300,6 +302,7 @@
 				215A22972606B4C400681672 /* E2ETest.swift */,
 				21351D2725F8261800DC24B7 /* NWError+CodableTest.swift */,
 				21A1109125EF2CB500209D7C /* NWConnection+Forwarding.swift */,
+				21B8FA1D260B692A00F35489 /* NWConnection+Testing.swift */,
 			);
 			path = ProxiyTests;
 			sourceTree = "<group>";
@@ -608,6 +611,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				215A22982606B4C400681672 /* E2ETest.swift in Sources */,
+				21B8FA1E260B692A00F35489 /* NWConnection+Testing.swift in Sources */,
 				21A1107925EF1F2E00209D7C /* EchoTests.swift in Sources */,
 				21351D2825F8261800DC24B7 /* NWError+CodableTest.swift in Sources */,
 				21A1107425EF1EEC00209D7C /* Echo.swift in Sources */,
